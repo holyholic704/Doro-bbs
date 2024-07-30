@@ -67,7 +67,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
-                            <mainClass>com.doro.gateway.DoroGatewayApplication</mainClass>
+                            <mainClass>com.doro.gateway.GatewayApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -35,7 +35,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib</classpathPrefix>
-                            <mainClass>com.doro.mq.DoroMqApplication</mainClass>
+                            <mainClass>com.doro.mq.MqApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

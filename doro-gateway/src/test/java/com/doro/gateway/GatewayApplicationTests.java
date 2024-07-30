@@ -1,10 +1,10 @@
-package com.doro.mq;
+package com.doro.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DoroMqApplicationTests {
+class GatewayApplicationTests {
 
     @Test
     void contextLoads() {
