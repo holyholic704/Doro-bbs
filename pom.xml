@@ -11,8 +11,11 @@
 
     <modules>
         <module>doro-common</module>
-        <module>doro-core</module>
         <module>doro-api</module>
+        <module>doro-gateway</module>
+        <module>doro-core</module>
+        <module>doro-id</module>
+        <module>doro-mq</module>
         <module>consumer-test</module>
     </modules>
 
@@ -26,6 +29,7 @@
         <dubbo.version>3.2.14</dubbo.version>
         <gateway.version>3.1.9</gateway.version>
         <loadbalancer.version>3.1.8</loadbalancer.version>
+        <hutool.version>5.8.29</hutool.version>
     </properties>
 
     <dependencies>
@@ -44,6 +48,12 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
     </dependencies>
 
