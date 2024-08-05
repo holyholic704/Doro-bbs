@@ -3,7 +3,6 @@ package com.doro.core.controller;
 import com.doro.api.service.TestService;
 import com.doro.common.base.res.Response;
 import com.doro.common.enumeration.ResponseEnum;
-import com.doro.core.service.HelloService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

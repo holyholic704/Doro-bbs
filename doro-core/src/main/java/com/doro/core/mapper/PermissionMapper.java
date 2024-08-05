@@ -1,4 +1,4 @@
-package com.doro.api.mapper.user;
+package com.doro.core.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

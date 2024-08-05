@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDubbo
 @EnableDiscoveryClient
 @SpringBootApplication
-@MapperScan("com.doro.common.mapper.*")
+@MapperScan("com.doro.core.mapper.*")
 public class CoreApplication {
 
     public static void main(String[] args) {

@@ -2,7 +2,7 @@ package com.doro.core.service.user;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.api.bean.user.User;
-import com.doro.api.mapper.user.UserMapper;
+import com.doro.core.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 /**
