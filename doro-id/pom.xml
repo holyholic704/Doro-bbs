@@ -13,6 +13,14 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.doro</groupId>
+            <artifactId>doro-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>${artifactId}</finalName>
         <plugins>

@@ -22,7 +22,6 @@
         <module>doro-core</module>
         <module>doro-id</module>
         <module>doro-mq</module>
-        <module>consumer-test</module>
     </modules>
 
     <properties>
@@ -37,5 +36,6 @@
         <loadbalancer.version>3.1.8</loadbalancer.version>
         <hutool.version>5.8.29</hutool.version>
         <bootstrap.version>3.1.5</bootstrap.version>
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
     </properties>
 </project>
