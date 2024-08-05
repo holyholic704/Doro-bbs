@@ -1,4 +1,4 @@
-package com.doro.api;
+package com.doro.api.service;
 
 public interface TestService {
 
