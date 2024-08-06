@@ -1,20 +1,24 @@
 package com.doro.common.utils;
 
 import cn.hutool.json.JSONUtil;
-import com.doro.common.bean.response.Response;
+import com.doro.common.base.res.Response;
+import com.doro.common.constant.Separator;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * 前端渲染
+ */
 public class RenderUtil {
 
-    public static void renderJson(HttpServletResponse response, Response re) throws IOException {
-        response.setContentType("application/json;charset=UTF-8");
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        ServletOutputStream out = response.getOutputStream();
-        String str = JSONUtil.toJsonStr(re);
+    public static void renderJson(HttpServletResponse httpServletResponse, Response<?> response) throws IOException {
+        httpServletResponse.setContentType("application/json;charset=UTF-8");
+        httpServletResponse.setHeader("Access-Control-Allow-Origin", Separator.STAR);
+        ServletOutputStream out = httpServletResponse.getOutputStream();
+        String str = JSONUtil.toJsonStr(response);
         out.write(str.getBytes(StandardCharsets.UTF_8));
         out.flush();
         out.close();

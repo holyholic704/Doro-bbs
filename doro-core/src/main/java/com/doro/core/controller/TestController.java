@@ -7,8 +7,6 @@ import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ServiceLoader;
-
 @RestController
 public class TestController {
 
@@ -17,13 +15,7 @@ public class TestController {
 
     @GetMapping("test")
     public Response test() {
-        ServiceLoader<HelloService> serviceLoader = ServiceLoader.load(HelloService.class);
-        serviceLoader.forEach(HelloService::say);
+        System.out.println(1 / 0);
         return Response.ofEnum(ResponseEnum.ERROR);
-    }
-
-    public static void main(String[] args) {
-        ServiceLoader<HelloService> serviceLoader = ServiceLoader.load(HelloService.class);
-        serviceLoader.forEach(HelloService::say);
     }
 }
