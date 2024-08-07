@@ -5,11 +5,13 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 
 @EnableDubbo
 @EnableDiscoveryClient
 @SpringBootApplication
-@MapperScan("com.doro.core.mapper.*")
+@MapperScan("com.doro.mapper.*")
+@ComponentScan("com.doro.*.config")
 public class CoreApplication {
 
     public static void main(String[] args) {

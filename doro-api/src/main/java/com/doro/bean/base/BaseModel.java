@@ -1,4 +1,4 @@
-package com.doro.base;
+package com.doro.bean.base;
 
 import lombok.Data;
 

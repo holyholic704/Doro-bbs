@@ -1,6 +1,5 @@
 package com.doro.core.service.login;
 
-import com.doro.bean.user.User;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;

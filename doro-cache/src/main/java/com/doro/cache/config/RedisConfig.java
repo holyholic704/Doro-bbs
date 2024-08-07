@@ -1,4 +1,4 @@
-package com.doro.core.config;
+package com.doro.cache.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,7 +1,7 @@
 package com.doro.bean.user;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.doro.base.BaseModel;
+import com.doro.bean.base.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,31 +13,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
-public class User extends BaseModel {
+@TableName("user_role")
+public class UserRole extends BaseModel {
 
     /**
-     * 用户名
+     * 用户ID
      */
-    private String username;
+    private Long userId;
 
     /**
-     * 密码
+     * 角色ID
      */
-    private String password;
-
-    /**
-     * 昵称
-     */
-    private String nickname;
-
-    /**
-     * 手机号
-     */
-    private String phone;
-
-    /**
-     * 邮箱
-     */
-    private String email;
+    private Long roleId;
 }

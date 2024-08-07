@@ -1,7 +1,7 @@
 package com.doro.bean.user;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.doro.base.BaseModel;
+import com.doro.bean.base.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
