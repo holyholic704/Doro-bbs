@@ -21,4 +21,9 @@ public class LoginController {
     public ResponseResult<?> login(@RequestBody RequestUser requestUser) {
         return loginService.login(requestUser);
     }
+
+    @PostMapping("register")
+    public ResponseResult<?> register(@RequestBody RequestUser requestUser) {
+        return loginService.register(requestUser);
+    }
 }

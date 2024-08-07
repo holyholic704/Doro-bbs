@@ -35,4 +35,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getEmail, email));
     }
+
+    public boolean notExist(String username) {
+        return this.count(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username)) < 1;
+    }
 }

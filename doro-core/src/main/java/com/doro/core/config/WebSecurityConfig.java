@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -32,21 +33,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Bean
-    PhoneAuthenticationProvider phoneAuthenticationProvider() {
-        return new PhoneAuthenticationProvider(useCodeUserDetails);
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 如果实现了多个 UserDetailsService，需指定哪个 Provider 用的是哪个 UserDetailsService
-        auth.authenticationProvider(phoneAuthenticationProvider())
-                .userDetailsService(useCodeUserDetails);
-    }
+//    @Bean
+//    PhoneAuthenticationProvider phoneAuthenticationProvider() {
+//        return new PhoneAuthenticationProvider(useCodeUserDetails);
+//    }
+//
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        // 如果实现了多个 UserDetailsService，需指定哪个 Provider 用的是哪个 UserDetailsService
+//        auth.authenticationProvider(phoneAuthenticationProvider())
+//                .userDetailsService(useCodeUserDetails);
+//    }
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
