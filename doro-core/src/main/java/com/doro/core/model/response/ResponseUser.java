@@ -1,6 +1,6 @@
 package com.doro.core.model.response;
 
-import com.doro.api.bean.user.User;
+import com.doro.bean.user.User;
 import lombok.Data;
 
 @Data

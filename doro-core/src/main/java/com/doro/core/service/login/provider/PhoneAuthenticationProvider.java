@@ -1,6 +1,6 @@
 package com.doro.core.service.login.provider;
 
-import com.doro.api.bean.user.User;
+import com.doro.bean.user.User;
 import com.doro.core.service.login.authentication.PhoneAuthenticationToken;
 import com.doro.core.service.login.details.UseCodeUserDetails;
 import org.springframework.security.authentication.AuthenticationProvider;

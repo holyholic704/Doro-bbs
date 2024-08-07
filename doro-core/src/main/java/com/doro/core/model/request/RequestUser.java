@@ -1,6 +1,6 @@
 package com.doro.core.model.request;
 
-import com.doro.api.bean.user.User;
+import com.doro.bean.user.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

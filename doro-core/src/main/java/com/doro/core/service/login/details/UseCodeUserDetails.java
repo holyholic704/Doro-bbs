@@ -1,6 +1,6 @@
 package com.doro.core.service.login.details;
 
-import com.doro.api.bean.user.User;
+import com.doro.bean.user.User;
 import com.doro.core.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +19,6 @@ public class UseCodeUserDetails implements UserDetailsService {
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
         User user = userService.getByPhone(phone);
         Assert.isTrue(user != null, "当前用户不存在");
-        return user;
+        return (UserDetails) user;
     }
 }

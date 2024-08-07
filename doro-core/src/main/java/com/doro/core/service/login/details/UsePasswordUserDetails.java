@@ -2,8 +2,9 @@ package com.doro.core.service.login.details;
 
 import cn.hutool.core.lang.RegexPool;
 import cn.hutool.core.util.ReUtil;
-import com.doro.api.bean.user.User;
+import com.doro.bean.user.User;
 import com.doro.common.constant.Settings;
+import com.doro.core.service.login.UserDetailsImpl;
 import com.doro.core.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ public class UsePasswordUserDetails implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.getUserByType(username);
         Assert.isTrue(user != null, "当前用户不存在");
-        return user;
+        return this.buildFromUser(user);
     }
 
     /**
@@ -42,5 +43,12 @@ public class UsePasswordUserDetails implements UserDetailsService {
             return userService.getByEmail(username);
         }
         return userService.getByUsername(username);
+    }
+
+    private UserDetails buildFromUser(User user) {
+        return new UserDetailsImpl()
+                .setId(user.getId())
+                .setUsername(user.getUsername())
+                .setPassword(user.getPassword());
     }
 }

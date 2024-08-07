@@ -1,4 +1,4 @@
-package com.doro.common.utils;
+package com.doro.core.utils;
 
 import cn.hutool.json.JSONUtil;
 import com.doro.common.model.res.ResponseResult;
