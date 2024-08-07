@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 @Getter
 @Setter
-public class Response<T> implements Serializable {
+public class ResponseResult<T> implements Serializable {
 
     /**
      * 状态码
@@ -35,7 +35,7 @@ public class Response<T> implements Serializable {
      * 缓存使用枚举创建的对象，避免过多的重复创建
      */
     @SuppressWarnings("rawtypes")
-    private static final Cache<ResponseEnum, Response> ENUM_RESPONSE_CACHE = Caffeine.newBuilder()
+    private static final Cache<ResponseEnum, ResponseResult> ENUM_RESPONSE_CACHE = Caffeine.newBuilder()
             .softValues()
             .maximumSize(20)
             .build();
@@ -45,44 +45,44 @@ public class Response<T> implements Serializable {
     /**
      * 不允许外部创建
      */
-    private Response() {
+    private ResponseResult() {
     }
 
-    private Response(T data) {
+    private ResponseResult(T data) {
         this.code = ResponseEnum.SUCCESS.getCode();
         this.message = ResponseEnum.SUCCESS.getMessage();
         this.data = data;
     }
 
-    private Response(String message) {
+    private ResponseResult(String message) {
         this.code = ResponseEnum.ERROR.getCode();
         this.message = message;
     }
 
-    private Response(int code, String message) {
+    private ResponseResult(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    private Response(ResponseEnum responseEnum) {
+    private ResponseResult(ResponseEnum responseEnum) {
         this.code = responseEnum.getCode();
         this.message = responseEnum.getMessage();
     }
 
-    public static <T> Response<T> success() {
-        return Response.ofEnum(ResponseEnum.SUCCESS);
+    public static <T> ResponseResult<T> success() {
+        return ResponseResult.ofEnum(ResponseEnum.SUCCESS);
     }
 
-    public static <T> Response<T> success(T data) {
-        return new Response<>(data);
+    public static <T> ResponseResult<T> success(T data) {
+        return new ResponseResult<>(data);
     }
 
-    public static <T> Response<T> error() {
-        return Response.ofEnum(ResponseEnum.ERROR);
+    public static <T> ResponseResult<T> error() {
+        return ResponseResult.ofEnum(ResponseEnum.ERROR);
     }
 
-    public static <T> Response<T> error(String message) {
-        return new Response<>(message);
+    public static <T> ResponseResult<T> error(String message) {
+        return new ResponseResult<>(message);
     }
 
     /**
@@ -92,21 +92,21 @@ public class Response<T> implements Serializable {
      * @return 响应对象
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static <T> Response<T> ofEnum(ResponseEnum responseEnum) {
-        Response response = ENUM_RESPONSE_CACHE.getIfPresent(responseEnum);
-        if (response == null) {
+    public static <T> ResponseResult<T> ofEnum(ResponseEnum responseEnum) {
+        ResponseResult responseResult = ENUM_RESPONSE_CACHE.getIfPresent(responseEnum);
+        if (responseResult == null) {
             try {
                 LOCK.lock();
                 // 二次校验
-                if ((response = ENUM_RESPONSE_CACHE.getIfPresent(responseEnum)) != null) {
-                    return response;
+                if ((responseResult = ENUM_RESPONSE_CACHE.getIfPresent(responseEnum)) != null) {
+                    return responseResult;
                 }
-                response = new Response(responseEnum);
-                ENUM_RESPONSE_CACHE.put(responseEnum, response);
+                responseResult = new ResponseResult(responseEnum);
+                ENUM_RESPONSE_CACHE.put(responseEnum, responseResult);
             } finally {
                 LOCK.unlock();
             }
         }
-        return response;
+        return responseResult;
     }
 }

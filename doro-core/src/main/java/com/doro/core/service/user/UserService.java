@@ -1,5 +1,6 @@
 package com.doro.core.service.user;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.api.bean.user.User;
 import com.doro.core.mapper.user.UserMapper;
@@ -10,4 +11,19 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
+
+    public User getByUsername(String username) {
+        return this.getOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username));
+    }
+
+    public User getByPhone(String phone) {
+        return this.getOne(new LambdaQueryWrapper<User>()
+                .eq(User::getPhone, phone));
+    }
+
+    public User getByEmail(String email) {
+        return this.getOne(new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, email));
+    }
 }

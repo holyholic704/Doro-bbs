@@ -1,6 +1,6 @@
 package com.doro.api.bean.user;
 
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doro.common.base.BaseModel;
 import lombok.AllArgsConstructor;
@@ -8,6 +8,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,7 +19,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("user")
-public class User extends BaseModel {
+public class User extends BaseModel implements UserDetails {
 
     /**
      * 用户名
@@ -28,13 +32,45 @@ public class User extends BaseModel {
     private String password;
 
     /**
-     * 真实姓名
+     * 昵称
      */
-    private String realName;
+    private String nickname;
 
     /**
-     * 逻辑删除
+     * 手机号
      */
-    @TableLogic
-    private Boolean del;
+    private String phone;
+
+    /**
+     * 邮箱
+     */
+    private String email;
+
+    @TableField(exist = false)
+    private Collection<? extends GrantedAuthority> authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
