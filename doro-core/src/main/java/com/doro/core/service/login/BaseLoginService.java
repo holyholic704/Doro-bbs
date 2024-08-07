@@ -32,7 +32,7 @@ public abstract class BaseLoginService {
                 return null;
             }
 
-            // 将认证信息存储在SecurityContextHolder中
+            // 将认证信息存储在 SecurityContextHolder 中
             SecurityContextHolder.getContext().setAuthentication(authentication);
             return initToken(authentication, requestUser);
         }

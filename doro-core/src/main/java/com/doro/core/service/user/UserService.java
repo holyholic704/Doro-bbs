@@ -12,16 +12,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService extends ServiceImpl<UserMapper, User> {
 
+    /**
+     * 根据用户名获取用户信息
+     */
     public User getByUsername(String username) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username));
     }
 
+    /**
+     * 根据手机号获取用户信息
+     */
     public User getByPhone(String phone) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getPhone, phone));
     }
 
+    /**
+     * 根据邮箱获取用户信息
+     */
     public User getByEmail(String email) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getEmail, email));
