@@ -1,6 +1,6 @@
 package com.doro.core.controller.login;
 
-import com.doro.common.base.res.ResponseResult;
+import com.doro.common.model.res.ResponseResult;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;

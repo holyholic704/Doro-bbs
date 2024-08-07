@@ -21,7 +21,7 @@
         <module>doro-gateway</module>
         <module>doro-core</module>
         <module>doro-id</module>
-        <module>doro-mq</module>
+        <module>doro-orm</module>
     </modules>
 
     <properties>

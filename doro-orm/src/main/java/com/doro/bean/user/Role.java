@@ -1,7 +1,7 @@
-package com.doro.api.bean.user;
+package com.doro.bean.user;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.doro.common.base.BaseModel;
+import com.doro.base.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,16 +13,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user_role")
-public class UserRole extends BaseModel {
+@TableName("role")
+public class Role extends BaseModel {
 
     /**
-     * 用户ID
+     * 角色
      */
-    private Long userId;
+    private String role;
 
-    /**
-     * 角色ID
-     */
-    private Long roleId;
 }

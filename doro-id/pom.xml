@@ -18,16 +18,6 @@
             <groupId>com.doro</groupId>
             <artifactId>doro-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>mysql-connector-j</artifactId>
-                    <groupId>com.mysql</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.baomidou</groupId>
-                    <artifactId>mybatis-plus-boot-starter</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>

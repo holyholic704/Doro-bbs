@@ -1,8 +1,8 @@
-package com.doro.api.bean.user;
+package com.doro.bean.user;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.doro.common.base.BaseModel;
+import com.doro.base.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

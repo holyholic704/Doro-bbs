@@ -1,4 +1,4 @@
-package com.doro.common.base.res;
+package com.doro.common.model.res;
 
 import com.doro.common.enumeration.ResponseEnum;
 import com.github.benmanes.caffeine.cache.Cache;

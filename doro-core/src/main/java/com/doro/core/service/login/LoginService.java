@@ -1,7 +1,7 @@
 package com.doro.core.service.login;
 
 import cn.hutool.core.util.StrUtil;
-import com.doro.common.base.res.ResponseResult;
+import com.doro.common.model.res.ResponseResult;
 import com.doro.common.constant.LoginConstant;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;

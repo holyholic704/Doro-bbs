@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.doro</groupId>
-            <artifactId>doro-api</artifactId>
+            <artifactId>doro-orm</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
