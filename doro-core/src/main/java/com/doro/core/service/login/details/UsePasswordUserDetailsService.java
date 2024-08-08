@@ -2,7 +2,7 @@ package com.doro.core.service.login.details;
 
 import cn.hutool.core.lang.RegexPool;
 import cn.hutool.core.util.ReUtil;
-import com.doro.bean.user.User;
+import com.doro.bean.User;
 import com.doro.common.constant.Settings;
 import com.doro.core.service.login.LoadUser;
 import com.doro.core.service.UserService;

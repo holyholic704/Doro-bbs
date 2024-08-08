@@ -1,6 +1,6 @@
 package com.doro.core.model.response;
 
-import com.doro.bean.user.User;
+import com.doro.bean.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

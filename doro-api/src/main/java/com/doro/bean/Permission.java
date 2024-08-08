@@ -1,4 +1,4 @@
-package com.doro.bean.user;
+package com.doro.bean;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doro.bean.base.BaseModel;
