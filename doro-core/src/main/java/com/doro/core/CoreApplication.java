@@ -10,8 +10,8 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDubbo
 @EnableDiscoveryClient
 @SpringBootApplication
-@MapperScan("com.doro.mapper.*")
-@ComponentScan("com.doro.*.config")
+@MapperScan("com.doro.orm.mapper")
+@ComponentScan({"com.doro.core.*", "com.doro.*.config"})
 public class CoreApplication {
 
     public static void main(String[] args) {

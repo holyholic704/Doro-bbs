@@ -9,7 +9,7 @@ import java.util.Collection;
 
 @Data
 @Accessors(chain = true)
-public class UserDetailsImpl implements UserDetails {
+public class LoadUser implements UserDetails {
 
     /**
      * 主键
@@ -26,6 +26,9 @@ public class UserDetailsImpl implements UserDetails {
      */
     private String password;
 
+    /**
+     * 权限
+     */
     private Collection<? extends GrantedAuthority> authorities;
 
     @Override

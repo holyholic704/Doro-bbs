@@ -1,4 +1,4 @@
-package com.doro.core.controller.user;
+package com.doro.core.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 

@@ -37,6 +37,7 @@
         <bootstrap.version>3.1.5</bootstrap.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <caffeine.version>2.9.3</caffeine.version>
+        <idgenerator.version>1.0.6</idgenerator.version>
     </properties>
 
     <dependencies>

@@ -2,8 +2,10 @@ package com.doro.core.model.response;
 
 import com.doro.bean.user.User;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class ResponseUser {
 
     private Long id;

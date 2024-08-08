@@ -1,4 +1,4 @@
-package com.doro.core.controller.login;
+package com.doro.core.controller;
 
 import com.doro.res.ResponseResult;
 import com.doro.core.model.request.RequestUser;

@@ -4,8 +4,8 @@ import cn.hutool.core.lang.RegexPool;
 import cn.hutool.core.util.ReUtil;
 import com.doro.bean.user.User;
 import com.doro.common.constant.Settings;
-import com.doro.core.service.login.UserDetailsImpl;
-import com.doro.core.service.user.UserService;
+import com.doro.core.service.login.LoadUser;
+import com.doro.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class UsePasswordUserDetails implements UserDetailsService {
+public class UsePasswordUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserService userService;
@@ -46,7 +46,7 @@ public class UsePasswordUserDetails implements UserDetailsService {
     }
 
     private UserDetails buildFromUser(User user) {
-        return new UserDetailsImpl()
+        return new LoadUser()
                 .setId(user.getId())
                 .setUsername(user.getUsername())
                 .setPassword(user.getPassword());
