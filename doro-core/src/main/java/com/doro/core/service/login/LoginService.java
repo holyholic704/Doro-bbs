@@ -3,7 +3,7 @@ package com.doro.core.service.login;
 import cn.hutool.core.util.StrUtil;
 import com.doro.bean.user.User;
 import com.doro.common.constant.LoginConstant;
-import com.doro.common.model.res.ResponseResult;
+import com.doro.res.ResponseResult;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
 import com.doro.core.service.user.UserService;

@@ -21,6 +21,7 @@
         <module>doro-gateway</module>
         <module>doro-core</module>
         <module>doro-id</module>
+        <module>doro-cache</module>
     </modules>
 
     <properties>
@@ -37,4 +38,30 @@
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <caffeine.version>2.9.3</caffeine.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- 工具包 -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
+        </dependency>
+
+        <!-- bootstrap 支持 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+            <version>${bootstrap.version}</version>
+        </dependency>
+    </dependencies>
 </project>
