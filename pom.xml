@@ -22,6 +22,7 @@
         <module>doro-core</module>
         <module>doro-id</module>
         <module>doro-cache</module>
+        <module>doro-orm</module>
     </modules>
 
     <properties>
