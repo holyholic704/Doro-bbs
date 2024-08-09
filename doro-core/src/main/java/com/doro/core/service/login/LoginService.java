@@ -1,17 +1,13 @@
 package com.doro.core.service.login;
 
-import cn.hutool.core.lang.RegexPool;
-import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import com.doro.bean.User;
-import com.doro.common.constant.LoginConstant;
-import com.doro.common.constant.Settings;
 import com.doro.common.enumeration.LoginTypeEnum;
-import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
 import com.doro.core.service.UserService;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
+import com.doro.core.service.login.valid.ValidAndInitService;
 import com.doro.core.utils.JwtUtil;
 import com.doro.res.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +34,8 @@ public class LoginService {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
+    private ValidAndInitService validAndInitService;
+    @Autowired
     private UserService userService;
     @Autowired
     private JwtUtil jwtUtil;
@@ -49,9 +47,7 @@ public class LoginService {
      * @return 是否成功登录
      */
     public ResponseResult<?> login(RequestUser requestUser) {
-        MyAuthenticationToken authenticationToken = new MyAuthenticationToken(requestUser.getUsername(), requestUser.getPassword());
-//        authenticationToken.setLoginType();
-//        authenticationToken.setUsePassword();
+        MyAuthenticationToken authenticationToken = validAndInitService.validAndInit(requestUser);
 
         // 认证，失败抛出异常
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -59,9 +55,8 @@ public class LoginService {
         // 将认证信息存储在 SecurityContextHolder 中
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-//        return initToken(authentication);
-//        return responseUser != null ? ResponseResult.success(responseUser) : ResponseResult.error("登录失败");
-        return null;
+        ResponseUser responseUser = initToken(authentication);
+        return responseUser != null ? ResponseResult.success(responseUser) : ResponseResult.error("登录失败");
     }
 
     /**
@@ -78,11 +73,11 @@ public class LoginService {
                     .setPassword(bCryptPasswordEncoder.encode(requestUser.getPassword()));
 
             if (userService.saveUser(register)) {
-                // 调用登录方法
-                ResponseUser responseUser = this.authenticate(requestUser);
-                if (responseUser != null) {
-                    return ResponseResult.success(responseUser);
-                }
+                MyAuthenticationToken authenticationToken = new MyAuthenticationToken(register.getUsername(), null, null);
+                authenticationToken.setDetails(register.getId());
+                // 将认证信息存储在 SecurityContextHolder 中
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                return ResponseResult.success(initToken(authenticationToken));
             }
         }
         return ResponseResult.error("注册失败");
@@ -94,8 +89,6 @@ public class LoginService {
         // 认证，失败抛出异常
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
-        // 将认证信息存储在 SecurityContextHolder 中
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return initToken(authentication);
     }
@@ -137,64 +130,5 @@ public class LoginService {
 //        // 缓存token
 //        redisTemplate.opsForValue().set(username, token, expired, TimeUnit.SECONDS);
         return null;
-    }
-
-    private void t(RequestUser requestUser) {
-        String username = requestUser.getUsername();
-        if (StrUtil.isNotEmpty(username)) {
-            if (LoginConstant.USE_PHONE.equals(requestUser.getLoginType())) {
-                this.isSupportLoginType(Settings.LOGIN_SUPPORT_PHONE);
-
-                if (!this.validPhone(requestUser.getUsername())) {
-                    throw new MyAuthenticationException("手机格式错误");
-                }
-
-//                return initAuthenticationToken(requestUser, LoginConstant.USE_PHONE, false);
-            }
-
-            if (LoginConstant.USE_EMAIL.equals(requestUser.getLoginType())) {
-                this.isSupportLoginType(Settings.LOGIN_SUPPORT_EMAIL);
-
-                if (!this.validEmail(requestUser.getUsername())) {
-                    throw new MyAuthenticationException("邮箱格式错误");
-                }
-
-//                return initAuthenticationToken(requestUser, LoginConstant.USE_EMAIL, false);
-            }
-
-            if (StrUtil.isEmpty(requestUser.getPassword())) {
-                throw new MyAuthenticationException("密码为空");
-            }
-
-            String loginType = LoginConstant.USE_PASSWORD;
-
-            if (this.validPhone(requestUser.getUsername())) {
-                loginType = LoginConstant.USE_PHONE;
-                isSupportLoginType(Settings.LOGIN_PASSWORD_WITH_PHONE);
-            }
-
-            if (this.validEmail(requestUser.getUsername())) {
-                loginType = LoginConstant.USE_EMAIL;
-                isSupportLoginType(Settings.LOGIN_PASSWORD_WITH_EMAIL);
-            }
-        }
-    }
-
-    private void isSupportLoginType(boolean isSupport) {
-        if (!isSupport) {
-            throw new MyAuthenticationException("不支持的登录方式");
-        }
-    }
-
-    protected void validPhone(String phone) {
-        if (!ReUtil.isMatch(RegexPool.MOBILE, phone)) {
-            throw new MyAuthenticationException("手机号格式错误");
-        }
-    }
-
-    protected boolean validEmail(String email) {
-        if (!ReUtil.isMatch(RegexPool.EMAIL, email)) {
-            throw new MyAuthenticationException("邮箱格式错误");
-        }
     }
 }

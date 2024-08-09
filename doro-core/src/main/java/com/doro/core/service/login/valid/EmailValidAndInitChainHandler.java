@@ -9,9 +9,8 @@ public class EmailValidAndInitChainHandler extends AbstractValidAndInitChainHand
     @Override
     protected MyAuthenticationToken handle(RequestUser requestUser) {
         if (LoginConstant.USE_EMAIL.equals(requestUser.getLoginType())) {
-            isSupportLoginType(Settings.LOGIN_SUPPORT_EMAIL);
-            validEmail(requestUser.getUsername());
-
+            this.isSupportLoginType(Settings.LOGIN_SUPPORT_EMAIL);
+            this.validEmail(requestUser.getUsername());
             return initAuthenticationToken(requestUser, LoginConstant.USE_EMAIL, false);
         }
         return doNextHandler(requestUser);

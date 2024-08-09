@@ -1,7 +1,7 @@
 package com.doro.core.service.login.valid;
 
-import cn.hutool.core.lang.RegexPool;
 import cn.hutool.core.util.ReUtil;
+import com.doro.common.constant.RegexConstant;
 import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
@@ -26,14 +26,6 @@ public abstract class AbstractValidAndInitChainHandler {
 
     protected abstract MyAuthenticationToken handle(RequestUser requestUser);
 
-    protected boolean validPhone(String phone) {
-        return ReUtil.isMatch(RegexPool.MOBILE, phone);
-    }
-
-    protected boolean validEmail(String email) {
-        return ReUtil.isMatch(RegexPool.EMAIL, email);
-    }
-
     protected MyAuthenticationToken initAuthenticationToken(RequestUser requestUser, String loginType, boolean usePassword) {
         MyAuthenticationToken authenticationToken = new MyAuthenticationToken(requestUser.getUsername(), requestUser.getPassword());
         authenticationToken.setLoginType(loginType);
@@ -41,14 +33,27 @@ public abstract class AbstractValidAndInitChainHandler {
         return authenticationToken;
     }
 
-    public MyAuthenticationToken process(RequestUser requestUser) {
-        MyAuthenticationToken authenticationToken = handle(requestUser);
-        return doNextHandler(requestUser);
-    }
-
     protected void isSupportLoginType(boolean isSupport) {
         if (!isSupport) {
             throw new MyAuthenticationException("不支持的登录方式");
+        }
+    }
+
+    protected void validPhone(String phone) {
+        if (!ReUtil.isMatch(RegexConstant.PHONE, phone)) {
+            throw new MyAuthenticationException("手机号码格式错误");
+        }
+    }
+
+    protected void validEmail(String email) {
+        if (!ReUtil.isMatch(RegexConstant.EMAIL, email)) {
+            throw new MyAuthenticationException("邮箱格式错误");
+        }
+    }
+
+    protected void validPassword(String password) {
+        if (!ReUtil.isMatch(RegexConstant.PASSWORD, password)) {
+            throw new MyAuthenticationException("密码格式不正确");
         }
     }
 }
