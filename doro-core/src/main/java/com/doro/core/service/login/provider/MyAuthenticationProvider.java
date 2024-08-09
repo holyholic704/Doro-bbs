@@ -1,7 +1,5 @@
 package com.doro.core.service.login.provider;
 
-import com.doro.core.service.login.LoadUser;
-import com.doro.core.service.login.authentication.UsePasswordAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -12,29 +10,29 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  * 认证
  */
-public class UsePasswordAuthenticationProvider implements AuthenticationProvider {
+public class MyAuthenticationProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UsePasswordAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public MyAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UsePasswordAuthenticationToken token = (UsePasswordAuthenticationToken) authentication;
+        MyAuthenticationToken token = (MyAuthenticationToken) authentication;
 
         String username = (String) token.getPrincipal();
-        LoadUser user = (LoadUser) userDetailsService.loadUserByUsername(username);
+        MyUserDetails user = (MyUserDetails) userDetailsService.loadUserByUsername(username);
 
         if (!token.withoutPassword()) {
             validPassword(token.getCredentials().toString(), user.getPassword());
         }
 
         // TODO 添加权限
-        token = new UsePasswordAuthenticationToken(username, null, null);
+        token = new MyAuthenticationToken(username, null, null);
         token.setDetails(user.getId());
         return token;
     }
@@ -53,6 +51,6 @@ public class UsePasswordAuthenticationProvider implements AuthenticationProvider
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return clazz.isAssignableFrom(UsePasswordAuthenticationToken.class);
+        return clazz.isAssignableFrom(MyAuthenticationToken.class);
     }
 }

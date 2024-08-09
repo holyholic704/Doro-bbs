@@ -1,10 +1,9 @@
-package com.doro.core.service.login.details;
+package com.doro.core.service.login.provider;
 
 import cn.hutool.core.lang.RegexPool;
 import cn.hutool.core.util.ReUtil;
 import com.doro.bean.User;
 import com.doro.common.constant.Settings;
-import com.doro.core.service.login.LoadUser;
 import com.doro.core.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 @Service
-public class UsePasswordUserDetailsService implements UserDetailsService {
+public class MyUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserService userService;
@@ -35,18 +34,18 @@ public class UsePasswordUserDetailsService implements UserDetailsService {
      */
     private User getUserByType(String username) {
         // 使用密码登录时，允许输入手机号
-        if (Settings.USE_PASSWORD_WITH_PHONE && ReUtil.contains(RegexPool.MOBILE, username)) {
+        if (Settings.LOGIN_PASSWORD_WITH_PHONE && ReUtil.contains(RegexPool.MOBILE, username)) {
             return userService.getByPhone(username);
         }
         // 使用密码登录时，允许使用邮箱
-        if (Settings.USE_PASSWORD_WITH_EMAIL && ReUtil.contains(RegexPool.EMAIL, username)) {
+        if (Settings.LOGIN_PASSWORD_WITH_EMAIL && ReUtil.contains(RegexPool.EMAIL, username)) {
             return userService.getByEmail(username);
         }
         return userService.getByUsername(username);
     }
 
     private UserDetails buildFromUser(User user) {
-        return new LoadUser()
+        return new MyUserDetails()
                 .setId(user.getId())
                 .setUsername(user.getUsername())
                 .setPassword(user.getPassword());

@@ -1,4 +1,4 @@
-package com.doro.core.service.login.authentication;
+package com.doro.core.service.login.provider;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -6,7 +6,7 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 
-public class UsePasswordAuthenticationToken extends AbstractAuthenticationToken {
+public class MyAuthenticationToken extends AbstractAuthenticationToken {
 
     /**
      * 用户名
@@ -16,29 +16,28 @@ public class UsePasswordAuthenticationToken extends AbstractAuthenticationToken 
     /**
      * 密码
      */
-    private final Object credentials;
+    private Object credentials;
 
     /**
      * 不使用密码校验
      */
     private boolean withoutPassword = false;
 
-    public UsePasswordAuthenticationToken(Object principal, Object credentials) {
+    public MyAuthenticationToken(Object principal) {
+        super(null);
+        this.principal = principal;
+        this.withoutPassword = true;
+        setAuthenticated(false);
+    }
+
+    public MyAuthenticationToken(Object principal, Object credentials) {
         super(null);
         this.principal = principal;
         this.credentials = credentials;
         setAuthenticated(false);
     }
 
-    public UsePasswordAuthenticationToken(Object principal, Object credentials, boolean withoutPassword) {
-        super(null);
-        this.principal = principal;
-        this.credentials = null;
-        this.withoutPassword = true;
-        setAuthenticated(false);
-    }
-
-    public UsePasswordAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    public MyAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;

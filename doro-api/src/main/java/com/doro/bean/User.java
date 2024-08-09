@@ -40,4 +40,9 @@ public class User extends BaseBean {
      * 邮箱
      */
     private String email;
+
+    /**
+     * 用户状态
+     */
+    private Integer status;
 }

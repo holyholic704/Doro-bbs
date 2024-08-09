@@ -1,8 +1,8 @@
 package com.doro.core.config;
 
 import com.doro.core.filter.JwtFilter;
-import com.doro.core.service.login.details.UsePasswordUserDetailsService;
-import com.doro.core.service.login.provider.UsePasswordAuthenticationProvider;
+import com.doro.core.service.login.provider.MyAuthenticationProvider;
+import com.doro.core.service.login.provider.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    private MyUserDetailsService myUserDetailsService;
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
     private JwtFilter jwtFilter;
 
     @Override
@@ -32,17 +35,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    @Autowired
-    UsePasswordUserDetailsService usePasswordUserDetailsService;
-
     @Bean
-    UsePasswordAuthenticationProvider usePasswordAuthenticationProvider() {
-        return new UsePasswordAuthenticationProvider(usePasswordUserDetailsService, bCryptPasswordEncoder);
+    MyAuthenticationProvider usePasswordAuthenticationProvider() {
+        return new MyAuthenticationProvider(myUserDetailsService, bCryptPasswordEncoder);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        // 如果实现了多个 UserDetailsService，需指定哪个 Provider 用的是哪个 UserDetailsService
         auth.authenticationProvider(usePasswordAuthenticationProvider());
     }
 
@@ -51,8 +50,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {

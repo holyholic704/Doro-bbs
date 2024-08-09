@@ -1,4 +1,4 @@
-package com.doro.core.exception;
+package com.doro.core.config;
 
 import com.doro.res.ResponseResult;
 import org.springframework.http.HttpStatus;

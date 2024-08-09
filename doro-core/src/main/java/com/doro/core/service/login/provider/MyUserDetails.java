@@ -1,4 +1,4 @@
-package com.doro.core.service.login;
+package com.doro.core.service.login.provider;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -9,7 +9,7 @@ import java.util.Collection;
 
 @Data
 @Accessors(chain = true)
-public class LoadUser implements UserDetails {
+public class MyUserDetails implements UserDetails {
 
     /**
      * 主键
