@@ -12,13 +12,4 @@ public enum LoginTypeEnum {
     USE_EMAIL("email");
 
     private final String type;
-
-    public static LoginTypeEnum getByType(String loginType) {
-        for (LoginTypeEnum loginTypeEnum : LoginTypeEnum.values()) {
-            if (loginTypeEnum.getType().equals(loginType)) {
-                return loginTypeEnum;
-            }
-        }
-        return LoginTypeEnum.USE_PASSWORD;
-    }
 }

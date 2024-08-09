@@ -42,7 +42,7 @@ public class User extends BaseBean {
     private String email;
 
     /**
-     * 用户状态
+     * 启用状态
      */
-    private Integer status;
+    private Boolean enable;
 }

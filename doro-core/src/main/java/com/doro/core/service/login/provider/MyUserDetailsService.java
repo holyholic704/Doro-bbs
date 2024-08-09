@@ -25,6 +25,13 @@ public class MyUserDetailsService implements UserDetailsService {
         return this.buildFromUser(user);
     }
 
+    public UserDetails loadUserByUsername(String username, String loginType) throws UsernameNotFoundException {
+        System.out.println(loginType);
+        User user = this.getUserByType(username);
+        Assert.isTrue(user != null, "当前用户不存在");
+        return this.buildFromUser(user);
+    }
+
     /**
      * 使用密码登录时，是否支持使用用户名、手机号、邮箱登录
      * 根据输入的不同，使用不同的获取用户的方法

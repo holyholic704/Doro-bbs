@@ -16,19 +16,17 @@ public class MyAuthenticationToken extends AbstractAuthenticationToken {
     /**
      * 密码
      */
-    private Object credentials;
+    private final Object credentials;
 
     /**
-     * 不使用密码校验
+     * 登录方式
      */
-    private boolean withoutPassword = false;
+    private String loginType;
 
-    public MyAuthenticationToken(Object principal) {
-        super(null);
-        this.principal = principal;
-        this.withoutPassword = true;
-        setAuthenticated(false);
-    }
+    /**
+     * 是否使用密码
+     */
+    private boolean usePassword = true;
 
     public MyAuthenticationToken(Object principal, Object credentials) {
         super(null);
@@ -60,7 +58,19 @@ public class MyAuthenticationToken extends AbstractAuthenticationToken {
         super.setAuthenticated(false);
     }
 
-    public boolean withoutPassword() {
-        return withoutPassword;
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public boolean isUsePassword() {
+        return usePassword;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
+    }
+
+    public void setUsePassword(boolean usePassword) {
+        this.usePassword = usePassword;
     }
 }

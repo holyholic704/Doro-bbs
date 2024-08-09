@@ -10,15 +10,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseResult<String> handleRuntimeException(Exception e) {
-        return ResponseResult.error();
-    }
+//    @ResponseStatus(HttpStatus.OK)
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseResult<String> handleRuntimeException(Exception e) {
+//
+//        return ResponseResult.error();
+//    }
 
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(AuthenticationException.class)
     public ResponseResult<String> handleAuthenticationException(Exception e) {
+        e.printStackTrace();
         return ResponseResult.error(e.getMessage());
     }
 }

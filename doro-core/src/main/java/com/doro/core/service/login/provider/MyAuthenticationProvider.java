@@ -4,7 +4,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -12,10 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class MyAuthenticationProvider implements AuthenticationProvider {
 
-    private final UserDetailsService userDetailsService;
+    private final MyUserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public MyAuthenticationProvider(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public MyAuthenticationProvider(MyUserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -25,9 +24,9 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         MyAuthenticationToken token = (MyAuthenticationToken) authentication;
 
         String username = (String) token.getPrincipal();
-        MyUserDetails user = (MyUserDetails) userDetailsService.loadUserByUsername(username);
+        MyUserDetails user = (MyUserDetails) userDetailsService.loadUserByUsername(username, token.getLoginType());
 
-        if (!token.withoutPassword()) {
+        if (token.isUsePassword()) {
             validPassword(token.getCredentials().toString(), user.getPassword());
         }
 
