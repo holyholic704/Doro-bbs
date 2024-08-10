@@ -13,6 +13,9 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
  */
 public class EmailValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
 
+    /**
+     * 校验逻辑
+     */
     @Override
     protected MyAuthenticationToken handle(RequestUser requestUser) {
         if (LoginConstant.USE_EMAIL.equals(requestUser.getLoginType())) {

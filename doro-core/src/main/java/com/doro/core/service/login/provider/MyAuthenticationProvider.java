@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -19,6 +20,9 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    /**
+     * 认证校验
+     */
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         MyAuthenticationToken token = (MyAuthenticationToken) authentication;
@@ -33,6 +37,10 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         // TODO 添加权限
         token = new MyAuthenticationToken(username, null, null);
         token.setDetails(user.getId());
+
+        // 将认证信息存储在 SecurityContextHolder 中
+        SecurityContextHolder.getContext().setAuthentication(token);
+
         return token;
     }
 

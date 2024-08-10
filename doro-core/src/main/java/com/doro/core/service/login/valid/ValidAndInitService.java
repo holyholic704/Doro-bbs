@@ -10,14 +10,20 @@ public class ValidAndInitService {
     private final AbstractValidAndInitChainHandler first = new UsernameValidChainHandler();
 
     {
-        AbstractValidAndInitChainHandler phoneValid = new PhoneValidAndInitChainHandler();
-        AbstractValidAndInitChainHandler emailValid = new EmailValidAndInitChainHandler();
-        AbstractValidAndInitChainHandler passwordValid = new PasswordValidAndInitChainHandler();
-        first.setNext(phoneValid);
-        phoneValid.setNext(emailValid);
-        emailValid.setNext(passwordValid);
+        AbstractValidAndInitChainHandler second = new PhoneValidAndInitChainHandler();
+        AbstractValidAndInitChainHandler third = new EmailValidAndInitChainHandler();
+        AbstractValidAndInitChainHandler forth = new PasswordValidAndInitChainHandler();
+        first.setNext(second);
+        second.setNext(third);
+        third.setNext(forth);
     }
 
+    /**
+     * 检验参数
+     *
+     * @param requestUser 请求信息
+     * @return 校验通过返回 AuthenticationToken
+     */
     public MyAuthenticationToken validAndInit(RequestUser requestUser) {
         return first.process(requestUser);
     }

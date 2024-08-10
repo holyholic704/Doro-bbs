@@ -10,9 +10,12 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
  */
 public class UsernameValidChainHandler extends AbstractValidAndInitChainHandler {
 
+    /**
+     * 校验逻辑
+     */
     @Override
     protected MyAuthenticationToken handle(RequestUser requestUser) {
-        validPassword(requestUser.getUsername());
+        validUsername(requestUser.getUsername());
         return null;
     }
 
@@ -21,7 +24,7 @@ public class UsernameValidChainHandler extends AbstractValidAndInitChainHandler 
      *
      * @param username 用户名
      */
-    private void validPassword(String username) {
+    private void validUsername(String username) {
         if (StrUtil.isEmpty(username)) {
             throw new MyAuthenticationException("用户名格式错误");
         }

@@ -11,12 +11,18 @@ public abstract class AbstractValidAndInitChainHandler {
 
     private AbstractValidAndInitChainHandler nextHandler;
 
+    /**
+     * 添加下一个处理流程
+     */
     public void setNext(AbstractValidAndInitChainHandler nextHandler) {
         this.nextHandler = nextHandler;
     }
 
     /**
      * 处理流程
+     *
+     * @param requestUser 请求信息
+     * @return 认证信息
      */
     protected MyAuthenticationToken process(RequestUser requestUser) {
         MyAuthenticationToken authenticationToken = handle(requestUser);
@@ -35,12 +41,12 @@ public abstract class AbstractValidAndInitChainHandler {
     protected abstract MyAuthenticationToken handle(RequestUser requestUser);
 
     /**
-     * 初始化 MyAuthenticationToken
+     * 初始化认证信息
      *
      * @param requestUser 请求信息
      * @param loginType   登录方式
      * @param usePassword 对应的登录方式是否需要使用密码
-     * @return MyAuthenticationToken
+     * @return 认证信息
      */
     protected MyAuthenticationToken initAuthenticationToken(RequestUser requestUser, String loginType, boolean usePassword) {
         MyAuthenticationToken authenticationToken = new MyAuthenticationToken(requestUser.getUsername(), requestUser.getPassword());

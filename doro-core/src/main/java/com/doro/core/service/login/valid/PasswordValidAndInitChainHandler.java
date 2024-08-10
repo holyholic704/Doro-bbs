@@ -13,20 +13,26 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
  */
 public class PasswordValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
 
+    /**
+     * 校验逻辑
+     */
     @Override
     protected MyAuthenticationToken handle(RequestUser requestUser) {
         this.validPassword(requestUser.getPassword());
 
+        // 默认使用用户名密码登录
         String loginType = LoginConstant.USE_PASSWORD;
 
+        // 判断传入的是否是手机号，如果是再判断是否支持该方式使用密码登录
         if (ReUtil.isMatch(RegexConstant.PHONE, requestUser.getUsername())) {
-            loginType = LoginConstant.USE_PHONE;
             isSupportLoginType(Settings.LOGIN_PASSWORD_WITH_PHONE);
+            loginType = LoginConstant.USE_PHONE;
         }
 
+        // 判断传入的是否是邮箱，如果是再判断是否支持该方式使用密码登录
         if (ReUtil.isMatch(RegexConstant.EMAIL, requestUser.getUsername())) {
-            loginType = LoginConstant.USE_EMAIL;
             isSupportLoginType(Settings.LOGIN_PASSWORD_WITH_EMAIL);
+            loginType = LoginConstant.USE_EMAIL;
         }
         return initAuthenticationToken(requestUser, loginType, true);
     }
