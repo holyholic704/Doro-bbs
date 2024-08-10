@@ -7,15 +7,12 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.utils.LoginValidUtil;
 
 /**
- * 邮箱登录校验
+ * 使用邮箱登录校验
  */
-public class EmailValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
+public class EmailLoginValid implements LoginValid<RequestUser, MyAuthenticationToken> {
 
-    /**
-     * 校验逻辑
-     */
     @Override
-    protected MyAuthenticationToken handle(RequestUser requestUser) {
+    public MyAuthenticationToken test(RequestUser requestUser) {
         if (LoginConstant.USE_EMAIL.equals(requestUser.getLoginType())) {
             LoginValidUtil.isSupportLoginType(Settings.LOGIN_SUPPORT_EMAIL);
             LoginValidUtil.validEmail(requestUser.getUsername());

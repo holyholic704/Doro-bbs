@@ -7,15 +7,12 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.utils.LoginValidUtil;
 
 /**
- * 手机号登录校验
+ * 使用手机登录校验
  */
-public class PhoneValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
+public class PhoneLoginValid implements LoginValid<RequestUser, MyAuthenticationToken> {
 
-    /**
-     * 校验逻辑
-     */
     @Override
-    protected MyAuthenticationToken handle(RequestUser requestUser) {
+    public MyAuthenticationToken test(RequestUser requestUser) {
         if (LoginConstant.USE_PHONE.equals(requestUser.getLoginType())) {
             LoginValidUtil.isSupportLoginType(Settings.LOGIN_SUPPORT_PHONE);
             LoginValidUtil.validPhone(requestUser.getUsername());

@@ -7,24 +7,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidAndInitService {
 
-    private final AbstractValidAndInitChainHandler first = new UsernameValidChainHandler();
-
-    {
-        AbstractValidAndInitChainHandler second = new PhoneValidAndInitChainHandler();
-        AbstractValidAndInitChainHandler third = new EmailValidAndInitChainHandler();
-        AbstractValidAndInitChainHandler forth = new PasswordValidAndInitChainHandler();
-        first.setNext(second);
-        second.setNext(third);
-        third.setNext(forth);
-    }
+    private final LoginValid<RequestUser, MyAuthenticationToken> first = new UsernameValid();
+    private final LoginValid<RequestUser, MyAuthenticationToken> second = new PhoneLoginValid();
+    private final LoginValid<RequestUser, MyAuthenticationToken> third = new EmailLoginValid();
+    private final LoginValid<RequestUser, MyAuthenticationToken> forth = new PasswordValid();
 
     /**
      * 检验参数
      *
      * @param requestUser 请求信息
-     * @return 校验通过返回 AuthenticationToken
+     * @return 校验通过返回认证信息
      */
     public MyAuthenticationToken validAndInit(RequestUser requestUser) {
-        return first.process(requestUser);
+        return first.and(second)
+                .and(third)
+                .and(forth)
+                .test(requestUser);
     }
 }

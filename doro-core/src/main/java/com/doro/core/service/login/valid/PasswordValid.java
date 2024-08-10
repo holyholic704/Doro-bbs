@@ -9,15 +9,12 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.utils.LoginValidUtil;
 
 /**
- * 密码校验
+ * 使用密码登录校验
  */
-public class PasswordValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
+public class PasswordValid implements LoginValid<RequestUser, MyAuthenticationToken> {
 
-    /**
-     * 校验逻辑
-     */
     @Override
-    protected MyAuthenticationToken handle(RequestUser requestUser) {
+    public MyAuthenticationToken test(RequestUser requestUser) {
         LoginValidUtil.validPassword(requestUser.getPassword());
 
         // 默认使用用户名密码登录
@@ -36,6 +33,4 @@ public class PasswordValidAndInitChainHandler extends AbstractValidAndInitChainH
         }
         return initAuthenticationToken(requestUser, loginType, true);
     }
-
-
 }
