@@ -12,7 +12,6 @@ import com.doro.core.utils.JwtUtil;
 import com.doro.res.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -70,6 +69,10 @@ public class LoginService {
                     .setEnable(!Settings.USER_NEED_ACTIVE);
 
             if (userService.saveUser(register)) {
+                if (Settings.USER_NEED_ACTIVE) {
+                    registerNeedActive(register);
+                    return ResponseResult.success("请等待激活");
+                }
                 MyAuthenticationToken authenticationToken = new MyAuthenticationToken(register.getUsername(), null, null);
                 authenticationToken.setDetails(register.getId());
                 // 将认证信息存储在 SecurityContextHolder 中
@@ -81,31 +84,28 @@ public class LoginService {
     }
 
     /**
-     * 注册用户是否需要激活
-     *
-     * @param user 用户信息
-     * @return
-     */
-    private Object registerNeedActive(User user) {
-        if (Settings.USER_NEED_ACTIVE) {
-
-        }
-
-
-    }
-
-    /**
      * 返回含有 Token 的响应信息
      *
      * @param authentication 认证信息
      * @return 响应信息
      */
-    public ResponseUser initToken(AbstractAuthenticationToken authentication) {
-//        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+    public ResponseUser initToken(Authentication authentication) {
+//        MyAuthenticationToken authenticationToken = (MyAuthenticationToken) authentication.getPrincipal();
 //        // 生成token
-//        String token = jwtUtil.generate(principal);
+//        String token = jwtUtil.generate(authenticationToken);
+//        String username = (String) authenticationToken.getPrincipal();
 //        // 缓存token
 //        redisTemplate.opsForValue().set(username, token, expired, TimeUnit.SECONDS);
+//        return new ResponseUser(token);
         return null;
+    }
+
+    /**
+     * 注册用户是否需要激活
+     *
+     * @param user 用户信息
+     */
+    private void registerNeedActive(User user) {
+        // TODO 激活功能
     }
 }
