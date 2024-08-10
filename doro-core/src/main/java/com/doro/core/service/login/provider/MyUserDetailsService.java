@@ -1,16 +1,14 @@
 package com.doro.core.service.login.provider;
 
-import cn.hutool.core.lang.RegexPool;
-import cn.hutool.core.util.ReUtil;
 import com.doro.bean.User;
-import com.doro.common.constant.Settings;
+import com.doro.common.constant.LoginConstant;
 import com.doro.core.service.UserService;
+import com.doro.core.utils.LoginValidUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
@@ -20,15 +18,12 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = this.getUserByType(username);
-        Assert.isTrue(user != null, "当前用户不存在");
-        return this.buildFromUser(user);
+        return null;
     }
 
     public UserDetails loadUserByUsername(String username, String loginType) throws UsernameNotFoundException {
-        System.out.println(loginType);
-        User user = this.getUserByType(username);
-        Assert.isTrue(user != null, "当前用户不存在");
+        User user = this.getUserByType(username, loginType);
+        LoginValidUtil.userNotExist(user != null);
         return this.buildFromUser(user);
     }
 
@@ -36,19 +31,18 @@ public class MyUserDetailsService implements UserDetailsService {
      * 使用密码登录时，是否支持使用用户名、手机号、邮箱登录
      * 根据输入的不同，使用不同的获取用户的方法
      *
-     * @param username 用户名、手机号、邮箱
+     * @param username  用户名、手机号、邮箱
+     * @param loginType 登录方式
      * @return 用户信息
      */
-    private User getUserByType(String username) {
-        // 使用密码登录时，允许输入手机号
-        if (Settings.LOGIN_PASSWORD_WITH_PHONE && ReUtil.contains(RegexPool.MOBILE, username)) {
-            return userService.getByPhone(username);
+    private User getUserByType(String username, String loginType) {
+        if (LoginConstant.USE_PHONE.equals(loginType)) {
+            return userService.getUserByPhone(username);
+        } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
+            return userService.getUserByEmail(username);
+        } else {
+            return userService.getUserByUsername(username);
         }
-        // 使用密码登录时，允许使用邮箱
-        if (Settings.LOGIN_PASSWORD_WITH_EMAIL && ReUtil.contains(RegexPool.EMAIL, username)) {
-            return userService.getByEmail(username);
-        }
-        return userService.getByUsername(username);
     }
 
     private UserDetails buildFromUser(User user) {

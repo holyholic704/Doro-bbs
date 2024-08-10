@@ -3,6 +3,7 @@ package com.doro.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.bean.User;
+import com.doro.common.constant.LoginConstant;
 import com.doro.orm.mapper.UserMapper;
 import com.github.yitter.idgen.YitIdHelper;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     /**
      * 根据用户名获取用户信息
      */
-    public User getByUsername(String username) {
+    public User getUserByUsername(String username) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username));
     }
@@ -24,7 +25,7 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     /**
      * 根据手机号获取用户信息
      */
-    public User getByPhone(String phone) {
+    public User getUserByPhone(String phone) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getPhone, phone));
     }
@@ -32,17 +33,47 @@ public class UserService extends ServiceImpl<UserMapper, User> {
     /**
      * 根据邮箱获取用户信息
      */
-    public User getByEmail(String email) {
+    public User getUserByEmail(String email) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getEmail, email));
     }
 
     /**
-     * 该用户名是否存在
+     * 该用户是否已存在
+     *
+     * @param username  用户名，可以为手机号、邮箱
+     * @param loginType 登录方式，这里为查询方式
      */
-    public boolean notExist(String username) {
+    public boolean existUser(String username, String loginType) {
+        // TODO 注意这里不要改为 swicth，后续 LoginConstant 可能会改为变量
+        if (LoginConstant.USE_PHONE.equals(loginType)) {
+            return this.hasPhoneUser(username);
+        } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
+            return this.hasEmailUser(username);
+        } else {
+            return this.hasUser(username);
+        }
+    }
+
+    public boolean hasUser(String username) {
         return this.count(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, username)) < 1;
+                .eq(User::getUsername, username)) > 0;
+    }
+
+    /**
+     * 是否有使用该手机的用户
+     */
+    public boolean hasEmailUser(String email) {
+        return this.count(new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, email)) > 0;
+    }
+
+    /**
+     * 是否有使用该手机的用户
+     */
+    public boolean hasPhoneUser(String phone) {
+        return this.count(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, phone)) > 0;
     }
 
     /**

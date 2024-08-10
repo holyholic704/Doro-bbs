@@ -35,7 +35,7 @@ public class MyAuthenticationProvider implements AuthenticationProvider {
         }
 
         // TODO 添加权限
-        token = new MyAuthenticationToken(username, null, null);
+        token = new MyAuthenticationToken(user.getUsername(), null, null);
         token.setDetails(user.getId());
 
         // 将认证信息存储在 SecurityContextHolder 中

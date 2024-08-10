@@ -39,6 +39,9 @@
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <caffeine.version>2.9.3</caffeine.version>
         <idgenerator.version>1.0.6</idgenerator.version>
+        <jackson.version>2.17.2</jackson.version>
+        <redisson.version>3.34.1</redisson.version>
+        <jwt.version>0.12.6</jwt.version>
     </properties>
 
     <dependencies>

@@ -1,6 +1,5 @@
 package com.doro.core.utils;
 
-import com.doro.bean.User;
 import com.doro.core.properties.GlobalProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -24,16 +23,16 @@ public class JwtUtil {
      * @param user 用户信息
      * @return token
      */
-    public String generate(User user) {
+    public static String generate(String user) {
         Map<String, Object> claims = new HashMap<>();
 
         return Jwts.builder()
                 .claims(claims)
-                .subject(user.getUsername())
-                .expiration(this.generateExpiration())
+                .subject(user)
+                .expiration(generateExpiration())
                 .issuedAt(new Date())
                 .compressWith(Jwts.ZIP.DEF)
-                .signWith(this.getSecretKey(), Jwts.SIG.HS256)
+                .signWith(getSecretKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -42,7 +41,7 @@ public class JwtUtil {
      *
      * @return 到期时间
      */
-    private Date generateExpiration() {
+    private static Date generateExpiration() {
         return new Date(System.currentTimeMillis() + GlobalProperties.JWT_EXPIRED * 1000);
     }
 
@@ -52,14 +51,14 @@ public class JwtUtil {
      * @param token token
      * @return token中的信息
      */
-    private Claims getClaimsFromToken(String token) {
+    private static Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(this.getSecretKey()).build()
+                .verifyWith(getSecretKey()).build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    private SecretKey getSecretKey() {
+    private static SecretKey getSecretKey() {
         return Keys.hmacShaKeyFor(GlobalProperties.JWT_SECRET.getBytes());
     }
 }

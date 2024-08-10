@@ -10,7 +10,7 @@ public class GlobalProperties {
 
     public static final String JWT_HEADER = "email";
 
-    public static final String JWT_SECRET = "email";
+    public static final String JWT_SECRET = "dafengqixiyunfeiyangweijiahaineixiguiguxiangandemengshixishousifang";
 
     public static final Integer JWT_EXPIRED = 60 * 60 * 24;
 }

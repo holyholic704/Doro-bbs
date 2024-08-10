@@ -1,6 +1,5 @@
 package com.doro.core.service.login.valid;
 
-import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 
@@ -53,16 +52,5 @@ public abstract class AbstractValidAndInitChainHandler {
         authenticationToken.setLoginType(loginType);
         authenticationToken.setUsePassword(usePassword);
         return authenticationToken;
-    }
-
-    /**
-     * 是否是支持的登录方式
-     *
-     * @param isSupport 是否支持
-     */
-    protected void isSupportLoginType(boolean isSupport) {
-        if (!isSupport) {
-            throw new MyAuthenticationException("不支持的登录方式");
-        }
     }
 }
