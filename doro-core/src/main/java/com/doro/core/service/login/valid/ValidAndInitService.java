@@ -7,18 +7,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidAndInitService {
 
-    AbstractValidAndInitChainHandler usernameValid = new UsernameValidChainHandler();
+    private final AbstractValidAndInitChainHandler first = new UsernameValidChainHandler();
 
     {
         AbstractValidAndInitChainHandler phoneValid = new PhoneValidAndInitChainHandler();
         AbstractValidAndInitChainHandler emailValid = new EmailValidAndInitChainHandler();
         AbstractValidAndInitChainHandler passwordValid = new PasswordValidAndInitChainHandler();
-        usernameValid.setNext(phoneValid);
+        first.setNext(phoneValid);
         phoneValid.setNext(emailValid);
         emailValid.setNext(passwordValid);
     }
 
     public MyAuthenticationToken validAndInit(RequestUser requestUser) {
-        return usernameValid.handle(requestUser);
+        return first.process(requestUser);
     }
 }

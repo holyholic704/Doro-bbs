@@ -1,7 +1,5 @@
 package com.doro.core.service.login.valid;
 
-import cn.hutool.core.util.ReUtil;
-import com.doro.common.constant.RegexConstant;
 import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
@@ -15,13 +13,6 @@ public abstract class AbstractValidAndInitChainHandler {
 
     public void setNext(AbstractValidAndInitChainHandler nextHandler) {
         this.nextHandler = nextHandler;
-    }
-
-    protected MyAuthenticationToken doNextHandler(RequestUser requestUser) {
-        if (this.nextHandler != null) {
-            return this.nextHandler.handle(requestUser);
-        }
-        return null;
     }
 
     protected abstract MyAuthenticationToken handle(RequestUser requestUser);
@@ -39,21 +30,14 @@ public abstract class AbstractValidAndInitChainHandler {
         }
     }
 
-    protected void validPhone(String phone) {
-        if (!ReUtil.isMatch(RegexConstant.PHONE, phone)) {
-            throw new MyAuthenticationException("手机号码格式错误");
+    protected MyAuthenticationToken process(RequestUser requestUser) {
+        MyAuthenticationToken authenticationToken = handle(requestUser);
+        if (authenticationToken != null) {
+            return authenticationToken;
         }
-    }
-
-    protected void validEmail(String email) {
-        if (!ReUtil.isMatch(RegexConstant.EMAIL, email)) {
-            throw new MyAuthenticationException("邮箱格式错误");
+        if (this.nextHandler != null) {
+            return this.nextHandler.process(requestUser);
         }
-    }
-
-    protected void validPassword(String password) {
-        if (!ReUtil.isMatch(RegexConstant.PASSWORD, password)) {
-            throw new MyAuthenticationException("密码格式不正确");
-        }
+        return null;
     }
 }

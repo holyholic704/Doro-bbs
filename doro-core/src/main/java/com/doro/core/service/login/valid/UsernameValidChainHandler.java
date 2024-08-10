@@ -12,6 +12,6 @@ public class UsernameValidChainHandler extends AbstractValidAndInitChainHandler 
         if (StrUtil.isEmpty(requestUser.getUsername())) {
             throw new MyAuthenticationException("用户名为空");
         }
-        return doNextHandler(requestUser);
+        return null;
     }
 }
