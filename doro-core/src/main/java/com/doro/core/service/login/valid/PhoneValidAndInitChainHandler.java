@@ -8,6 +8,9 @@ import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 
+/**
+ * 手机号登录校验
+ */
 public class PhoneValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
 
     @Override
@@ -20,6 +23,11 @@ public class PhoneValidAndInitChainHandler extends AbstractValidAndInitChainHand
         return null;
     }
 
+    /**
+     * 手机号校验
+     *
+     * @param phone 手机号
+     */
     private void validPhone(String phone) {
         if (!ReUtil.isMatch(RegexConstant.PHONE, phone)) {
             throw new MyAuthenticationException("手机号码格式错误");

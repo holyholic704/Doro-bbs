@@ -8,6 +8,9 @@ import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 
+/**
+ * 密码校验
+ */
 public class PasswordValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
 
     @Override
@@ -28,6 +31,11 @@ public class PasswordValidAndInitChainHandler extends AbstractValidAndInitChainH
         return initAuthenticationToken(requestUser, loginType, true);
     }
 
+    /**
+     * 密码校验
+     *
+     * @param password 密码
+     */
     private void validPassword(String password) {
         if (!ReUtil.isMatch(RegexConstant.PASSWORD, password)) {
             throw new MyAuthenticationException("密码格式不正确");

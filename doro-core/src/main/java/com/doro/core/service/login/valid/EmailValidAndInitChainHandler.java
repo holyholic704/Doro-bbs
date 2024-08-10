@@ -8,6 +8,9 @@ import com.doro.core.exception.MyAuthenticationException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 
+/**
+ * 邮箱登录校验
+ */
 public class EmailValidAndInitChainHandler extends AbstractValidAndInitChainHandler {
 
     @Override
@@ -20,6 +23,11 @@ public class EmailValidAndInitChainHandler extends AbstractValidAndInitChainHand
         return null;
     }
 
+    /**
+     * 邮箱校验
+     *
+     * @param email 邮箱
+     */
     private void validEmail(String email) {
         if (!ReUtil.isMatch(RegexConstant.EMAIL, email)) {
             throw new MyAuthenticationException("邮箱格式错误");
