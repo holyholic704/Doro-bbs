@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.bean.User;
 import com.doro.common.constant.LoginConstant;
 import com.doro.orm.mapper.UserMapper;
-import com.github.yitter.idgen.YitIdHelper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -80,7 +79,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
      * 保存一个用户
      */
     public boolean saveUser(User user) {
-        user.setId(YitIdHelper.nextId());
         return this.save(user);
     }
 }

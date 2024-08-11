@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.OK)
     @ExceptionHandler(AuthenticationException.class)
     public ResponseResult<String> handleAuthenticationException(Exception e) {
+        // TODO 记得去除
         e.printStackTrace();
         return ResponseResult.error(e.getMessage());
     }
