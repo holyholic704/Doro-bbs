@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式锁
+ * TODO 读写锁引入？
  */
 @Component
 public class LockUtil {
