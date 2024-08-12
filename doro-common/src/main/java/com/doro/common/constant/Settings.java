@@ -15,4 +15,7 @@ public class Settings {
     public static boolean REGISTER_SUPPORT_PHONE = false;
 
     public static boolean USER_NEED_ACTIVE = false;
+
+    public static String FUCK = "you";
+    public static Boolean bbb = true;
 }

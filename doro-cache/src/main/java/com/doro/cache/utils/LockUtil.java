@@ -66,11 +66,10 @@ public class LockUtil {
     /**
      * 加锁尝试
      *
-     * @param key      键
-     * @param waitTime 加锁等待时间
+     * @param key 键
      */
-    public static MyLock tryLock(String key, long waitTime) {
-        return LockUtil.tryLock(key, waitTime, 0, TimeUnit.SECONDS, false);
+    public static MyLock tryLock(String key) {
+        return LockUtil.tryLock(key, 0, 0, TimeUnit.SECONDS, false);
     }
 
     /**
@@ -97,10 +96,10 @@ public class LockUtil {
         InnerLock lock = LockUtil.getLock(key, fair);
         boolean acquired;
         try {
-            if (leaseTime > 0) {
-                acquired = lock.tryLock(waitTime, leaseTime, unit);
-            } else {
+            if (waitTime == 0 && leaseTime == 0) {
                 acquired = lock.tryLock();
+            } else {
+                acquired = lock.tryLock(waitTime, leaseTime, unit);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -120,6 +119,20 @@ public class LockUtil {
      */
     public static void unlock(MyLock lock) {
         lock.unlock();
+    }
+
+    /**
+     * 异步释放锁
+     */
+    public static void unlockAsync(String key) {
+        LockUtil.unlockAsync(LockUtil.getLock(key, false));
+    }
+
+    /**
+     * 异步释放锁
+     */
+    public static void unlockAsync(MyLock lock) {
+        lock.unlockAsync();
     }
 
     /**
@@ -258,6 +271,11 @@ public class LockUtil {
         @Override
         public void unlock() {
             this.rLock.unlock();
+        }
+
+        @Override
+        public void unlockAsync() {
+            this.rLock.unlockAsync();
         }
 
         @Override

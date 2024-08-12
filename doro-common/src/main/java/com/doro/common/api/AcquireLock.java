@@ -22,7 +22,7 @@ public interface AcquireLock {
     void lock(long leaseTime, TimeUnit unit);
 
     /**
-     * 加锁尝试，建议使用带有超时时间的版本
+     * 加锁尝试，立即返回结果
      *
      * @return 是否成功获取锁
      */

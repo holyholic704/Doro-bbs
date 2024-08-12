@@ -12,6 +12,11 @@ public interface MyLock {
     void unlock();
 
     /**
+     * 异步释放锁
+     */
+    void unlockAsync();
+
+    /**
      * 强制释放锁，可以释放其他线程加的锁
      *
      * @return 如果锁存在且释放成功，返回 true，其他情况返回 false
