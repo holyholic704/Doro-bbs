@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class GlobalSetting implements Serializable {
 
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Integer id;
 
     private String k;
 

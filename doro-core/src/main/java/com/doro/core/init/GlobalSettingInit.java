@@ -6,9 +6,8 @@ import com.doro.cache.utils.LockUtil;
 import com.doro.common.api.MyLock;
 import com.doro.common.constant.Settings;
 import com.doro.core.service.GlobalSettingService;
-import org.apache.dubbo.config.annotation.DubboReference;
-import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@DependsOn("lockUtil")
 public class GlobalSettingInit {
 
     private final PlatformTransactionManager transactionManager;
@@ -41,11 +41,6 @@ public class GlobalSettingInit {
             this.check();
             lock.unlockAsync();
         }
-    }
-
-    public static void main(String[] args) {
-        long l1 = System.currentTimeMillis();
-        System.out.println(System.currentTimeMillis() - l1);
     }
 
     private void check() {

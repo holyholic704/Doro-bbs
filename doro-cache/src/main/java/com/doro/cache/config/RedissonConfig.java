@@ -4,29 +4,47 @@ import com.doro.common.constant.Separator;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class RedissonConfig {
 
-    @Value("${spring.redis.host}")
-    private String host;
-
-    @Value("${spring.redis.password}")
-    private String password;
-
-    @Value("${spring.redis.port}")
-    private int port;
+    @Autowired
+    private RedisProperties redisProperties;
 
     @Bean
     public RedissonClient redissonClient() {
+        return Redisson.create(initConfig());
+    }
+
+    private Config initConfig() {
         Config config = new Config();
-        // TODO 目前为单例部署
-        config.useSingleServer()
-                .setAddress("redis://" + host + Separator.COLON + port)
-                .setPassword(password);
-        return Redisson.create(config);
+
+        if (redisProperties.getCluster() != null) {
+            config.useClusterServers()
+                    .addNodeAddress(this.getNodeAddresses())
+                    .setPassword(redisProperties.getPassword());
+        } else if (redisProperties.getSentinel() != null) {
+            // TODO Sentinel 支持
+        } else {
+            config.useSingleServer()
+                    .setAddress("redis://" + redisProperties.getHost() + Separator.COLON + redisProperties.getPort())
+                    .setPassword(redisProperties.getPassword());
+        }
+        return config;
+    }
+
+    private String[] getNodeAddresses() {
+        List<String> clusterNodeList = redisProperties.getCluster().getNodes();
+        String[] nodeAddresses = new String[clusterNodeList.size()];
+        for (int i = 0; i < clusterNodeList.size(); i++) {
+            nodeAddresses[i] = "redis://" + clusterNodeList.get(i);
+        }
+        return nodeAddresses;
     }
 }
