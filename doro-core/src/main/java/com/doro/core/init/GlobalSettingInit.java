@@ -19,6 +19,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * 初始化全局配置
+ */
 @Component
 @DependsOn("lockUtil")
 public class GlobalSettingInit {
@@ -43,6 +46,9 @@ public class GlobalSettingInit {
         }
     }
 
+    /**
+     * 检查配置
+     */
     private void check() {
         Field[] fields = Settings.class.getDeclaredFields();
         Map<String, Field> fieldMap = new HashMap<>(fields.length);
@@ -80,7 +86,7 @@ public class GlobalSettingInit {
                     list.add(new GlobalSetting()
                             .setK(field.getName())
                             .setV(String.valueOf(field.get(null)))
-                            .setType(field.getType().getSimpleName()));
+                            .setType(field.getType().getSimpleName().toLowerCase()));
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }
@@ -95,6 +101,7 @@ public class GlobalSettingInit {
         }
 
         if (status != null) {
+            globalSettingService.updateVersion();
             transactionManager.commit(status);
         }
     }

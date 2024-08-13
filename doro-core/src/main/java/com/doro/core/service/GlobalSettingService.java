@@ -1,5 +1,6 @@
 package com.doro.core.service;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.orm.mapper.GlobalSettingMapper;
@@ -26,5 +27,11 @@ public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, Globa
 
     public boolean saveList(Collection<GlobalSetting> list) {
         return this.saveBatch(list);
+    }
+
+    public boolean updateVersion() {
+        return this.update(new LambdaUpdateWrapper<GlobalSetting>()
+                .eq(GlobalSetting::getK, "VERSION")
+                .setSql("VERSION = VERSION + 1"));
     }
 }

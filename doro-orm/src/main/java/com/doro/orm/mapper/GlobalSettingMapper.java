@@ -10,6 +10,6 @@ import java.util.Map;
 public interface GlobalSettingMapper extends BaseMapper<GlobalSetting> {
 
     @MapKey("k")
-    @Select("SELECT k, v, type FROM global_setting;")
+    @Select("SELECT id, k, v, type FROM global_setting;")
     Map<String, GlobalSetting> getAllMap();
 }
