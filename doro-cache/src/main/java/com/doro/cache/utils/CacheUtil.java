@@ -44,9 +44,7 @@ public class CacheUtil {
     public static void removeLocalCache(String key, String cacheKey) {
         Cache<String, Object> localCache = LOCAL_CACHE_MAP.getIfPresent(key);
         if (localCache != null) {
-            System.out.println("before");
             synchronized (key.intern()) {
-                System.out.println("after");
                 // 二次检查
                 localCache = LOCAL_CACHE_MAP.getIfPresent(key);
                 if (localCache != null) {

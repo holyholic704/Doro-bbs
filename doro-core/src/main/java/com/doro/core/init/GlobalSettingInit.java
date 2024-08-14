@@ -4,7 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.LockUtil;
 import com.doro.common.api.MyLock;
-import com.doro.common.constant.Settings;
+import com.doro.core.properties.GlobalSettingTemplate;
 import com.doro.core.service.GlobalSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -50,7 +50,7 @@ public class GlobalSettingInit {
      * 检查配置
      */
     private void check() {
-        Field[] fields = Settings.class.getDeclaredFields();
+        Field[] fields = GlobalSettingTemplate.class.getDeclaredFields();
         Map<String, Field> fieldMap = new HashMap<>(fields.length);
         for (Field field : fields) {
             field.setAccessible(true);
@@ -73,16 +73,24 @@ public class GlobalSettingInit {
 //        redisTemplate.opsForHash().putAll();
     }
 
+    /**
+     * 新增或删除数据库中的配置
+     *
+     * @param fieldMap         数据库中待新增的字段
+     * @param globalSettingMap 数据库中待删除的字段
+     */
     private void doInsertOrDelete(Map<String, Field> fieldMap, Map<String, GlobalSetting> globalSettingMap) {
         // 使用编程式事务：方法可以设置为 private，避免自调用失效，事务更小
         TransactionStatus status = null;
 
+        // 添加数据库中没有的字段
         if (MapUtil.isNotEmpty(fieldMap)) {
             status = this.createStatus(status);
             Collection<Field> fieldCollection = fieldMap.values();
             List<GlobalSetting> list = new ArrayList<>();
             for (Field field : fieldCollection) {
                 try {
+                    field.setAccessible(true);
                     list.add(new GlobalSetting()
                             .setK(field.getName())
                             .setV(String.valueOf(field.get(null)))
@@ -95,12 +103,14 @@ public class GlobalSettingInit {
             globalSettingService.saveList(list);
         }
 
+        // 删除数据库中多余的字段
         if (MapUtil.isNotEmpty(globalSettingMap)) {
             status = this.createStatus(status);
             globalSettingService.deleteByIdList(globalSettingMap.values().stream().map(GlobalSetting::getId).collect(Collectors.toList()));
         }
 
         if (status != null) {
+            // 更新版本
             globalSettingService.updateVersion();
             transactionManager.commit(status);
         }
@@ -110,6 +120,9 @@ public class GlobalSettingInit {
         return status != null ? status : transactionManager.getTransaction(new DefaultTransactionDefinition());
     }
 
+    /**
+     * 字段过滤，保留数据库中没有或多余的字段
+     */
     private void filterMap(Map<String, Field> fieldMap, Map<String, GlobalSetting> globalSettingMap) {
         if (MapUtil.isNotEmpty(globalSettingMap)) {
             Iterator<Map.Entry<String, GlobalSetting>> iterator = globalSettingMap.entrySet().iterator();

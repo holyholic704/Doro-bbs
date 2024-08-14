@@ -1,5 +1,8 @@
 package com.doro.common.constant;
 
+/**
+ * 分隔符
+ */
 public class Separator {
 
     public static final String STAR = "*";

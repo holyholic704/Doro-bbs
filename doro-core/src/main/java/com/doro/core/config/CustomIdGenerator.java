@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.github.yitter.idgen.YitIdHelper;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mybatis Plus 主键生成
+ */
 @Component
 public class CustomIdGenerator implements IdentifierGenerator {
 

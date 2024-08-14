@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
+/**
+ * Redisson 配置
+ */
 @Configuration
 public class RedissonConfig {
 
@@ -22,6 +25,9 @@ public class RedissonConfig {
         return Redisson.create(initConfig());
     }
 
+    /**
+     * 初始化配置
+     */
     private Config initConfig() {
         Config config = new Config();
 
@@ -39,6 +45,9 @@ public class RedissonConfig {
         return config;
     }
 
+    /**
+     * 获取集群的节点地址
+     */
     private String[] getNodeAddresses() {
         List<String> clusterNodeList = redisProperties.getCluster().getNodes();
         String[] nodeAddresses = new String[clusterNodeList.size()];

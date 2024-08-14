@@ -4,6 +4,9 @@ import cn.hutool.core.util.ReUtil;
 import com.doro.common.constant.RegexConstant;
 import com.doro.core.exception.MyAuthenticationException;
 
+/**
+ * 登录校验工具包
+ */
 public class LoginValidUtil {
 
     /**

@@ -10,6 +10,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 全局配置服务
+ */
 @Service
 public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, GlobalSetting> {
 

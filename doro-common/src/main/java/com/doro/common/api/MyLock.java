@@ -1,7 +1,7 @@
 package com.doro.common.api;
 
 /**
- * 分布式锁
+ * 分布式锁操作
  * 不包括加锁操作，请使用 AcquireLock
  */
 public interface MyLock {

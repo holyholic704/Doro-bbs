@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 初始化分布式 ID
+ */
 @Component
 public class IdGeneratorInit {
 
@@ -17,6 +20,5 @@ public class IdGeneratorInit {
     private void run() {
         IdGeneratorOptions options = new IdGeneratorOptions(workId);
         YitIdHelper.setIdGenerator(options);
-        System.out.println("id 初始化");
     }
 }

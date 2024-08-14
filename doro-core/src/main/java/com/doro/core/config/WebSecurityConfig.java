@@ -13,13 +13,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Security 配置
+ */
 @Configuration
 @SuppressWarnings("deprecation")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private MyUserDetailsService myUserDetailsService;
-    BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -36,13 +39,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    MyAuthenticationProvider usePasswordAuthenticationProvider() {
+    MyAuthenticationProvider myAuthenticationProvider() {
         return new MyAuthenticationProvider(myUserDetailsService, bCryptPasswordEncoder);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(usePasswordAuthenticationProvider());
+        // 自定义认证方式
+        auth.authenticationProvider(myAuthenticationProvider());
     }
 
     @Bean
@@ -53,6 +57,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return (bCryptPasswordEncoder = new BCryptPasswordEncoder());
+        return bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
 }

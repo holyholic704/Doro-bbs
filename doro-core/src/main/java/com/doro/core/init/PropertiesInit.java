@@ -1,7 +1,6 @@
 package com.doro.core.init;
 
-import cn.hutool.core.util.ReflectUtil;
-import com.doro.common.constant.Settings;
+import com.doro.core.properties.GlobalSettingTemplate;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -21,7 +20,7 @@ public class PropertiesInit {
     public static void main(String[] args) throws ClassNotFoundException {
 
 //        System.out.println(SettingTypeEnum.BOOLEAN.getFunction().apply("true"));
-        Field[] fields = Settings.class.getDeclaredFields();
+        Field[] fields = GlobalSettingTemplate.class.getDeclaredFields();
         for (Field field : fields) {
             System.out.println(field.getName());
         }

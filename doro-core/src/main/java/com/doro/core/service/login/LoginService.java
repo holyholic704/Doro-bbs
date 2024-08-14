@@ -1,12 +1,11 @@
 package com.doro.core.service.login;
 
 import com.doro.bean.User;
-import com.doro.common.constant.Settings;
+import com.doro.core.properties.GlobalSettingTemplate;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
 import com.doro.core.service.UserService;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
-import com.doro.core.service.login.valid.ValidAndInitService;
 import com.doro.core.utils.JwtUtil;
 import com.doro.core.utils.LoginValidUtil;
 import com.doro.res.ResponseResult;
@@ -68,10 +67,10 @@ public class LoginService {
         User register = new User()
                 .setUsername(requestUser.getUsername())
                 .setPassword(bCryptPasswordEncoder.encode(requestUser.getPassword()))
-                .setEnable(!Settings.USER_NEED_ACTIVE);
+                .setEnable(!GlobalSettingTemplate.USER_NEED_ACTIVE);
 
         if (userService.saveUser(register)) {
-            if (Settings.USER_NEED_ACTIVE) {
+            if (GlobalSettingTemplate.USER_NEED_ACTIVE) {
                 registerNeedActive(register);
                 return ResponseResult.success("请等待激活");
             }

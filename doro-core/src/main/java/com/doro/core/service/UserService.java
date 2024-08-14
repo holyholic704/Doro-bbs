@@ -54,6 +54,9 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         }
     }
 
+    /**
+     * 是否有使用该用户名的用户
+     */
     public boolean hasUser(String username) {
         return this.count(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username)) > 0;

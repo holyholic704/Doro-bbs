@@ -2,6 +2,9 @@ package com.doro.common.constant;
 
 import cn.hutool.core.lang.RegexPool;
 
+/**
+ * 正则校验
+ */
 public class RegexConstant {
 
     /**

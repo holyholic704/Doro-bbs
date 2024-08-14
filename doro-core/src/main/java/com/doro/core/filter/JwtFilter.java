@@ -12,16 +12,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * JWT 过滤器
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
-    CommonSecurityProperties commonSecurityProperties;
+    private CommonSecurityProperties commonSecurityProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (fromGateway(request)) {
-
+            // TODO JWT 过滤
         }
         filterChain.doFilter(request, response);
     }

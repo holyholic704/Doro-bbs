@@ -1,9 +1,13 @@
-package com.doro.core.service.login.valid;
+package com.doro.core.service.login;
 
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
+import com.doro.core.service.login.valid.*;
 import org.springframework.stereotype.Component;
 
+/**
+ * 参数校验
+ */
 @Component
 public class ValidAndInitService {
 

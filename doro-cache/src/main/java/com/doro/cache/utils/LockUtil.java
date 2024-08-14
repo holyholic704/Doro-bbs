@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 分布式锁
+ * 分布式锁工具包
  * TODO 读写锁引入？
  */
 @Component

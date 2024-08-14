@@ -1,18 +1,28 @@
 package com.doro.common.constant;
 
+/**
+ * 分布式锁及缓存相关常量
+ */
 public class CacheConstant {
 
+    /**
+     * 分布式锁前缀
+     */
     public static final String LOCK_PREFIX = "LOCK_";
 
+    /**
+     * 分布式公平锁前缀
+     */
     public static final String LOCK_FAIR_PREFIX = "LOCK_FAIR_";
 
+    /**
+     * 分布式读写锁前缀
+     */
     public static final String LOCK_RW_PREFIX = "LOCK_RW_";
 
-    public static final String LOCAL_CACHE_REMOVING_PREFIX = "LOCAL_CACHE_REMOVING_";
-
-    public static final String LOCAL_LOCK_PREFIX = "LOCAL_LOCK_";
-
-    public static final String ENUM_RESPONSE_CACHE = "ENUM_RESPONSE_CACHE";
-
+    /**
+     * 全局配置初始化
+     */
+    public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
 
 }

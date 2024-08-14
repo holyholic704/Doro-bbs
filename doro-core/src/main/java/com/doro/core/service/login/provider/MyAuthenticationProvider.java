@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
- * 认证
+ * 自定义认证
  */
 public class MyAuthenticationProvider implements AuthenticationProvider {
 

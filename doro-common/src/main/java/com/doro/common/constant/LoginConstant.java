@@ -1,5 +1,8 @@
 package com.doro.common.constant;
 
+/**
+ * 登录注册相关常量
+ */
 public class LoginConstant {
 
     public static final String USE_PASSWORD = "pwd";

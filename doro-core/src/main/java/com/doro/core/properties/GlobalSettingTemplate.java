@@ -1,6 +1,9 @@
-package com.doro.common.constant;
+package com.doro.core.properties;
 
-public class Settings {
+/**
+ * 全局配置模版
+ */
+public class GlobalSettingTemplate {
 
     public static int VERSION = 0;
 
@@ -17,4 +20,10 @@ public class Settings {
     public static boolean REGISTER_SUPPORT_PHONE = false;
 
     public static boolean USER_NEED_ACTIVE = false;
+
+    public static final String JWT_HEADER = "email";
+
+    public static final String JWT_SECRET = "dafengqixiyunfeiyangweijiahaineixiguiguxiangandemengshixishousifang";
+
+    public static final Integer JWT_EXPIRED = 60 * 60 * 24;
 }
