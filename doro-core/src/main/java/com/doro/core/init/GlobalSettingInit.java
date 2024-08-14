@@ -4,6 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.LockUtil;
 import com.doro.common.api.MyLock;
+import com.doro.common.constant.CacheConstant;
 import com.doro.core.properties.GlobalSettingTemplate;
 import com.doro.core.service.GlobalSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,8 @@ public class GlobalSettingInit {
 
     @PostConstruct
     private void run() {
-        MyLock lock = LockUtil.tryLock("INIT_GLOBAL_SETTING");
+        // 同一时间只允许一个节点可以进行初始化
+        MyLock lock = LockUtil.tryLock(CacheConstant.INIT_GLOBAL_SETTING);
         if (lock != null) {
             this.check();
             lock.unlockAsync();

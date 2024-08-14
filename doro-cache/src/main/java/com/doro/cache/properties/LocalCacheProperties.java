@@ -1,7 +1,9 @@
 package com.doro.cache.properties;
 
 import com.doro.common.enumeration.ReferenceTypeEnum;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.concurrent.TimeUnit;
@@ -9,9 +11,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * 本地缓存配置
  */
-@Data
+@Getter
+@Setter(AccessLevel.PRIVATE)
 @Accessors(chain = true)
 public class LocalCacheProperties {
+
+    /**
+     * 默认配置
+     */
+    public static final LocalCacheProperties NORMAL = new LocalCacheProperties();
 
     /**
      * 超时时间
@@ -38,4 +46,35 @@ public class LocalCacheProperties {
      * 值的引用类型
      */
     private ReferenceTypeEnum referenceType;
+
+    private LocalCacheProperties() {
+    }
+
+    public static LocalCacheProperties normal() {
+        return new LocalCacheProperties();
+    }
+
+    public static LocalCacheProperties expire(Long expireTime) {
+        return normal().setExpireTime(expireTime);
+    }
+
+    public static LocalCacheProperties expire(Long expireTime, TimeUnit unit, boolean expireAfterAccess) {
+        return normal()
+                .setExpireTime(expireTime)
+                .setUnit(unit)
+                .setExpireAfterAccess(expireAfterAccess);
+    }
+
+    public static LocalCacheProperties maxSize(Long maxSize) {
+        return normal().setMaxSize(maxSize);
+    }
+
+    public static LocalCacheProperties of(Long expireTime, TimeUnit unit, Long maxSize, boolean expireAfterAccess, ReferenceTypeEnum referenceType) {
+        return normal()
+                .setExpireTime(expireTime)
+                .setUnit(unit)
+                .setMaxSize(maxSize)
+                .setExpireAfterAccess(expireAfterAccess)
+                .setReferenceType(referenceType);
+    }
 }

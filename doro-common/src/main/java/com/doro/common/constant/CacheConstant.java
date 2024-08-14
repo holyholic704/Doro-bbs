@@ -25,4 +25,6 @@ public class CacheConstant {
      */
     public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
 
+    public static final String ENUM_RESPONSE_CACHE = "ENUM_RESPONSE_CACHE";
+
 }

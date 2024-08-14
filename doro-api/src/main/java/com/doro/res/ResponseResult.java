@@ -1,13 +1,13 @@
 package com.doro.res;
 
+import com.doro.cache.properties.LocalCacheProperties;
+import com.doro.cache.utils.CacheUtil;
+import com.doro.common.constant.CacheConstant;
 import com.doro.common.enumeration.ResponseEnum;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 统一响应
@@ -30,17 +30,6 @@ public class ResponseResult<T> implements Serializable {
      * 返回数据
      */
     private T data;
-
-    /**
-     * 缓存使用枚举创建的对象，避免过多的重复创建
-     */
-    @SuppressWarnings("rawtypes")
-    private static final Cache<ResponseEnum, ResponseResult> ENUM_RESPONSE_CACHE = Caffeine.newBuilder()
-            .softValues()
-            .maximumSize(20)
-            .build();
-
-    private static final ReentrantLock LOCK = new ReentrantLock(true);
 
     /**
      * 不允许外部创建
@@ -82,7 +71,10 @@ public class ResponseResult<T> implements Serializable {
     }
 
     public static <T> ResponseResult<T> error(String message) {
-        return new ResponseResult<>(message);
+        return CacheUtil.computeLocalIfAbsent(CacheConstant.ENUM_RESPONSE_CACHE,
+                message,
+                new ResponseResult<>(message),
+                LocalCacheProperties.maxSize(60L));
     }
 
     /**
@@ -93,20 +85,8 @@ public class ResponseResult<T> implements Serializable {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> ResponseResult<T> ofEnum(ResponseEnum responseEnum) {
-        ResponseResult responseResult = ENUM_RESPONSE_CACHE.getIfPresent(responseEnum);
-        if (responseResult == null) {
-            try {
-                LOCK.lock();
-                // 二次校验
-                if ((responseResult = ENUM_RESPONSE_CACHE.getIfPresent(responseEnum)) != null) {
-                    return responseResult;
-                }
-                responseResult = new ResponseResult(responseEnum);
-                ENUM_RESPONSE_CACHE.put(responseEnum, responseResult);
-            } finally {
-                LOCK.unlock();
-            }
-        }
-        return responseResult;
+        return CacheUtil.computeLocalIfAbsent(CacheConstant.ENUM_RESPONSE_CACHE,
+                responseEnum.getMessage(),
+                new ResponseResult(responseEnum));
     }
 }
