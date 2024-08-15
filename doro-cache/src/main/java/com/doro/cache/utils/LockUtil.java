@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * 分布式锁工具包
  * TODO 读写锁引入？
+ *
+ * @author jiage
  */
 @Component
 public class LockUtil {

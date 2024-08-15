@@ -2,7 +2,7 @@ package com.doro.core.config;
 
 import com.doro.core.filter.JwtFilter;
 import com.doro.core.service.login.provider.MyAuthenticationProvider;
-import com.doro.core.service.login.provider.MyUserDetailsService;
+import com.doro.core.service.login.provider.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 /**
  * Security 配置
+ *
+ * @author jiage
  */
 @Configuration
 @SuppressWarnings("deprecation")
@@ -22,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
-    private MyUserDetailsService myUserDetailsService;
+    private UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -40,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     MyAuthenticationProvider myAuthenticationProvider() {
-        return new MyAuthenticationProvider(myUserDetailsService, bCryptPasswordEncoder);
+        return new MyAuthenticationProvider(userDetailsServiceImpl, bCryptPasswordEncoder);
     }
 
     @Override

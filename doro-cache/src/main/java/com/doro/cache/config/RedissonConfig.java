@@ -13,6 +13,8 @@ import java.util.List;
 
 /**
  * Redisson 配置
+ *
+ * @author jiage
  */
 @Configuration
 public class RedissonConfig {

@@ -12,10 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class MyAuthenticationProvider implements AuthenticationProvider {
 
-    private final MyUserDetailsService userDetailsService;
+    private final UserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public MyAuthenticationProvider(MyUserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public MyAuthenticationProvider(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailsService = userDetailsService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }

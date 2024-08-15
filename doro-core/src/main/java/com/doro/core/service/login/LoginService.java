@@ -1,9 +1,9 @@
 package com.doro.core.service.login;
 
 import com.doro.bean.User;
-import com.doro.core.properties.GlobalSettingTemplate;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
+import com.doro.core.properties.GlobalSettingTemplate;
 import com.doro.core.service.UserService;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.utils.JwtUtil;
@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 登录注册服务
+ *
+ * @author jiage
  */
 @Service
 public class LoginService {

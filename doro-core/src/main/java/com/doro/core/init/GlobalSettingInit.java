@@ -43,7 +43,7 @@ public class GlobalSettingInit {
         // 同一时间只允许一个节点可以进行初始化
         MyLock lock = LockUtil.tryLock(CacheConstant.INIT_GLOBAL_SETTING);
         if (lock != null) {
-            this.check();
+//            this.check();
             lock.unlockAsync();
         }
     }

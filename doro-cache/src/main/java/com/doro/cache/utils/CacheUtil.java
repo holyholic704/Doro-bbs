@@ -7,6 +7,11 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+/**
+ * 缓存工具包
+ *
+ * @author jiage
+ */
 @Component
 @DependsOn("lockUtil")
 public class CacheUtil {
@@ -45,7 +50,7 @@ public class CacheUtil {
         return cacheValue;
     }
 
-    public static <T> void putLocal(String key, String cacheKey, Object cacheValue) {
+    public static <T> void putLocal(String key, String cacheKey, T cacheValue) {
         putLocal(key, cacheKey, cacheValue, LocalCacheProperties.NORMAL);
     }
 
@@ -70,7 +75,7 @@ public class CacheUtil {
      * 建议与添加缓存一起使用，应避免单独使用
      */
     @SuppressWarnings("unchecked")
-    public static <T> void removeLocal(String key, String cacheKey) {
+    public static void removeLocal(String key, String cacheKey) {
         Cache<String, Object> localCache = (Cache<String, Object>) LOCAL_CACHE_MAP.getIfPresent(key);
         if (localCache != null) {
             synchronized (key.intern()) {
@@ -117,6 +122,8 @@ public class CacheUtil {
                     break;
                 case WEAK:
                     caffeine.weakValues();
+                    break;
+                default:
                     break;
             }
         }
