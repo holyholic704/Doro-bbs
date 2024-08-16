@@ -11,7 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("com.doro.orm.mapper")
-@ComponentScan({"com.doro.core.*", "com.doro.*.config", "com.doro.*.utils"})
+@ComponentScan({"com.doro.*.*"})
 public class CoreApplication {
 
     public static void main(String[] args) {

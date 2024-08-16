@@ -1,7 +1,6 @@
 package com.doro.res;
 
-import com.doro.cache.properties.LocalCacheProperties;
-import com.doro.cache.utils.CacheUtil;
+import com.doro.cache.utils.LocalCacheUtil;
 import com.doro.common.constant.CacheConstant;
 import com.doro.common.enumeration.ResponseEnum;
 import lombok.Getter;
@@ -71,10 +70,9 @@ public class ResponseResult<T> implements Serializable {
     }
 
     public static <T> ResponseResult<T> error(String message) {
-        return CacheUtil.computeLocalIfAbsent(CacheConstant.ENUM_RESPONSE_CACHE,
+        return LocalCacheUtil.computeLocalIfAbsent(CacheConstant.ENUM_RESPONSE_CACHE,
                 message,
-                new ResponseResult<>(message),
-                LocalCacheProperties.maxSize(60L));
+                new ResponseResult<>(message));
     }
 
     /**
@@ -85,7 +83,7 @@ public class ResponseResult<T> implements Serializable {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> ResponseResult<T> ofEnum(ResponseEnum responseEnum) {
-        return CacheUtil.computeLocalIfAbsent(CacheConstant.ENUM_RESPONSE_CACHE,
+        return LocalCacheUtil.computeLocalIfAbsent(CacheConstant.ENUM_RESPONSE_CACHE,
                 responseEnum.getMessage(),
                 new ResponseResult(responseEnum));
     }

@@ -3,6 +3,7 @@ package com.doro.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.bean.User;
+import com.doro.cache.anno.MyCache;
 import com.doro.common.constant.LoginConstant;
 import com.doro.orm.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,12 @@ public class UserService extends ServiceImpl<UserMapper, User> {
      * 根据用户名获取用户信息
      */
     public User getUserByUsername(String username) {
+        return this.getOne(new LambdaQueryWrapper<User>()
+                .eq(User::getUsername, username));
+    }
+
+    @MyCache(key = "#user.username")
+    public User getUserByUsername(String username,User user) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username));
     }

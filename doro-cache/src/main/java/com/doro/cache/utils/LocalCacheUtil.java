@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @DependsOn("lockUtil")
-public class CacheUtil {
+public class LocalCacheUtil {
 
     /**
      * 本地缓存集合
@@ -67,6 +67,20 @@ public class CacheUtil {
                     LOCAL_CACHE_MAP.put(key, localCache = initLocalCache(localCacheProperties));
                 }
                 localCache.put(cacheKey, cacheValue);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void removeLocal(String key) {
+        Cache<String, Object> localCache = (Cache<String, Object>) LOCAL_CACHE_MAP.getIfPresent(key);
+        if (localCache != null) {
+            synchronized (key.intern()) {
+                localCache = (Cache<String, Object>) LOCAL_CACHE_MAP.getIfPresent(key);
+                if (localCache != null) {
+                    localCache.invalidateAll();
+                    LOCAL_CACHE_MAP.invalidate(key);
+                }
             }
         }
     }
@@ -167,4 +181,6 @@ public class CacheUtil {
 //
 //        System.out.println("done");
     }
+
+
 }

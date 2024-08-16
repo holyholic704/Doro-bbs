@@ -2,6 +2,8 @@ package com.doro.common.constant;
 
 /**
  * 分布式锁及缓存相关常量
+ *
+ * @author jiage
  */
 public class CacheConstant {
 
@@ -26,5 +28,7 @@ public class CacheConstant {
     public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
 
     public static final String ENUM_RESPONSE_CACHE = "ENUM_RESPONSE_CACHE";
+
+    public static final String DEL_LOCAL_CACHE = "DEL_LOCAL_CACHE";
 
 }

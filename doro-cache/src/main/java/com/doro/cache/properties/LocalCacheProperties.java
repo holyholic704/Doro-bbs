@@ -10,9 +10,11 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 本地缓存配置
+ *
+ * @author jiage
  */
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter
 @Accessors(chain = true)
 public class LocalCacheProperties {
 
@@ -47,8 +49,6 @@ public class LocalCacheProperties {
      */
     private ReferenceTypeEnum referenceType;
 
-    private LocalCacheProperties() {
-    }
 
     public static LocalCacheProperties normal() {
         return new LocalCacheProperties();
