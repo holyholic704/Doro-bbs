@@ -2,7 +2,6 @@ package com.doro.cache.utils;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -14,7 +13,6 @@ import java.util.function.Function;
  * @author jiage
  */
 @Component
-@DependsOn("lockUtil")
 public class LocalCacheUtil {
 
     /**
