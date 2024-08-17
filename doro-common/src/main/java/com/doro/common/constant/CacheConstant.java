@@ -23,6 +23,17 @@ public class CacheConstant {
     public static final String LOCK_RW_PREFIX = "LOCK_RW_";
 
     /**
+     * 缓存前缀
+     */
+    public static final String CACHE_PREFIX = "CACHE_";
+
+    public static final String CACHE_DEFAULT_AREA = "DEFAULT_AREA";
+    public static final String CACHE_SYNC = "CACHE_SYNC";
+    public static final String CACHE_PROPERTIES = "CACHE_PROPERTIES";
+    public static final long CACHE_DEFAULT_EXPIRE = 15 * 60;
+    public static final long CACHE_DEFAULT_LOCAL_MAX_SIZE = 100;
+
+    /**
      * 全局配置初始化
      */
     public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";

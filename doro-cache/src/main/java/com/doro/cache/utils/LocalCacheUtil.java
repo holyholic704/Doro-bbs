@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class LocalCacheUtil {
 
     /**
-     * 本地缓存集合
+     * 本地缓存
      */
     private static final Cache<String, Object> LOCAL_CACHE = Caffeine.newBuilder()
             .maximumSize(1024)
