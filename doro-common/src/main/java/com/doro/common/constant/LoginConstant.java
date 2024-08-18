@@ -2,6 +2,8 @@ package com.doro.common.constant;
 
 /**
  * 登录注册相关常量
+ *
+ * @author jiage
  */
 public class LoginConstant {
 

@@ -4,6 +4,8 @@ import cn.hutool.core.lang.RegexPool;
 
 /**
  * 正则校验
+ *
+ * @author jiage
  */
 public class RegexConstant {
 

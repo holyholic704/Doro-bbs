@@ -1,6 +1,6 @@
 package com.doro.cache.anno;
 
-import com.doro.common.enumeration.CacheTypeEnum;
+import com.doro.common.enumeration.CacheType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -33,6 +33,6 @@ public @interface MyCache {
     /**
      * 缓存类型
      */
-    CacheTypeEnum cacheType() default CacheTypeEnum.REMOTE;
+    CacheType cacheType() default CacheType.REMOTE;
 
 }

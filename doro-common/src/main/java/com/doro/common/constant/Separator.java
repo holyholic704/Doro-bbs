@@ -2,6 +2,8 @@ package com.doro.common.constant;
 
 /**
  * 分隔符
+ *
+ * @author jiage
  */
 public class Separator {
 

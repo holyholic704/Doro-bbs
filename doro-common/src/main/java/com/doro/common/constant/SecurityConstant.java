@@ -2,6 +2,8 @@ package com.doro.common.constant;
 
 /**
  * 认证授权相关常量
+ *
+ * @author jiage
  */
 public class SecurityConstant {
 
