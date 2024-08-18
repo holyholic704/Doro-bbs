@@ -5,7 +5,7 @@ import com.doro.common.constant.Separator;
 import org.redisson.Redisson;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
-import org.redisson.codec.JsonJacksonCodec;
+import org.redisson.codec.Kryo5Codec;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -39,7 +39,7 @@ public class RedissonConfig {
      */
     private Config initConfig() {
         Config config = new Config()
-                .setCodec(new JsonJacksonCodec());
+                .setCodec(new Kryo5Codec());
 
         if (redisProperties.getCluster() != null) {
             config.useClusterServers()

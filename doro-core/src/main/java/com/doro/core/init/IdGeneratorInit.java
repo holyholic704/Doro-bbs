@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class IdGeneratorInit {
 
-    @Value("${IdGenerator.workId}")
+    @Value("${worker-id}")
     private short workId;
 
     @PostConstruct

@@ -1,5 +1,7 @@
 package com.doro.common.constant;
 
+import java.time.Duration;
+
 /**
  * 分布式锁及缓存相关常量
  *
@@ -30,8 +32,8 @@ public class CacheConstant {
     public static final String CACHE_DEFAULT_AREA = "DEFAULT_AREA";
     public static final String CACHE_SYNC = "CACHE_SYNC";
     public static final String CACHE_PROPERTIES = "CACHE_PROPERTIES";
-    public static final long CACHE_DEFAULT_EXPIRE = 15 * 60;
-    public static final long CACHE_DEFAULT_LOCAL_MAX_SIZE = 100;
+    public static final Duration CACHE_DEFAULT_DURATION = Duration.ofMinutes(15);
+    public static final long CACHE_DEFAULT_MAX_SIZE = 1024;
 
     /**
      * 全局配置初始化

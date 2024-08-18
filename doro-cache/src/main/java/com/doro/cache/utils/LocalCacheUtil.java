@@ -1,11 +1,9 @@
 package com.doro.cache.utils;
 
+import com.doro.common.constant.CacheConstant;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Component;
-
-import java.time.Duration;
-import java.util.function.Function;
 
 /**
  * 缓存工具包
@@ -19,8 +17,8 @@ public class LocalCacheUtil {
      * 本地缓存
      */
     private static final Cache<String, Object> LOCAL_CACHE = Caffeine.newBuilder()
-            .maximumSize(1024)
-            .expireAfterAccess(Duration.ofMinutes(15))
+            .maximumSize(CacheConstant.CACHE_DEFAULT_MAX_SIZE)
+            .expireAfterAccess(CacheConstant.CACHE_DEFAULT_DURATION)
             .build();
 
     @SuppressWarnings("unchecked")
@@ -33,12 +31,11 @@ public class LocalCacheUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T computeIfAbsent(String key, Function<String, T> function) {
+    public static <T> T putIfAbsent(String key, T value) {
         Object existValue = LOCAL_CACHE.getIfPresent(key);
         if (existValue != null) {
             return (T) existValue;
         } else {
-            T value = function.apply(key);
             LOCAL_CACHE.put(key, value);
             return value;
         }

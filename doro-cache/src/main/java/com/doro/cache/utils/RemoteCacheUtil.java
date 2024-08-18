@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @author jiage
@@ -37,14 +36,12 @@ public class RemoteCacheUtil {
         getBucket(key).set(value, duration);
     }
 
-    public static <T> T computeIfAbsent(String key, Function<String, T> function) {
-        return computeIfAbsent(key, function, null);
+    public static <T> T putIfAbsent(String key, T value) {
+        return putIfAbsent(key, value, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T computeIfAbsent(String key, Function<String, T> function, Duration duration) {
-        T value = function.apply(key);
-
+    public static <T> T putIfAbsent(String key, T value, Duration duration) {
         RBatch rBatch = createBatch();
         rBatch.getBucket(key).getAsync();
         if (duration != null) {
