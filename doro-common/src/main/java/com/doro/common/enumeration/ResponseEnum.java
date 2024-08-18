@@ -15,6 +15,7 @@ public enum ResponseEnum {
      */
     SUCCESS(10001, "请求成功"),
     ERROR(10000, "请求失败"),
+    SYSTEM_ERROR(10002, "系统异常"),
     ;
 
     /**
