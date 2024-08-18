@@ -35,6 +35,6 @@ public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, Globa
     public boolean updateVersion() {
         return this.update(new LambdaUpdateWrapper<GlobalSetting>()
                 .eq(GlobalSetting::getK, "VERSION")
-                .setSql("VERSION = VERSION + 1"));
+                .setSql("v = v + 1"));
     }
 }

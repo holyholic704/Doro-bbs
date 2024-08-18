@@ -45,6 +45,11 @@ public class CacheConstant {
     public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
 
     /**
+     * 全局配置缓存
+     */
+    public static final String GLOBAL_SETTING = "GLOBAL_SETTING";
+
+    /**
      * 删除本地缓存的主题
      */
     public static final String DEL_LOCAL_CACHE_TOPIC = "DEL_LOCAL_CACHE";
