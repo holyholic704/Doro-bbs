@@ -38,7 +38,7 @@ public class RemoteCacheUtil {
      * 添加缓存
      */
     public static void put(String key, Object value) {
-        getBucket(key).set(value);
+        put(key, value, CacheConstant.CACHE_DEFAULT_DURATION);
     }
 
     /**

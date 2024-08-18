@@ -23,6 +23,4 @@ public class GlobalSetting implements Serializable {
     private String k;
 
     private String v;
-
-    private String type;
 }

@@ -1,6 +1,7 @@
 package com.doro.core.utils;
 
-import com.doro.core.properties.GlobalSettingTemplate;
+import com.doro.core.properties.G_Setting;
+import com.doro.core.properties.GlobalSettingAcquire;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -42,7 +43,8 @@ public class JwtUtil {
      * @return 到期时间
      */
     private static Date generateExpiration() {
-        return new Date(System.currentTimeMillis() + GlobalSettingTemplate.JWT_EXPIRED * 1000);
+        long jwtExpiration = GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION);
+        return new Date(System.currentTimeMillis() + jwtExpiration * 1000);
     }
 
     /**
@@ -59,6 +61,7 @@ public class JwtUtil {
     }
 
     private static SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(GlobalSettingTemplate.JWT_SECRET.getBytes());
+        String jwtSecret = GlobalSettingAcquire.get(G_Setting.JWT_SECRET);
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 }

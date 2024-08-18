@@ -3,7 +3,8 @@ package com.doro.core.service.login;
 import com.doro.bean.User;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
-import com.doro.core.properties.GlobalSettingTemplate;
+import com.doro.core.properties.G_Setting;
+import com.doro.core.properties.GlobalSettingAcquire;
 import com.doro.core.service.UserService;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.utils.JwtUtil;
@@ -66,13 +67,15 @@ public class LoginService {
         // 检查是否有重复的用户
         LoginValidUtil.userExisted(userService.existUser((String) authenticationToken.getPrincipal(), authenticationToken.getLoginType()));
 
+        boolean userNeedActive = GlobalSettingAcquire.get(G_Setting.USER_NEED_ACTIVE);
+
         User register = new User()
                 .setUsername(requestUser.getUsername())
                 .setPassword(bCryptPasswordEncoder.encode(requestUser.getPassword()))
-                .setEnable(!GlobalSettingTemplate.USER_NEED_ACTIVE);
+                .setEnable(!userNeedActive);
 
         if (userService.saveUser(register)) {
-            if (GlobalSettingTemplate.USER_NEED_ACTIVE) {
+            if (userNeedActive) {
                 registerNeedActive(register);
                 return ResponseResult.success("请等待激活");
             }

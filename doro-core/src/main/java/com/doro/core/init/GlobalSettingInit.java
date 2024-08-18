@@ -3,10 +3,9 @@ package com.doro.core.init;
 import cn.hutool.core.map.MapUtil;
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.LockUtil;
-import com.doro.cache.utils.RemoteCacheUtil;
 import com.doro.common.api.MyLock;
 import com.doro.common.constant.CacheConstant;
-import com.doro.core.properties.GlobalSettingTemplate;
+import com.doro.core.properties.G_Setting;
 import com.doro.core.service.GlobalSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -16,8 +15,8 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import javax.annotation.PostConstruct;
-import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -52,48 +51,32 @@ public class GlobalSettingInit {
      * 检查配置
      */
     private void check() {
-        Field[] fields = GlobalSettingTemplate.class.getDeclaredFields();
-        Map<String, Field> fieldMap = new HashMap<>(fields.length);
-        for (Field field : fields) {
-            field.setAccessible(true);
-            fieldMap.put(field.getName(), field);
-        }
-
+        Map<String, G_Setting> globalSettingTemplateMap = Arrays.stream(G_Setting.values()).collect(Collectors.toMap(G_Setting::name, Function.identity()));
         Map<String, GlobalSetting> globalSettingMap = globalSettingService.getAllMap();
-
-        filterMap(fieldMap, globalSettingMap);
-        doInsertOrDelete(fieldMap, globalSettingMap);
+        filterMap(globalSettingTemplateMap, globalSettingMap);
+        doInsertOrDelete(globalSettingTemplateMap, globalSettingMap);
     }
 
     private void addCache() {
-        RemoteCacheUtil.put();
+//        RemoteCacheUtil.put();
     }
 
     /**
      * 新增或删除数据库中的配置
-     *
-     * @param fieldMap         数据库中待新增的字段
-     * @param globalSettingMap 数据库中待删除的字段
      */
-    private void doInsertOrDelete(Map<String, Field> fieldMap, Map<String, GlobalSetting> globalSettingMap) {
+    private void doInsertOrDelete(Map<String, G_Setting> gSettingMap, Map<String, GlobalSetting> globalSettingMap) {
         // 使用编程式事务：方法可以设置为 private，避免自调用失效，事务更小
         TransactionStatus status = null;
 
         // 添加数据库中没有的字段
-        if (MapUtil.isNotEmpty(fieldMap)) {
+        if (MapUtil.isNotEmpty(gSettingMap)) {
             status = this.createStatus(status);
-            Collection<Field> fieldCollection = fieldMap.values();
+            Collection<G_Setting> gSettings = gSettingMap.values();
             List<GlobalSetting> list = new ArrayList<>();
-            for (Field field : fieldCollection) {
-                try {
-                    field.setAccessible(true);
-                    list.add(new GlobalSetting()
-                            .setK(field.getName())
-                            .setV(String.valueOf(field.get(null)))
-                            .setType(field.getType().getSimpleName().toLowerCase()));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
+            for (G_Setting gSetting : gSettings) {
+                list.add(new GlobalSetting()
+                        .setK(gSetting.name())
+                        .setV(String.valueOf(gSetting.getDefaultValue())));
             }
 
             globalSettingService.saveList(list);
@@ -119,15 +102,15 @@ public class GlobalSettingInit {
     /**
      * 字段过滤，保留数据库中没有或多余的字段
      */
-    private void filterMap(Map<String, Field> fieldMap, Map<String, GlobalSetting> globalSettingMap) {
+    private void filterMap(Map<String, G_Setting> gSettingMap, Map<String, GlobalSetting> globalSettingMap) {
         if (MapUtil.isNotEmpty(globalSettingMap)) {
             Iterator<Map.Entry<String, GlobalSetting>> iterator = globalSettingMap.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, GlobalSetting> entry = iterator.next();
                 // 只关心字段有没有，不关心值是否相同
-                if (fieldMap.containsKey(entry.getKey())) {
+                if (gSettingMap.containsKey(entry.getKey())) {
                     iterator.remove();
-                    fieldMap.remove(entry.getKey());
+                    gSettingMap.remove(entry.getKey());
                 }
             }
         }
