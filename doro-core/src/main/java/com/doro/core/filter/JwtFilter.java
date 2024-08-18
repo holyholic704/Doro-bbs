@@ -14,12 +14,18 @@ import java.io.IOException;
 
 /**
  * JWT 过滤器
+ *
+ * @author jiage
  */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    private final CommonSecurityProperties commonSecurityProperties;
+
     @Autowired
-    private CommonSecurityProperties commonSecurityProperties;
+    public JwtFilter(CommonSecurityProperties commonSecurityProperties) {
+        this.commonSecurityProperties = commonSecurityProperties;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

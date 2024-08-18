@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * Mybatis Plus 主键生成
+ *
+ * @author jiage
  */
 @Component
 public class CustomIdGenerator implements IdentifierGenerator {

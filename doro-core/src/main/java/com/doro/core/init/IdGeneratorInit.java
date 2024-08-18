@@ -9,6 +9,8 @@ import javax.annotation.PostConstruct;
 
 /**
  * 初始化分布式 ID
+ *
+ * @author jiage
  */
 @Component
 public class IdGeneratorInit {

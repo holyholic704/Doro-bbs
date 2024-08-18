@@ -1,15 +1,14 @@
 package com.doro.cache.utils;
 
 import com.doro.common.constant.CacheConstant;
-import org.redisson.api.BatchResult;
-import org.redisson.api.RBatch;
-import org.redisson.api.RBucket;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 远程缓存（Redis）工具类
@@ -76,6 +75,26 @@ public class RemoteCacheUtil {
         return isSuccess != null && isSuccess ? value : (T) responses.get(0);
     }
 
+    public static void putMap(String key, Map<String, Object> map) {
+        putMap(key, map, CacheConstant.CACHE_DEFAULT_DURATION);
+    }
+
+    public static void putMap(String key, Map<String, Object> map, Duration duration) {
+        RMapCache<String, Object> rMapCache = getMapCache(key);
+        rMapCache.putAll(map, duration.getSeconds(), TimeUnit.SECONDS);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T getByField(String key, String field) {
+        RMapCache<String, Object> rMapCache = getMapCache(key);
+        return (T) rMapCache.get(field);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> Map<String, T> getAllMap(String key) {
+        return (Map<String, T>) getMapCache(key).readAllMap();
+    }
+
     /**
      * 删除缓存
      */
@@ -85,6 +104,10 @@ public class RemoteCacheUtil {
 
     private static RBucket<Object> getBucket(String name) {
         return redissonClient.getBucket(name);
+    }
+
+    private static RMapCache<String, Object> getMapCache(String name) {
+        return redissonClient.getMapCache(name);
     }
 
     private static RBatch createBatch() {

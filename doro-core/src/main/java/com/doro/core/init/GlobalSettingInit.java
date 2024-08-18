@@ -3,13 +3,13 @@ package com.doro.core.init;
 import cn.hutool.core.map.MapUtil;
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.LockUtil;
+import com.doro.cache.utils.RemoteCacheUtil;
 import com.doro.common.api.MyLock;
 import com.doro.common.constant.CacheConstant;
 import com.doro.core.properties.GlobalSettingTemplate;
 import com.doro.core.service.GlobalSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -22,19 +22,19 @@ import java.util.stream.Collectors;
 
 /**
  * 初始化全局配置
+ *
+ * @author jiage
  */
 @Component
 @DependsOn("lockUtil")
 public class GlobalSettingInit {
 
     private final PlatformTransactionManager transactionManager;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final GlobalSettingService globalSettingService;
 
     @Autowired
-    public GlobalSettingInit(PlatformTransactionManager transactionManager, RedisTemplate<String, Object> redisTemplate, GlobalSettingService globalSettingService) {
+    public GlobalSettingInit(PlatformTransactionManager transactionManager, GlobalSettingService globalSettingService) {
         this.transactionManager = transactionManager;
-        this.redisTemplate = redisTemplate;
         this.globalSettingService = globalSettingService;
     }
 
@@ -43,7 +43,7 @@ public class GlobalSettingInit {
         // 同一时间只允许一个节点可以进行初始化
         MyLock lock = LockUtil.tryLock(CacheConstant.INIT_GLOBAL_SETTING);
         if (lock != null) {
-//            this.check();
+            this.check();
             lock.unlockAsync();
         }
     }
@@ -65,14 +65,8 @@ public class GlobalSettingInit {
         doInsertOrDelete(fieldMap, globalSettingMap);
     }
 
-    // TODO 缓存预热
     private void addCache() {
-//        List<GlobalSetting> globalSettingList = globalSettingService.getAll();
-//        Map<String, Object> settingMap = new HashMap<>();
-//        for (GlobalSetting setting : globalSettingList) {
-//
-//        }
-//        redisTemplate.opsForHash().putAll();
+        RemoteCacheUtil.put();
     }
 
     /**

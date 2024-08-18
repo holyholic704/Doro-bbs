@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * 自定义认证
+ *
+ * @author jiage
  */
 public class MyAuthenticationProvider implements AuthenticationProvider {
 

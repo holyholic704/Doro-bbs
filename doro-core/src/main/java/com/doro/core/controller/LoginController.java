@@ -10,12 +10,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * 登录注册
+ *
+ * @author jiage
  */
 @RestController
 public class LoginController {
 
+    private final LoginService loginService;
+
     @Autowired
-    private LoginService loginService;
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
 
     @PostMapping("login")
     public ResponseResult<?> login(@RequestBody RequestUser requestUser) {
