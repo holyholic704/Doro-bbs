@@ -42,6 +42,6 @@ public class CacheConstant {
 
     public static final String ENUM_RESPONSE_CACHE = "ENUM_RESPONSE_CACHE";
 
-    public static final String DEL_LOCAL_CACHE = "DEL_LOCAL_CACHE";
+    public static final String DEL_LOCAL_CACHE_TOPIC = "DEL_LOCAL_CACHE";
 
 }

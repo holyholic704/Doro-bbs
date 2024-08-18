@@ -14,11 +14,11 @@ import javax.annotation.PostConstruct;
 public class IdGeneratorInit {
 
     @Value("${worker-id}")
-    private short workId;
+    private short workerId;
 
     @PostConstruct
     private void run() {
-        IdGeneratorOptions options = new IdGeneratorOptions(workId);
+        IdGeneratorOptions options = new IdGeneratorOptions(workerId);
         YitIdHelper.setIdGenerator(options);
     }
 }

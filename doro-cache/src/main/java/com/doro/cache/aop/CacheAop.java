@@ -40,10 +40,10 @@ public class CacheAop {
 
             String key = getKey(signature.getParameterNames(), args, myCache.key());
             if (key != null) {
-                String area = myCache.area();
-                if (StrUtil.isNotEmpty(area)) {
-
-                }
+//                String area = myCache.area();
+//                if (StrUtil.isNotEmpty(area)) {
+//
+//                }
             }
         }
     }

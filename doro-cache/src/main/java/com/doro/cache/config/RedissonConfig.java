@@ -1,9 +1,7 @@
 package com.doro.cache.config;
 
-import com.doro.cache.listener.DelMessageListener;
 import com.doro.common.constant.Separator;
 import org.redisson.Redisson;
-import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.Kryo5Codec;
 import org.redisson.config.Config;
@@ -22,16 +20,16 @@ import java.util.List;
 @Configuration
 public class RedissonConfig {
 
-    @Autowired
-    private RedisProperties redisProperties;
+    private final RedisProperties redisProperties;
 
-    private RedissonClient redissonClient;
+    @Autowired
+    public RedissonConfig(RedisProperties redisProperties) {
+        this.redisProperties = redisProperties;
+    }
 
     @Bean
     public RedissonClient redissonClient() {
-        redissonClient = Redisson.create(initConfig());
-        test();
-        return redissonClient;
+        return Redisson.create(initConfig());
     }
 
     /**
@@ -65,10 +63,5 @@ public class RedissonConfig {
             nodeAddresses[i] = "redis://" + clusterNodeList.get(i);
         }
         return nodeAddresses;
-    }
-
-    private void test() {
-        RTopic rTopic = redissonClient.getTopic("fuck");
-        rTopic.addListener(String.class, new DelMessageListener());
     }
 }
