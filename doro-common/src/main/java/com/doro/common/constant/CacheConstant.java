@@ -29,10 +29,14 @@ public class CacheConstant {
      */
     public static final String CACHE_PREFIX = "CACHE_";
 
-    public static final String CACHE_DEFAULT_AREA = "DEFAULT_AREA";
-    public static final String CACHE_SYNC = "CACHE_SYNC";
-    public static final String CACHE_PROPERTIES = "CACHE_PROPERTIES";
+    /**
+     * 默认缓存超时时长
+     */
     public static final Duration CACHE_DEFAULT_DURATION = Duration.ofMinutes(15);
+
+    /**
+     * 默认缓存容量
+     */
     public static final long CACHE_DEFAULT_MAX_SIZE = 1024;
 
     /**
@@ -40,8 +44,9 @@ public class CacheConstant {
      */
     public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
 
-    public static final String ENUM_RESPONSE_CACHE = "ENUM_RESPONSE_CACHE";
-
+    /**
+     * 删除本地缓存的主题
+     */
     public static final String DEL_LOCAL_CACHE_TOPIC = "DEL_LOCAL_CACHE";
 
 }

@@ -6,7 +6,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Component;
 
 /**
- * 缓存工具包
+ * 本地缓存工具类
  *
  * @author jiage
  */
@@ -21,15 +21,26 @@ public class LocalCacheUtil {
             .expireAfterAccess(CacheConstant.CACHE_DEFAULT_DURATION)
             .build();
 
+    /**
+     * 获取缓存
+     */
     @SuppressWarnings("unchecked")
     public static <T> T get(String key) {
         return (T) LOCAL_CACHE.getIfPresent(key);
     }
 
+    /**
+     * 添加缓存
+     */
     public static void put(String key, Object value) {
         LOCAL_CACHE.put(key, value);
     }
 
+    /**
+     * 没有缓存则添加，有则直接返回
+     *
+     * @return 没有则返回当前值，有则返回缓存中的值
+     */
     @SuppressWarnings("unchecked")
     public static <T> T putIfAbsent(String key, T value) {
         Object existValue = LOCAL_CACHE.getIfPresent(key);
@@ -41,6 +52,9 @@ public class LocalCacheUtil {
         }
     }
 
+    /**
+     * 删除缓存
+     */
     public static void remove(String key) {
         LOCAL_CACHE.invalidate(key);
     }
