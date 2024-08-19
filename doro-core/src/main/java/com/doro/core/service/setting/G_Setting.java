@@ -1,4 +1,4 @@
-package com.doro.core.properties;
+package com.doro.core.service.setting;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

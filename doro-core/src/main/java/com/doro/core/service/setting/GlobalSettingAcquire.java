@@ -1,4 +1,4 @@
-package com.doro.core.properties;
+package com.doro.core.service.setting;
 
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.MultiCacheUtil;
@@ -46,7 +46,7 @@ public class GlobalSettingAcquire {
             throw new SystemException("系统异常");
         }
 
-        Map<String, String> map = globalSettingService.getAll()
+        Map<String, String> map = globalSettingList
                 .stream()
                 .collect(Collectors.toMap(GlobalSetting::getK, GlobalSetting::getV));
         MultiCacheUtil.put(CacheConstant.GLOBAL_SETTING, map);

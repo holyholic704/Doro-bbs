@@ -1,7 +1,7 @@
 package com.doro.core.utils;
 
-import com.doro.core.properties.G_Setting;
-import com.doro.core.properties.GlobalSettingAcquire;
+import com.doro.core.service.setting.G_Setting;
+import com.doro.core.service.setting.GlobalSettingAcquire;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

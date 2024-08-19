@@ -5,8 +5,9 @@ import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.LockUtil;
 import com.doro.common.api.MyLock;
 import com.doro.common.constant.CacheConstant;
-import com.doro.core.properties.G_Setting;
 import com.doro.core.service.GlobalSettingService;
+import com.doro.core.service.setting.G_Setting;
+import com.doro.core.service.setting.GlobalSettingAcquire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,7 @@ public class GlobalSettingInit {
         MyLock lock = LockUtil.tryLock(CacheConstant.INIT_GLOBAL_SETTING);
         if (lock != null) {
             this.check();
+            GlobalSettingAcquire.init();
             lock.unlockAsync();
         }
     }
@@ -55,10 +57,6 @@ public class GlobalSettingInit {
         Map<String, GlobalSetting> globalSettingMap = globalSettingService.getAllMap();
         filterMap(globalSettingTemplateMap, globalSettingMap);
         doInsertOrDelete(globalSettingTemplateMap, globalSettingMap);
-    }
-
-    private void addCache() {
-//        RemoteCacheUtil.put();
     }
 
     /**

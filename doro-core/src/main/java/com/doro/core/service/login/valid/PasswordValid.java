@@ -4,8 +4,8 @@ import cn.hutool.core.util.ReUtil;
 import com.doro.common.constant.LoginConstant;
 import com.doro.common.constant.RegexConstant;
 import com.doro.core.model.request.RequestUser;
-import com.doro.core.properties.G_Setting;
-import com.doro.core.properties.GlobalSettingAcquire;
+import com.doro.core.service.setting.G_Setting;
+import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.utils.LoginValidUtil;
 

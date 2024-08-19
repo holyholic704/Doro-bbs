@@ -1,4 +1,4 @@
-package com.doro.core.properties;
+package com.doro.core.service.setting;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,7 +1,7 @@
 package com.doro.core.filter;
 
 import com.doro.common.constant.SecurityConstant;
-import com.doro.core.properties.CommonSecurityProperties;
+import com.doro.core.service.setting.CommonSecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
