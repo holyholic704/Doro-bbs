@@ -2,7 +2,7 @@ package com.doro.cache.utils;
 
 import com.doro.cache.api.AcquireLock;
 import com.doro.cache.api.MyLock;
-import com.doro.cache.constant.CacheConstant;
+import com.doro.cache.constant.LockConstant;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -238,8 +238,8 @@ public class LockUtil {
      * @return 锁对象
      */
     private static InnerLock getLock(String key, boolean fair) {
-        return new InnerLock(fair ? redissonClient.getFairLock(CacheConstant.LOCK_FAIR_PREFIX + key)
-                : redissonClient.getLock(CacheConstant.LOCK_PREFIX + key));
+        return new InnerLock(fair ? redissonClient.getFairLock(LockConstant.LOCK_FAIR_PREFIX + key)
+                : redissonClient.getLock(LockConstant.LOCK_PREFIX + key));
     }
 
     private final static class InnerLock implements MyLock, AcquireLock {

@@ -2,9 +2,9 @@ package com.doro.core.init;
 
 import cn.hutool.core.map.MapUtil;
 import com.doro.bean.setting.GlobalSetting;
-import com.doro.cache.utils.LockUtil;
 import com.doro.cache.api.MyLock;
-import com.doro.cache.constant.CacheConstant;
+import com.doro.cache.constant.LockConstant;
+import com.doro.cache.utils.LockUtil;
 import com.doro.core.service.GlobalSettingService;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
@@ -41,7 +41,7 @@ public class GlobalSettingInit {
     @PostConstruct
     private void run() {
         // 同一时间只允许一个节点可以进行初始化
-        MyLock lock = LockUtil.tryLock(CacheConstant.INIT_GLOBAL_SETTING);
+        MyLock lock = LockUtil.tryLock(LockConstant.INIT_GLOBAL_SETTING);
         if (lock != null) {
             this.check();
             GlobalSettingAcquire.init();
