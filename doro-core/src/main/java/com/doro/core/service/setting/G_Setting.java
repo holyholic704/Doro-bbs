@@ -69,6 +69,11 @@ public enum G_Setting {
      * JWT 超时时间
      */
     JWT_EXPIRATION(60 * 60 * 24, Long::parseLong),
+
+    /**
+     * Gateway 携带标签
+     */
+    GATEWAY_HEADER("", v -> v),
     ;
 
     /**

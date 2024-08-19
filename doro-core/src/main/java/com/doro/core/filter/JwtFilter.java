@@ -1,8 +1,8 @@
 package com.doro.core.filter;
 
 import com.doro.common.constant.SecurityConstant;
-import com.doro.core.service.setting.CommonSecurityProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.doro.core.service.setting.G_Setting;
+import com.doro.core.service.setting.GlobalSettingAcquire;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,13 +20,6 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final CommonSecurityProperties commonSecurityProperties;
-
-    @Autowired
-    public JwtFilter(CommonSecurityProperties commonSecurityProperties) {
-        this.commonSecurityProperties = commonSecurityProperties;
-    }
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (fromGateway(request)) {
@@ -36,7 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean fromGateway(HttpServletRequest request) {
-        String gatewayHeader = request.getHeader(SecurityConstant.GATEWAY_HEAD);
-        return commonSecurityProperties.getGatewayHeader().equals(gatewayHeader);
+        String from = request.getHeader(SecurityConstant.GATEWAY_HEAD);
+        String gatewayHeader = GlobalSettingAcquire.get(G_Setting.GATEWAY_HEADER);
+        return gatewayHeader.equals(from);
     }
 }
