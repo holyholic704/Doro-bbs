@@ -3,6 +3,11 @@ package com.doro.core.service.login.valid;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 
+/**
+ * 登录注册校验
+ *
+ * @author jiage
+ */
 @FunctionalInterface
 public interface LoginValid<T, R> {
 

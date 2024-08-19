@@ -6,6 +6,8 @@ import com.doro.core.utils.LoginValidUtil;
 
 /**
  * 用户名校验
+ *
+ * @author jiage
  */
 public class UsernameValid implements LoginValid<RequestUser, MyAuthenticationToken> {
 

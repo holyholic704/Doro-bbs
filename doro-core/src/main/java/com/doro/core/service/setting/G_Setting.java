@@ -73,7 +73,7 @@ public enum G_Setting {
     /**
      * Gateway 携带标签
      */
-    GATEWAY_HEADER("", v -> v),
+    GATEWAY_HEADER("lumanmanqixiuyuanxi", v -> v),
     ;
 
     /**

@@ -7,6 +7,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+/**
+ * 自定义用户信息
+ *
+ * @author jiage
+ */
 @Data
 @Accessors(chain = true)
 public class MyUserDetails implements UserDetails {

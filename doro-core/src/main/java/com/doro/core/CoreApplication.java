@@ -7,6 +7,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.ComponentScan;
 
+/**
+ * 应用！启动！！！
+ *
+ * @author jiage
+ */
 @EnableDubbo
 @EnableDiscoveryClient
 @SpringBootApplication

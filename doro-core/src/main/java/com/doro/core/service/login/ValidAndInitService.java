@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 
 /**
  * 参数校验
+ *
+ * @author jiage
  */
 @Component
 public class ValidAndInitService {
