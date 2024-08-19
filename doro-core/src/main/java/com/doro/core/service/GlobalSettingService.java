@@ -8,20 +8,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 全局配置服务
+ *
+ * @author jiage
  */
 @Service
 public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, GlobalSetting> {
 
     public List<GlobalSetting> getAll() {
         return this.list();
-    }
-
-    public Map<String, GlobalSetting> getAllMap() {
-        return this.getBaseMapper().getAllMap();
     }
 
     public boolean deleteByIdList(Collection<?> idCollection) {

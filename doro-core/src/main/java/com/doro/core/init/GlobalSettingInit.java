@@ -1,5 +1,6 @@
 package com.doro.core.init;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.api.MyLock;
@@ -54,8 +55,15 @@ public class GlobalSettingInit {
      */
     private void check() {
         Map<String, G_Setting> globalSettingTemplateMap = Arrays.stream(G_Setting.values()).collect(Collectors.toMap(G_Setting::name, Function.identity()));
-        Map<String, GlobalSetting> globalSettingMap = globalSettingService.getAllMap();
-        filterMap(globalSettingTemplateMap, globalSettingMap);
+
+        Map<String, GlobalSetting> globalSettingMap = null;
+        List<GlobalSetting> globalSettingList = globalSettingService.getAll();
+        if (CollUtil.isNotEmpty(globalSettingList)) {
+            globalSettingMap = globalSettingList.stream().collect(Collectors.toMap(GlobalSetting::getK, Function.identity()));
+            // 过滤
+            filterMap(globalSettingTemplateMap, globalSettingMap);
+        }
+
         doInsertOrDelete(globalSettingTemplateMap, globalSettingMap);
     }
 
@@ -68,7 +76,7 @@ public class GlobalSettingInit {
 
         // 添加数据库中没有的字段
         if (MapUtil.isNotEmpty(gSettingMap)) {
-            status = this.createStatus(status);
+            status = this.createStatus(null);
             Collection<G_Setting> gSettings = gSettingMap.values();
             List<GlobalSetting> list = new ArrayList<>();
             for (G_Setting gSetting : gSettings) {
@@ -101,15 +109,13 @@ public class GlobalSettingInit {
      * 字段过滤，保留数据库中没有或多余的字段
      */
     private void filterMap(Map<String, G_Setting> gSettingMap, Map<String, GlobalSetting> globalSettingMap) {
-        if (MapUtil.isNotEmpty(globalSettingMap)) {
-            Iterator<Map.Entry<String, GlobalSetting>> iterator = globalSettingMap.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, GlobalSetting> entry = iterator.next();
-                // 只关心字段有没有，不关心值是否相同
-                if (gSettingMap.containsKey(entry.getKey())) {
-                    iterator.remove();
-                    gSettingMap.remove(entry.getKey());
-                }
+        Iterator<Map.Entry<String, GlobalSetting>> iterator = globalSettingMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, GlobalSetting> entry = iterator.next();
+            // 只关心字段有没有，不关心值是否相同
+            if (gSettingMap.containsKey(entry.getKey())) {
+                iterator.remove();
+                gSettingMap.remove(entry.getKey());
             }
         }
     }

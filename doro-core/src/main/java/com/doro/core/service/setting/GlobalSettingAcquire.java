@@ -1,8 +1,9 @@
 package com.doro.core.service.setting;
 
+import cn.hutool.core.collection.CollUtil;
 import com.doro.bean.setting.GlobalSetting;
-import com.doro.cache.utils.MultiCacheUtil;
 import com.doro.cache.constant.CacheConstant;
+import com.doro.cache.utils.MultiCacheUtil;
 import com.doro.core.exception.SystemException;
 import com.doro.core.service.GlobalSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * 获取全局配置
+ *
  * @author jiage
  */
 @Component
@@ -26,13 +29,17 @@ public class GlobalSettingAcquire {
         GlobalSettingAcquire.globalSettingService = globalSettingService;
     }
 
+    /**
+     * 获取配置的值
+     */
     public static <T> T get(G_Setting gSetting) {
         Map<String, String> map = MultiCacheUtil.get(CacheConstant.GLOBAL_SETTING);
+        // 集合不为空，就可认为该字段一定存在
         if (map != null) {
-            return convert(map.get(gSetting.name()), gSetting.getFunction());
+            return convert(map.get(gSetting.name()), gSetting.getConvert());
         }
         map = init();
-        return convert(map.get(gSetting.name()), gSetting.getFunction());
+        return convert(map.get(gSetting.name()), gSetting.getConvert());
     }
 
     @SuppressWarnings("unchecked")
@@ -40,9 +47,13 @@ public class GlobalSettingAcquire {
         return (T) function.apply(value);
     }
 
+    /**
+     * 初始化，将数据库中的数据添加到缓存中
+     */
     public static Map<String, String> init() {
         List<GlobalSetting> globalSettingList = globalSettingService.getAll();
-        if (globalSettingList == null) {
+        // 不可能出现没有数据的情况
+        if (CollUtil.isEmpty(globalSettingList)) {
             throw new SystemException("系统异常");
         }
 
