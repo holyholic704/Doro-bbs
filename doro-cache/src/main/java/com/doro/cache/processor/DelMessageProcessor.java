@@ -1,7 +1,7 @@
 package com.doro.cache.processor;
 
+import com.doro.cache.constant.CacheConstant;
 import com.doro.cache.listener.DelMessageListener;
-import com.doro.common.constant.CacheConstant;
 import com.doro.common.constant.Separator;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
+ * 删除消息处理
+ *
  * @author jiage
  */
 @Component

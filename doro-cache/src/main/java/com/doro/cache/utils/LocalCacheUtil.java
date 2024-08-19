@@ -1,6 +1,6 @@
 package com.doro.cache.utils;
 
-import com.doro.common.constant.CacheConstant;
+import com.doro.cache.constant.CacheConstant;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Component;

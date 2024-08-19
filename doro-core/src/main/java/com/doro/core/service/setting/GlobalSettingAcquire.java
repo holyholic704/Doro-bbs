@@ -2,7 +2,7 @@ package com.doro.core.service.setting;
 
 import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.utils.MultiCacheUtil;
-import com.doro.common.constant.CacheConstant;
+import com.doro.cache.constant.CacheConstant;
 import com.doro.core.exception.SystemException;
 import com.doro.core.service.GlobalSettingService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package com.doro.cache.utils;
 
-import com.doro.common.api.AcquireLock;
-import com.doro.common.api.MyLock;
-import com.doro.common.constant.CacheConstant;
+import com.doro.cache.api.AcquireLock;
+import com.doro.cache.api.MyLock;
+import com.doro.cache.constant.CacheConstant;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

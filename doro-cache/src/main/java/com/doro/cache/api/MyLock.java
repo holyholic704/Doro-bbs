@@ -1,8 +1,10 @@
-package com.doro.common.api;
+package com.doro.cache.api;
 
 /**
  * 分布式锁操作
  * 不包括加锁操作，请使用 AcquireLock
+ *
+ * @author jiage
  */
 public interface MyLock {
 

@@ -4,6 +4,7 @@ import com.doro.cache.utils.LocalCacheUtil;
 import org.redisson.api.listener.MessageListener;
 
 /**
+ * 删除消息监听器
  *
  * @author jiage
  */

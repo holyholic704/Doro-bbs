@@ -1,6 +1,6 @@
 package com.doro.cache.utils;
 
-import com.doro.common.constant.CacheConstant;
+import com.doro.cache.constant.CacheConstant;
 import org.redisson.api.BatchResult;
 import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;

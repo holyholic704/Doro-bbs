@@ -1,4 +1,4 @@
-package com.doro.common.constant;
+package com.doro.cache.constant;
 
 import java.time.Duration;
 

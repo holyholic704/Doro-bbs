@@ -1,10 +1,12 @@
-package com.doro.common.api;
+package com.doro.cache.api;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式锁的获取
  * 不包括除加锁以外的操作，请使用 MyLock
+ *
+ * @author jiage
  */
 public interface AcquireLock {
 
