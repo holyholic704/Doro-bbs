@@ -1,7 +1,7 @@
 package com.doro.cache.processor;
 
 import com.doro.cache.constant.CacheConstant;
-import com.doro.cache.listener.DelMessageListener;
+import com.doro.cache.listener.MyMessageListener;
 import com.doro.common.constant.Separator;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
@@ -25,7 +25,7 @@ public class DelMessageProcessor {
     @Autowired
     public DelMessageProcessor(RedissonClient redissonClient) {
         delTopic = redissonClient.getTopic(CacheConstant.DEL_LOCAL_CACHE_TOPIC);
-        delTopic.addListener(String.class, new DelMessageListener());
+        delTopic.addListener(String.class, new MyMessageListener());
     }
 
     public void send(String key) {
