@@ -64,6 +64,8 @@ public class RemoteCacheUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T putIfAbsent(String key, T value, Duration duration) {
+        key = CacheConstant.CACHE_PREFIX + key;
+
         RBatch rBatch = createBatch();
         rBatch.getBucket(key).getAsync();
         rBatch.getBucket(key).setIfAbsentAsync(value, duration);
@@ -84,7 +86,7 @@ public class RemoteCacheUtil {
     }
 
     private static RBucket<Object> getBucket(String name) {
-        return redissonClient.getBucket(name);
+        return redissonClient.getBucket(CacheConstant.CACHE_PREFIX + name);
     }
 
     private static RBatch createBatch() {

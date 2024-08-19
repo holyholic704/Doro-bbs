@@ -1,7 +1,6 @@
 package com.doro.core.service.login;
 
 import com.doro.bean.User;
-import com.doro.cache.utils.RemoteCacheUtil;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
 import com.doro.core.service.UserService;
@@ -19,8 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-
 /**
  * 登录注册服务
  *
@@ -29,14 +26,18 @@ import java.time.Duration;
 @Service
 public class LoginService {
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final ValidAndInitService validAndInitService;
+    private final UserService userService;
+
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private ValidAndInitService validAndInitService;
-    @Autowired
-    private UserService userService;
+    public LoginService(BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, ValidAndInitService validAndInitService, UserService userService) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.validAndInitService = validAndInitService;
+        this.userService = userService;
+    }
 
     /**
      * 登录
@@ -93,12 +94,7 @@ public class LoginService {
      */
     public ResponseUser initToken(Authentication authentication) {
         MyAuthenticationToken authenticationToken = (MyAuthenticationToken) authentication;
-        // 生成token
-        String token = JwtUtil.generate((String) authenticationToken.getPrincipal());
-        String username = (String) authenticationToken.getPrincipal();
-        // 缓存token
-        RemoteCacheUtil.put(username, token, Duration.ofSeconds(60 * 60 * 24));
-        return new ResponseUser(token);
+        return new ResponseUser(JwtUtil.generateAndCache((String) authenticationToken.getPrincipal(), (Long) authenticationToken.getDetails()));
     }
 
     /**

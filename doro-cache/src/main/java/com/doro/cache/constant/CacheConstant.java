@@ -15,6 +15,16 @@ public class CacheConstant {
     public static final String CACHE_PREFIX = "CACHE_";
 
     /**
+     * JWT 缓存前缀
+     */
+    public static final String JWT_PREFIX = "JWT_";
+
+    /**
+     * 用户信息缓存前缀
+     */
+    public static final String USER_INFO_PREFIX = "USER_INFO_";
+
+    /**
      * 默认缓存超时时长
      */
     public static final Duration CACHE_DEFAULT_DURATION = Duration.ofMinutes(15);

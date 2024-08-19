@@ -21,4 +21,10 @@ public class LoginConstant {
      * 登录方式：使用邮箱
      */
     public static final String USE_EMAIL = "email";
+
+    public static final String CLAIMS_USER_ID = "USER_ID";
+
+    public static final String JWT_HEADER = "Authorization";
+
+    public static final String JWT_SUFFIX = "Bearer";
 }

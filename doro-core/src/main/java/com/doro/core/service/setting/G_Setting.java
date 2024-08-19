@@ -58,7 +58,7 @@ public enum G_Setting {
     /**
      * JWT 标签
      */
-    JWT_HEADER("email", v -> v),
+    JWT_HEADER("dorodorodoro", v -> v),
 
     /**
      * JWT 秘钥
@@ -68,7 +68,7 @@ public enum G_Setting {
     /**
      * JWT 超时时间
      */
-    JWT_EXPIRATION(60 * 60 * 24, Long::parseLong),
+    JWT_EXPIRATION(60 * 60 * 24, Integer::parseInt),
 
     /**
      * Gateway 携带标签

@@ -26,14 +26,14 @@ public class LocalCacheUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T get(String key) {
-        return (T) LOCAL_CACHE.getIfPresent(key);
+        return (T) LOCAL_CACHE.getIfPresent(CacheConstant.CACHE_PREFIX + key);
     }
 
     /**
      * 添加缓存
      */
     public static void put(String key, Object value) {
-        LOCAL_CACHE.put(key, value);
+        LOCAL_CACHE.put(CacheConstant.CACHE_PREFIX + key, value);
     }
 
     /**
@@ -43,11 +43,11 @@ public class LocalCacheUtil {
      */
     @SuppressWarnings("unchecked")
     public static <T> T putIfAbsent(String key, T value) {
-        Object existValue = LOCAL_CACHE.getIfPresent(key);
+        Object existValue = LOCAL_CACHE.getIfPresent(CacheConstant.CACHE_PREFIX + key);
         if (existValue != null) {
             return (T) existValue;
         } else {
-            LOCAL_CACHE.put(key, value);
+            LOCAL_CACHE.put(CacheConstant.CACHE_PREFIX + key, value);
             return value;
         }
     }
@@ -56,6 +56,6 @@ public class LocalCacheUtil {
      * 删除缓存
      */
     public static void remove(String key) {
-        LOCAL_CACHE.invalidate(key);
+        LOCAL_CACHE.invalidate(CacheConstant.CACHE_PREFIX + key);
     }
 }

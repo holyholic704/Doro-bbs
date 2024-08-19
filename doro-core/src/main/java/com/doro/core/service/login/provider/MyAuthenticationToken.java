@@ -6,6 +6,11 @@ import org.springframework.util.Assert;
 
 import java.util.Collection;
 
+/**
+ * 自定义认证信息
+ *
+ * @author jiage
+ */
 public class MyAuthenticationToken extends AbstractAuthenticationToken {
 
     /**

@@ -21,11 +21,6 @@ public class UserService extends ServiceImpl<UserMapper, User> {
                 .eq(User::getUsername, username));
     }
 
-    public User getUserByUsername(String username, User user) {
-        return this.getOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, username));
-    }
-
     /**
      * 根据手机号获取用户信息
      */

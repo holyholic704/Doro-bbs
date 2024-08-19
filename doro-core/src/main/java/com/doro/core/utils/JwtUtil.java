@@ -1,5 +1,9 @@
 package com.doro.core.utils;
 
+import cn.hutool.core.date.DateUtil;
+import com.doro.cache.constant.CacheConstant;
+import com.doro.cache.utils.RemoteCacheUtil;
+import com.doro.common.constant.LoginConstant;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import io.jsonwebtoken.Claims;
@@ -8,58 +12,101 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JWT 工具包
+ * JWT 工具类
+ *
+ * @author jiage
  */
 @Component
 public class JwtUtil {
 
     /**
-     * 生成token
+     * 生成 Token
      *
-     * @param user 用户信息
-     * @return token
+     * @param username 用户名
+     * @param userId   用户 ID
+     * @return Token
      */
-    public static String generate(String user) {
-        Map<String, Object> claims = new HashMap<>();
+    public static String generate(String username, Long userId) {
+        Map<String, Object> claims = new HashMap<>(1);
+        claims.put(LoginConstant.CLAIMS_USER_ID, userId);
+
+        Date now = new Date();
 
         return Jwts.builder()
                 .claims(claims)
-                .subject(user)
-                .expiration(generateExpiration())
-                .issuedAt(new Date())
+                // 主题
+                .subject(username)
+                // 过期时间
+                .expiration(generateExpiration(now))
+                // 签发时间
+                .issuedAt(now)
+                // 压缩方式
                 .compressWith(Jwts.ZIP.DEF)
+                // 签名
                 .signWith(getSecretKey(), Jwts.SIG.HS256)
                 .compact();
     }
 
     /**
-     * 获取到期时间
+     * 生成 Token，并添加到缓存
      *
-     * @return 到期时间
+     * @param username 用户名
+     * @param userId   用户 ID
+     * @return Token
      */
-    private static Date generateExpiration() {
-        long jwtExpiration = GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION);
-        return new Date(System.currentTimeMillis() + jwtExpiration * 1000);
+    public static String generateAndCache(String username, Long userId) {
+        String token = generate(username, userId);
+        RemoteCacheUtil.put(CacheConstant.JWT_PREFIX + username, token, Duration.ofSeconds(GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION)));
+        return token;
     }
 
     /**
-     * 获取token中的信息
-     *
-     * @param token token
-     * @return token中的信息
+     * Token 是否过期
      */
-    private static Claims getClaimsFromToken(String token) {
+    public static boolean isExpired(String token) {
+        return getExpiration(token).before(new Date());
+    }
+
+    /**
+     * 生成到期时间
+     */
+    private static Date generateExpiration(Date now) {
+        return DateUtil.offsetSecond(now, GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION));
+    }
+
+    /**
+     * 获取 Token 中的信息
+     */
+    private static Claims getPayload(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey()).build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
+    /**
+     * 获取用户名
+     */
+    public static String getUsername(String token) {
+        return getPayload(token).getSubject();
+    }
+
+    /**
+     * 获取到期时间
+     */
+    public static Date getExpiration(String token) {
+        return getPayload(token).getExpiration();
+    }
+
+    /**
+     * 获取秘钥
+     */
     private static SecretKey getSecretKey() {
         String jwtSecret = GlobalSettingAcquire.get(G_Setting.JWT_SECRET);
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
