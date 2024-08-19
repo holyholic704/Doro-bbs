@@ -13,8 +13,6 @@ public class Separator {
 
     public static final String SLASH = "/";
 
-    public static final String SLASH_HTTP = "//";
-
     public static final String HASH = "#";
 
     public static final String UNDERSCORE = "_";

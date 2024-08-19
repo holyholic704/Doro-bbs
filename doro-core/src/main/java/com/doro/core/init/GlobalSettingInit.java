@@ -6,6 +6,7 @@ import com.doro.bean.setting.GlobalSetting;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.constant.LockConstant;
 import com.doro.cache.utils.LockUtil;
+import com.doro.common.api.Runner;
 import com.doro.core.service.GlobalSettingService;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
@@ -16,7 +17,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 @Component
 @DependsOn("lockUtil")
-public class GlobalSettingInit {
+public class GlobalSettingInit implements Runner {
 
     private final PlatformTransactionManager transactionManager;
     private final GlobalSettingService globalSettingService;
@@ -39,8 +39,8 @@ public class GlobalSettingInit {
         this.globalSettingService = globalSettingService;
     }
 
-    @PostConstruct
-    private void run() {
+    @Override
+    public void run() {
         // 同一时间只允许一个节点可以进行初始化
         MyLock lock = LockUtil.tryLock(LockConstant.INIT_GLOBAL_SETTING);
         if (lock != null) {

@@ -5,6 +5,8 @@ import lombok.Getter;
 
 /**
  * 统一响应枚举
+ *
+ * @author jiage
  */
 @Getter
 @AllArgsConstructor

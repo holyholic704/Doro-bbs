@@ -1,11 +1,10 @@
 package com.doro.core.init;
 
+import com.doro.common.api.Runner;
 import com.github.yitter.contract.IdGeneratorOptions;
 import com.github.yitter.idgen.YitIdHelper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 初始化分布式 ID
@@ -13,13 +12,13 @@ import javax.annotation.PostConstruct;
  * @author jiage
  */
 @Component
-public class IdGeneratorInit {
+public class IdGeneratorInit implements Runner {
 
     @Value("${worker-id}")
     private short workerId;
 
-    @PostConstruct
-    private void run() {
+    @Override
+    public void run() {
         IdGeneratorOptions options = new IdGeneratorOptions(workerId);
         YitIdHelper.setIdGenerator(options);
     }

@@ -1,17 +1,17 @@
 package com.doro.core.service.login;
 
 import com.doro.bean.User;
+import com.doro.cache.utils.RemoteCacheUtil;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
-import com.doro.core.service.setting.G_Setting;
-import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.service.UserService;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
+import com.doro.core.service.setting.G_Setting;
+import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
 import com.doro.core.utils.LoginValidUtil;
 import com.doro.res.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 /**
  * 登录注册服务
@@ -33,8 +33,6 @@ public class LoginService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private ValidAndInitService validAndInitService;
     @Autowired
@@ -99,7 +97,7 @@ public class LoginService {
         String token = JwtUtil.generate((String) authenticationToken.getPrincipal());
         String username = (String) authenticationToken.getPrincipal();
         // 缓存token
-        redisTemplate.opsForValue().set(username, token, 60 * 60 * 24, TimeUnit.SECONDS);
+        RemoteCacheUtil.put(username, token, Duration.ofSeconds(60 * 60 * 24));
         return new ResponseUser(token);
     }
 
