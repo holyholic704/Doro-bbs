@@ -30,8 +30,8 @@ public class CacheConstant {
     public static final String GLOBAL_SETTING = "GLOBAL_SETTING";
 
     /**
-     * 删除本地缓存的主题
+     * 刷新本地缓存的主题
      */
-    public static final String DEL_LOCAL_CACHE_TOPIC = "DEL_LOCAL_CACHE";
+    public static final String FLUSH_LOCAL_CACHE_TOPIC = "FLUSH_LOCAL_CACHE";
 
 }

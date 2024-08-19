@@ -1,7 +1,6 @@
 package com.doro.cache.utils;
 
-import com.doro.cache.processor.DelMessageProcessor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.doro.cache.flush.FlushLocalCacheProcessor;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -13,13 +12,6 @@ import java.time.Duration;
  */
 @Component
 public class MultiCacheUtil {
-
-    private static DelMessageProcessor delMessageProcessor;
-
-    @Autowired
-    public void setDelMessageProcessor(DelMessageProcessor delMessageProcessor) {
-        MultiCacheUtil.delMessageProcessor = delMessageProcessor;
-    }
 
     /**
      * 获取缓存
@@ -80,6 +72,6 @@ public class MultiCacheUtil {
      */
     private static void removeLocalAndPublish(String key) {
         LocalCacheUtil.remove(key);
-        delMessageProcessor.send(key);
+        FlushLocalCacheProcessor.send(key);
     }
 }
