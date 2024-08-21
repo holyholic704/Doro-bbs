@@ -1,0 +1,48 @@
+package com.doro.bean;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.doro.bean.base.BaseBean;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+/**
+ *
+ * @author jiage
+ */
+@Data
+@EqualsAndHashCode(callSuper = true)
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@TableName("post")
+public class Post extends BaseBean {
+
+    /**
+     * 作者 ID
+     */
+    private Long authorId;
+
+    /**
+     * 正文
+     */
+    private String text;
+
+    /**
+     * 文章类型 ID
+     */
+    private Long typeId;
+
+    /**
+     * 版块 ID
+     */
+    private Long sectionId;
+
+    /**
+     * 是否有效
+     */
+    private Boolean activated;
+
+}
