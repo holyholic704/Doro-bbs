@@ -1,11 +1,14 @@
 package com.doro.core.model.response;
 
 import com.doro.bean.User;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+/**
+ * @author jiage
+ */
+@Setter
+@Getter
 public class ResponseUser {
 
     private Long id;

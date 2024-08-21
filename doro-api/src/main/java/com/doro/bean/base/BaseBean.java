@@ -8,6 +8,9 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * @author jiage
+ */
 @Setter
 @Getter
 public class BaseBean implements Serializable {

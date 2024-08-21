@@ -1,10 +1,15 @@
 package com.doro.core.model.request;
 
 import com.doro.bean.User;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+/**
+ * @author jiage
+ */
+@Getter
+@Setter
 @EqualsAndHashCode(callSuper = true)
 public class RequestUser extends User {
 
