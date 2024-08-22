@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
+ * 版块
+ *
  * @author jiage
  */
 @Data
@@ -16,8 +18,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("user")
+@TableName("section")
 public class Section extends BaseBean {
 
+    /**
+     * 名称
+     */
     private String name;
 }

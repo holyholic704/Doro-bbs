@@ -14,12 +14,19 @@ import java.util.Date;
 @Component
 public class MybatisPlusFillHandler implements MetaObjectHandler {
 
+    /**
+     * 插入时填充
+     */
     @Override
     public void insertFill(MetaObject metaObject) {
-        this.setFieldValByName("createTime", new Date(), metaObject);
-        this.setFieldValByName("updateTime", new Date(), metaObject);
+        Date now = new Date();
+        this.setFieldValByName("createTime", now, metaObject);
+        this.setFieldValByName("updateTime", now, metaObject);
     }
 
+    /**
+     * 修改时填充
+     */
     @Override
     public void updateFill(MetaObject metaObject) {
         this.setFieldValByName("updateTime", new Date(), metaObject);

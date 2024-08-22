@@ -5,15 +5,16 @@ import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * 基础实体
+ *
  * @author jiage
  */
 @Setter
 @Getter
-public class BaseBean implements Serializable {
+public class BaseBean extends BaseModel {
 
     /**
      * 主键

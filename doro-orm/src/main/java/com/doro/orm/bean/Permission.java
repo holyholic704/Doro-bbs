@@ -8,6 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+/**
+ * 权限
+ *
+ * @author jiage
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
