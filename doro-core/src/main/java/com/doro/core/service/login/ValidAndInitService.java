@@ -2,7 +2,10 @@ package com.doro.core.service.login;
 
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
-import com.doro.core.valid.login.*;
+import com.doro.core.valid.login.AbstractLoginValid;
+import com.doro.core.valid.login.EmailLoginValid;
+import com.doro.core.valid.login.PasswordLoginValid;
+import com.doro.core.valid.login.PhoneLoginValid;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,10 +16,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidAndInitService {
 
-    private final AbstractLoginValid first = new UsernameValid();
-    private final AbstractLoginValid second = new PhoneLoginValid();
-    private final AbstractLoginValid third = new EmailLoginValid();
-    private final AbstractLoginValid forth = new PasswordValid();
+    private final AbstractLoginValid first = new PhoneLoginValid();
+    private final AbstractLoginValid second = new EmailLoginValid();
+    private final AbstractLoginValid third = new PasswordLoginValid();
 
     /**
      * 检验参数
@@ -27,7 +29,6 @@ public class ValidAndInitService {
     public MyAuthenticationToken validAndInit(RequestUser requestUser) {
         return first.and(second)
                 .and(third)
-                .and(forth)
                 .valid(requestUser);
     }
 }

@@ -13,9 +13,11 @@ import com.doro.core.service.setting.GlobalSettingAcquire;
  *
  * @author jiage
  */
-public class PasswordValid extends AbstractLoginValid {
+public class PasswordLoginValid extends AbstractLoginValid {
+
     @Override
     public MyAuthenticationToken valid(RequestUser requestUser) {
+        validUsername(requestUser.getUsername());
         validPassword(requestUser.getPassword());
 
         // 默认使用用户名密码登录

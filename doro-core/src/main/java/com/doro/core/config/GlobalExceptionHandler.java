@@ -30,6 +30,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 参数校验异常
+     * Spring 的权限校验，灵活性不足，只少量使用
      */
     @SuppressWarnings("ConstantConditions")
     @ResponseStatus(HttpStatus.OK)
