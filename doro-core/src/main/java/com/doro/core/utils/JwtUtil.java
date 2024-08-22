@@ -62,7 +62,8 @@ public class JwtUtil {
      */
     public static String generateAndCache(String username, Long userId) {
         String token = generate(username, userId);
-        RemoteCacheUtil.put(CacheConstant.JWT_PREFIX + username, token, Duration.ofSeconds(GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION)));
+        int jwtExpiration = GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION);
+        RemoteCacheUtil.put(CacheConstant.JWT_PREFIX + username, token, Duration.ofSeconds(jwtExpiration));
         return token;
     }
 

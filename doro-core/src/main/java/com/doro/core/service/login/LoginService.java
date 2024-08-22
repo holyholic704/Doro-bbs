@@ -1,6 +1,7 @@
 package com.doro.core.service.login;
 
 import com.doro.bean.User;
+import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
 import com.doro.core.service.UserService;
@@ -8,7 +9,6 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
-import com.doro.core.utils.LoginValidUtil;
 import com.doro.res.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -64,7 +64,7 @@ public class LoginService {
     public ResponseResult<?> register(RequestUser requestUser) {
         MyAuthenticationToken authenticationToken = validAndInitService.validAndInit(requestUser);
         // 检查是否有重复的用户
-        LoginValidUtil.userExisted(userService.existUser((String) authenticationToken.getPrincipal(), authenticationToken.getLoginType()));
+        userExisted(userService.existUser((String) authenticationToken.getPrincipal(), authenticationToken.getLoginType()));
 
         boolean userNeedActive = GlobalSettingAcquire.get(G_Setting.USER_NEED_ACTIVE);
 
@@ -94,7 +94,9 @@ public class LoginService {
      */
     public ResponseUser initToken(Authentication authentication) {
         MyAuthenticationToken authenticationToken = (MyAuthenticationToken) authentication;
-        return new ResponseUser(JwtUtil.generateAndCache((String) authenticationToken.getPrincipal(), (Long) authenticationToken.getDetails()));
+        return new ResponseUser((Long) authenticationToken.getDetails(),
+                (String) authenticationToken.getPrincipal(),
+                JwtUtil.generateAndCache((String) authenticationToken.getPrincipal(), (Long) authenticationToken.getDetails()));
     }
 
     /**
@@ -104,5 +106,11 @@ public class LoginService {
      */
     private void registerNeedActive(User user) {
         // TODO 激活功能
+    }
+
+    private void userExisted(boolean exist) {
+        if (exist) {
+            throw new ValidException("该用户已存在");
+        }
     }
 }

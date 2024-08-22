@@ -2,8 +2,8 @@ package com.doro.core.service.login.provider;
 
 import com.doro.bean.User;
 import com.doro.common.constant.LoginConstant;
+import com.doro.core.exception.ValidException;
 import com.doro.core.service.UserService;
-import com.doro.core.utils.LoginValidUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public UserDetails loadUserByUsername(String username, String loginType) throws UsernameNotFoundException {
         User user = this.getUserByType(username, loginType);
-        LoginValidUtil.userNotExist(user != null);
+        userNotExist(user != null);
         return this.buildFromUser(user);
     }
 
@@ -51,6 +51,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return userService.getUserByEmail(username);
         } else {
             return userService.getUserByUsername(username);
+        }
+    }
+
+    private void userNotExist(boolean exist) {
+        if (!exist) {
+            throw new ValidException("用户不存在");
         }
     }
 

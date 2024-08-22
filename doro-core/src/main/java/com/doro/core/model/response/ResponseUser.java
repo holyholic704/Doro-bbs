@@ -1,6 +1,5 @@
 package com.doro.core.model.response;
 
-import com.doro.bean.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,9 +16,9 @@ public class ResponseUser {
 
     private String token;
 
-    public ResponseUser(User user, String token) {
-        this.id = user.getId();
-        this.username = user.getUsername();
+    public ResponseUser(Long id, String username, String token) {
+        this.id = id;
+        this.username = username;
         this.token = token;
     }
 
