@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- *
  * @author jiage
  */
 @Data
@@ -19,6 +18,11 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @TableName("post")
 public class Post extends BaseBean {
+
+    /**
+     * 标题
+     */
+    private String title;
 
     /**
      * 作者 ID

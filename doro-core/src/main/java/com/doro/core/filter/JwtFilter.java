@@ -9,6 +9,7 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -40,13 +41,15 @@ public class JwtFilter extends OncePerRequestFilter {
         if (StrUtil.isNotEmpty(token) && StrUtil.startWith(token, LoginConstant.JWT_SUFFIX)) {
             token = token.substring(LoginConstant.JWT_SUFFIX.length());
 
-            String username = JwtUtil.getUsername(token);
+            Claims claims = JwtUtil.getPayload(token);
+            String username = JwtUtil.getUsername(claims);
             String storeToken = RemoteCacheUtil.get(CacheConstant.JWT_PREFIX + username);
 
             // 传入的 Token 是否与系统存储的相同，是否
             if (token.equals(storeToken) && !JwtUtil.isExpired(token)) {
                 // TODO 添加权限列表?
                 MyAuthenticationToken authenticationToken = new MyAuthenticationToken(username, null, null);
+                authenticationToken.setDetails(JwtUtil.getUserId(claims));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                 return true;
             }

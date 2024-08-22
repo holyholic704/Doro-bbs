@@ -33,7 +33,7 @@ public class JwtUtil {
      * @return Token
      */
     public static String generate(String username, Long userId) {
-        Map<String, Object> claims = new HashMap<>(1);
+        Map<String, Long> claims = new HashMap<>(1);
         claims.put(LoginConstant.CLAIMS_USER_ID, userId);
 
         Date now = new Date();
@@ -83,7 +83,7 @@ public class JwtUtil {
     /**
      * 获取 Token 中的信息
      */
-    private static Claims getPayload(String token) {
+    public static Claims getPayload(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey()).build()
                 .parseSignedClaims(token)
@@ -95,6 +95,27 @@ public class JwtUtil {
      */
     public static String getUsername(String token) {
         return getPayload(token).getSubject();
+    }
+
+    /**
+     * 获取用户名
+     */
+    public static String getUsername(Claims claims) {
+        return claims.getSubject();
+    }
+
+    /**
+     * 获取用户 ID
+     */
+    public static Long getUserId(String token) {
+        return getPayload(token).get(LoginConstant.CLAIMS_USER_ID, Long.class);
+    }
+
+    /**
+     * 获取用户 ID
+     */
+    public static Long getUserId(Claims claims) {
+        return claims.get(LoginConstant.CLAIMS_USER_ID, Long.class);
     }
 
     /**
