@@ -36,6 +36,7 @@ public class Post extends BaseBean {
 
     /**
      * 文章类型 ID
+     * TODO 是否需要？
      */
     private Long typeId;
 
