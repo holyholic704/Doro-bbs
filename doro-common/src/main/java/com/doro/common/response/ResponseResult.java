@@ -1,6 +1,5 @@
-package com.doro.core.response;
+package com.doro.common.response;
 
-import com.doro.cache.utils.LocalCacheUtil;
 import com.doro.common.enumeration.ResponseEnum;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +8,8 @@ import java.io.Serializable;
 
 /**
  * 统一响应
+ *
+ * @author jiage
  */
 @Getter
 @Setter
@@ -69,7 +70,7 @@ public class ResponseResult<T> implements Serializable {
     }
 
     public static <T> ResponseResult<T> error(String message) {
-        return LocalCacheUtil.putIfAbsent(message, new ResponseResult<>(message));
+        return new ResponseResult<>(message);
     }
 
     /**
@@ -80,6 +81,6 @@ public class ResponseResult<T> implements Serializable {
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> ResponseResult<T> ofEnum(ResponseEnum responseEnum) {
-        return LocalCacheUtil.putIfAbsent(responseEnum.getMessage(), new ResponseResult(responseEnum));
+        return new ResponseResult(responseEnum);
     }
 }

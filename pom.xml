@@ -20,7 +20,6 @@
         <module>doro-api</module>
         <module>doro-gateway</module>
         <module>doro-core</module>
-<!--        <module>doro-cache</module>-->
         <module>doro-orm</module>
     </modules>
 

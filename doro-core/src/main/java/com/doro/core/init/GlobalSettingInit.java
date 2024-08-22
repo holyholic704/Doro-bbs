@@ -11,7 +11,6 @@ import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.orm.bean.GlobalSetting;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
  * @author jiage
  */
 @Component
-@DependsOn("lockUtil")
+//@DependsOn("lockUtil")
 public class GlobalSettingInit implements Runner {
 
     private final PlatformTransactionManager transactionManager;

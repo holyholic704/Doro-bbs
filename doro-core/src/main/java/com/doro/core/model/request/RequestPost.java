@@ -1,5 +1,6 @@
 package com.doro.core.model.request;
 
+import com.doro.common.base.BaseRequest;
 import lombok.Getter;
 import lombok.Setter;
 

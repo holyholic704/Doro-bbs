@@ -1,7 +1,7 @@
 package com.doro.core.controller;
 
 import com.doro.core.model.request.RequestUser;
-import com.doro.core.response.ResponseResult;
+import com.doro.common.response.ResponseResult;
 import com.doro.core.service.login.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

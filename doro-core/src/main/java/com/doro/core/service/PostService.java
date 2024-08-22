@@ -3,9 +3,9 @@ package com.doro.core.service;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.doro.common.response.ResponseResult;
 import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestPost;
-import com.doro.core.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.bean.Post;
 import com.doro.orm.mapper.PostMapper;
@@ -37,8 +37,8 @@ public class PostService extends ServiceImpl<PostMapper, Post> {
     }
 
     public ResponseResult<?> page(RequestPost requestPost) {
-        Page<Post> page = new Page<>();
-        return null;
+        Page<Post> page = this.page(requestPost.asPage());
+        return ResponseResult.success(page);
     }
 
     private void valid(RequestPost requestPost) {

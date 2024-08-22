@@ -18,6 +18,12 @@
             <groupId>com.doro</groupId>
             <artifactId>doro-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>mybatis-plus-boot-starter</artifactId>
+                    <groupId>com.baomidou</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Nacos 注册中心 -->
