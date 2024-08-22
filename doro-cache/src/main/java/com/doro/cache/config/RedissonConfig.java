@@ -1,6 +1,5 @@
 package com.doro.cache.config;
 
-import com.doro.common.constant.Separator;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.Kryo5Codec;
@@ -47,7 +46,7 @@ public class RedissonConfig {
             // TODO Sentinel 支持
         } else {
             config.useSingleServer()
-                    .setAddress("redis://" + redisProperties.getHost() + Separator.COLON + redisProperties.getPort())
+                    .setAddress("redis://" + redisProperties.getHost() + ":" + redisProperties.getPort())
                     .setPassword(redisProperties.getPassword());
         }
         return config;

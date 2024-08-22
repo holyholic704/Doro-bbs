@@ -21,9 +21,4 @@ public class LockConstant {
      * 分布式读写锁前缀
      */
     public static final String LOCK_RW_PREFIX = "LOCK_RW_";
-
-    /**
-     * 全局配置初始化
-     */
-    public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
 }

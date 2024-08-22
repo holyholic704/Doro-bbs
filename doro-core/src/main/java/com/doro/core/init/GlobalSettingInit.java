@@ -2,14 +2,14 @@ package com.doro.core.init;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
-import com.doro.orm.bean.GlobalSetting;
 import com.doro.cache.api.MyLock;
-import com.doro.cache.constant.LockConstant;
 import com.doro.cache.utils.LockUtil;
 import com.doro.common.api.Runner;
+import com.doro.common.constant.LockConstant;
 import com.doro.core.service.GlobalSettingService;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
+import com.doro.orm.bean.GlobalSetting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;

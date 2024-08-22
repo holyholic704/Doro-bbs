@@ -1,8 +1,8 @@
 package com.doro.core.filter;
 
 import cn.hutool.core.util.StrUtil;
-import com.doro.cache.constant.CacheConstant;
 import com.doro.cache.utils.RemoteCacheUtil;
+import com.doro.common.constant.CacheConstant;
 import com.doro.common.constant.LoginConstant;
 import com.doro.common.constant.SecurityConstant;
 import com.doro.core.service.login.provider.MyAuthenticationToken;

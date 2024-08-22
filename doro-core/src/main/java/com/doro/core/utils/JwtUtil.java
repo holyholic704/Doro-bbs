@@ -1,8 +1,8 @@
 package com.doro.core.utils;
 
 import cn.hutool.core.date.DateUtil;
-import com.doro.cache.constant.CacheConstant;
 import com.doro.cache.utils.RemoteCacheUtil;
+import com.doro.common.constant.CacheConstant;
 import com.doro.common.constant.LoginConstant;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;

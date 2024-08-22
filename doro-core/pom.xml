@@ -20,13 +20,6 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- TODO 可能会独立出去 -->
-        <dependency>
-            <groupId>com.doro</groupId>
-            <artifactId>doro-cache</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-
         <dependency>
             <groupId>com.doro</groupId>
             <artifactId>doro-api</artifactId>
