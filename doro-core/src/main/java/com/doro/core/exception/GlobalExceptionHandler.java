@@ -1,4 +1,4 @@
-package com.doro.core.config;
+package com.doro.core.exception;
 
 import com.doro.common.enumeration.ResponseEnum;
 import com.doro.core.exception.SystemException;

@@ -1,7 +1,8 @@
-package com.doro.common.base;
+package com.doro.orm.bean;
 
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.doro.common.base.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 

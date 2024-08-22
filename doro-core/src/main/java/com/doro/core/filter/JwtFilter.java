@@ -8,6 +8,7 @@ import com.doro.common.constant.SecurityConstant;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
+import com.doro.core.utils.IpUtil;
 import com.doro.core.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println(IpUtil.getIp(request));
         if (fromGateway(request) && checkToken(request)) {
             // TODO 网关过滤
         }

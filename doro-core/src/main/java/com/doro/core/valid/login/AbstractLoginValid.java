@@ -5,7 +5,7 @@ import com.doro.common.constant.Regex;
 import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
-import com.doro.core.valid.Valid;
+import com.doro.common.api.Valid;
 
 /**
  * 登录注册校验

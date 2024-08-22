@@ -16,4 +16,6 @@ public class Separator {
     public static final String HASH = "#";
 
     public static final String UNDERSCORE = "_";
+
+    public static final String COMMA = ",";
 }

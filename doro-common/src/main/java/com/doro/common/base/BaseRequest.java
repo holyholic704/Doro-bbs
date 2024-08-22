@@ -1,6 +1,5 @@
 package com.doro.common.base;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,10 +23,4 @@ public class BaseRequest {
      */
     private int size;
 
-    /**
-     * 生成分页对象
-     */
-    public <T> Page<T> asPage() {
-        return new Page<>(current, size);
-    }
 }
