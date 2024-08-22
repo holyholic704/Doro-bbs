@@ -1,7 +1,7 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.bean.SensitiveWord;
+import com.doro.orm.bean.SensitiveWord;
 
 /**
  * @author jiage

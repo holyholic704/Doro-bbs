@@ -2,7 +2,7 @@ package com.doro.core.init;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
-import com.doro.bean.setting.GlobalSetting;
+import com.doro.orm.bean.GlobalSetting;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.constant.LockConstant;
 import com.doro.cache.utils.LockUtil;

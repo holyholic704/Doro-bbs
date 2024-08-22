@@ -1,15 +1,15 @@
 package com.doro.core.service.login;
 
-import com.doro.bean.User;
 import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
+import com.doro.core.response.ResponseResult;
 import com.doro.core.service.UserService;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
-import com.doro.res.ResponseResult;
+import com.doro.orm.bean.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;

@@ -7,10 +7,18 @@
     <name>doro-common</name>
     <description>common</description>
 
-    <!-- 不允许引入任何包 -->
     <parent>
         <groupId>com.doro</groupId>
         <artifactId>doro-bbs</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
+    <dependencies>
+        <!-- ORM 支持 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+    </dependencies>
 </project>

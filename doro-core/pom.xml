@@ -20,9 +20,16 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <!-- TODO 可能会独立出去 -->
         <dependency>
             <groupId>com.doro</groupId>
             <artifactId>doro-cache</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.doro</groupId>
+            <artifactId>doro-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
@@ -62,6 +69,17 @@
             <groupId>com.github.yitter</groupId>
             <artifactId>yitter-idgenerator</artifactId>
             <version>${idgenerator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>4.0.0</version>
         </dependency>
     </dependencies>
 

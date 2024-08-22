@@ -1,7 +1,7 @@
 package com.doro.core.service.setting;
 
 import cn.hutool.core.collection.CollUtil;
-import com.doro.bean.setting.GlobalSetting;
+import com.doro.orm.bean.GlobalSetting;
 import com.doro.cache.constant.CacheConstant;
 import com.doro.cache.utils.MultiCacheUtil;
 import com.doro.core.exception.SystemException;

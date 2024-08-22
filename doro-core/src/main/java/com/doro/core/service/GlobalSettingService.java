@@ -2,7 +2,7 @@ package com.doro.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.bean.setting.GlobalSetting;
+import com.doro.orm.bean.GlobalSetting;
 import com.doro.orm.mapper.GlobalSettingMapper;
 import org.springframework.stereotype.Service;
 

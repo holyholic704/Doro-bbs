@@ -1,8 +1,8 @@
 package com.doro.core.utils;
 
 import cn.hutool.json.JSONUtil;
-import com.doro.res.ResponseResult;
 import com.doro.common.constant.Separator;
+import com.doro.core.response.ResponseResult;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

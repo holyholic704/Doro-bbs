@@ -3,7 +3,7 @@ package com.doro.core.config;
 import com.doro.common.enumeration.ResponseEnum;
 import com.doro.core.exception.SystemException;
 import com.doro.core.exception.ValidException;
-import com.doro.res.ResponseResult;
+import com.doro.core.response.ResponseResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;

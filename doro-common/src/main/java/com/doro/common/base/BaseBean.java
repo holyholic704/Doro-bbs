@@ -1,4 +1,4 @@
-package com.doro.bean.base;
+package com.doro.common.base;
 
 
 import com.baomidou.mybatisplus.annotation.*;

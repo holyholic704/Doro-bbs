@@ -3,12 +3,12 @@ package com.doro.core.service;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.bean.Post;
 import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestPost;
+import com.doro.core.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
+import com.doro.orm.bean.Post;
 import com.doro.orm.mapper.PostMapper;
-import com.doro.res.ResponseResult;
 import org.springframework.stereotype.Service;
 
 /**
@@ -26,7 +26,6 @@ public class PostService extends ServiceImpl<PostMapper, Post> {
         Post post = new Post()
                 .setTitle(requestPost.getTitle())
                 .setText(requestPost.getText())
-                .setTypeId(requestPost.getTypeId())
                 .setAuthorId(authorId)
                 .setSectionId(requestPost.getSectionId())
                 .setActivated(false);

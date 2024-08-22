@@ -1,6 +1,6 @@
 package com.doro.core.service.login.provider;
 
-import com.doro.bean.User;
+import com.doro.orm.bean.User;
 import com.doro.common.constant.LoginConstant;
 import com.doro.core.exception.ValidException;
 import com.doro.core.service.UserService;
