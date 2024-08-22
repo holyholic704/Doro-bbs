@@ -1,7 +1,7 @@
 package com.doro.core.valid.login;
 
 import cn.hutool.core.util.ReUtil;
-import com.doro.common.constant.RegexConstant;
+import com.doro.common.constant.Regex;
 import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
@@ -27,7 +27,7 @@ public abstract class AbstractLoginValid implements Valid<RequestUser, MyAuthent
      * 邮箱校验
      */
     protected void validEmail(String email) {
-        if (!ReUtil.isMatch(RegexConstant.EMAIL, email)) {
+        if (!ReUtil.isMatch(Regex.EMAIL, email)) {
             throw new ValidException("邮箱格式错误");
         }
     }
@@ -36,7 +36,7 @@ public abstract class AbstractLoginValid implements Valid<RequestUser, MyAuthent
      * 手机号校验
      */
     protected void validPhone(String phone) {
-        if (!ReUtil.isMatch(RegexConstant.PHONE, phone)) {
+        if (!ReUtil.isMatch(Regex.PHONE, phone)) {
             throw new ValidException("手机号码格式错误");
         }
     }
@@ -45,7 +45,7 @@ public abstract class AbstractLoginValid implements Valid<RequestUser, MyAuthent
      * 用户名校验
      */
     protected void validUsername(String username) {
-        if (!ReUtil.isMatch(RegexConstant.USERNAME, username)) {
+        if (!ReUtil.isMatch(Regex.USERNAME, username)) {
             throw new ValidException("用户名格式错误");
         }
     }
@@ -54,7 +54,7 @@ public abstract class AbstractLoginValid implements Valid<RequestUser, MyAuthent
      * 密码校验
      */
     protected void validPassword(String password) {
-        if (!ReUtil.isMatch(RegexConstant.PASSWORD, password)) {
+        if (!ReUtil.isMatch(Regex.PASSWORD, password)) {
             throw new ValidException("密码格式不正确");
         }
     }

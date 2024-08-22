@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * 启动加载
+ * 启动时自动加载
  *
  * @author jiage
  */

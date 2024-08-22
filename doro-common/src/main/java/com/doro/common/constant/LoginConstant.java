@@ -22,9 +22,18 @@ public class LoginConstant {
      */
     public static final String USE_EMAIL = "email";
 
+    /**
+     * 用户 ID
+     */
     public static final String CLAIMS_USER_ID = "USER_ID";
 
+    /**
+     * JWT 标签
+     */
     public static final String JWT_HEADER = "Authorization";
 
+    /**
+     * JWT 前缀
+     */
     public static final String JWT_SUFFIX = "Bearer";
 }

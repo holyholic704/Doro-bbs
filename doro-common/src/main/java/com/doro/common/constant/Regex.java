@@ -3,11 +3,11 @@ package com.doro.common.constant;
 import cn.hutool.core.lang.RegexPool;
 
 /**
- * 正则校验
+ * 正则校验表达式
  *
  * @author jiage
  */
-public class RegexConstant {
+public class Regex {
 
     /**
      * 用户名校验
