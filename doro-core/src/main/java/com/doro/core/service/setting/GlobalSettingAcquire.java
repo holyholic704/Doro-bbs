@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.doro.cache.utils.MultiCacheUtil;
 import com.doro.common.constant.CacheConstant;
 import com.doro.core.exception.SystemException;
-import com.doro.core.service.GlobalSettingService;
+import com.doro.orm.service.GlobalSettingService;
 import com.doro.orm.bean.GlobalSettingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,7 +51,7 @@ public class GlobalSettingAcquire {
      * 初始化，将数据库中的数据添加到缓存中
      */
     public static Map<String, String> init() {
-        List<GlobalSettingBean> globalSettingBeanList = globalSettingService.getAll();
+        List<GlobalSettingBean> globalSettingBeanList = globalSettingService.getAllSetting();
         // 不可能出现没有数据的情况
         if (CollUtil.isEmpty(globalSettingBeanList)) {
             throw new SystemException("系统异常");

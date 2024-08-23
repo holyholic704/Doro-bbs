@@ -1,15 +1,16 @@
 package com.doro.core.service.login;
 
-import com.doro.core.exception.ValidException;
-import com.doro.orm.request.RequestUser;
-import com.doro.core.model.response.ResponseUser;
+import com.doro.common.constant.LoginConstant;
 import com.doro.common.response.ResponseResult;
-import com.doro.core.service.UserService;
+import com.doro.core.exception.ValidException;
+import com.doro.core.response.ResponseUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
 import com.doro.orm.bean.UserBean;
+import com.doro.orm.request.RequestUser;
+import com.doro.orm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -64,7 +65,7 @@ public class LoginService {
     public ResponseResult<?> register(RequestUser requestUser) {
         MyAuthenticationToken authenticationToken = validAndInitService.validAndInit(requestUser);
         // 检查是否有重复的用户
-        userExisted(userService.existUser((String) authenticationToken.getPrincipal(), authenticationToken.getLoginType()));
+        isUserExisted((String) authenticationToken.getPrincipal(), authenticationToken.getLoginType());
 
         boolean userNeedActive = GlobalSettingAcquire.get(G_Setting.USER_NEED_ACTIVE);
 
@@ -108,8 +109,23 @@ public class LoginService {
         // TODO 激活功能
     }
 
-    private void userExisted(boolean exist) {
-        if (exist) {
+    /**
+     * 该用户是否已存在
+     *
+     * @param username  用户名，可以为手机号、邮箱
+     * @param loginType 登录方式，这里为查询方式
+     */
+    private void isUserExisted(String username, String loginType) {
+        // 注意这里不要改为 swicth，后续 LoginConstant 可能会改为变量
+        boolean existed;
+        if (LoginConstant.USE_PHONE.equals(loginType)) {
+            existed = userService.hasPhoneUser(username);
+        } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
+            existed = userService.hasEmailUser(username);
+        } else {
+            existed = userService.hasUser(username);
+        }
+        if (existed) {
             throw new ValidException("该用户已存在");
         }
     }

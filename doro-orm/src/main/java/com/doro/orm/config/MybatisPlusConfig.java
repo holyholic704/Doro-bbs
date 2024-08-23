@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  * @author jiage
  */
 @Configuration
-public class MybatisPlusConfig {
+class MybatisPlusConfig {
 
     /**
      * 分页插件

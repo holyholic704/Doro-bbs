@@ -1,4 +1,4 @@
-package com.doro.core.service;
+package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.orm.bean.SensitiveWordBean;

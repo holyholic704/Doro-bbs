@@ -6,7 +6,7 @@ import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.common.api.Runner;
 import com.doro.common.constant.LockConstant;
-import com.doro.core.service.GlobalSettingService;
+import com.doro.orm.service.GlobalSettingService;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.orm.bean.GlobalSettingBean;
@@ -56,7 +56,7 @@ public class GlobalSettingInit implements Runner {
         Map<String, G_Setting> globalSettingTemplateMap = Arrays.stream(G_Setting.values()).collect(Collectors.toMap(G_Setting::name, Function.identity()));
 
         Map<String, GlobalSettingBean> globalSettingMap = null;
-        List<GlobalSettingBean> globalSettingBeanList = globalSettingService.getAll();
+        List<GlobalSettingBean> globalSettingBeanList = globalSettingService.getAllSetting();
         if (CollUtil.isNotEmpty(globalSettingBeanList)) {
             globalSettingMap = globalSettingBeanList.stream().collect(Collectors.toMap(GlobalSettingBean::getK, Function.identity()));
             // 过滤
@@ -84,13 +84,13 @@ public class GlobalSettingInit implements Runner {
                         .setV(String.valueOf(gSetting.getDefaultValue())));
             }
 
-            globalSettingService.saveList(list);
+            globalSettingService.saveSettingList(list);
         }
 
         // 删除数据库中多余的字段
         if (MapUtil.isNotEmpty(globalSettingMap)) {
             status = this.createStatus(status);
-            globalSettingService.deleteByIdList(globalSettingMap.values().stream().map(GlobalSettingBean::getId).collect(Collectors.toList()));
+            globalSettingService.deleteSettingByIds(globalSettingMap.values().stream().map(GlobalSettingBean::getId).collect(Collectors.toList()));
         }
 
         if (status != null) {

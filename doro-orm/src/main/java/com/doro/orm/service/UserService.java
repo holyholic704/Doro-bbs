@@ -1,9 +1,8 @@
-package com.doro.core.service;
+package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.orm.bean.UserBean;
-import com.doro.common.constant.LoginConstant;
 import com.doro.orm.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
@@ -37,23 +36,6 @@ public class UserService extends ServiceImpl<UserMapper, UserBean> {
     public UserBean getUserByEmail(String email) {
         return this.getOne(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getEmail, email));
-    }
-
-    /**
-     * 该用户是否已存在
-     *
-     * @param username  用户名，可以为手机号、邮箱
-     * @param loginType 登录方式，这里为查询方式
-     */
-    public boolean existUser(String username, String loginType) {
-        // TODO 注意这里不要改为 swicth，后续 LoginConstant 可能会改为变量
-        if (LoginConstant.USE_PHONE.equals(loginType)) {
-            return this.hasPhoneUser(username);
-        } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
-            return this.hasEmailUser(username);
-        } else {
-            return this.hasUser(username);
-        }
     }
 
     /**

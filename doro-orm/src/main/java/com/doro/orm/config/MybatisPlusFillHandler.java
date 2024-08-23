@@ -12,7 +12,7 @@ import java.util.Date;
  * @author jiage
  */
 @Component
-public class MybatisPlusFillHandler implements MetaObjectHandler {
+class MybatisPlusFillHandler implements MetaObjectHandler {
 
     /**
      * 插入时填充

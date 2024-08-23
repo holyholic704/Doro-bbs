@@ -1,4 +1,4 @@
-package com.doro.core.service;
+package com.doro.orm.service;
 
 /**
  * @author jiage

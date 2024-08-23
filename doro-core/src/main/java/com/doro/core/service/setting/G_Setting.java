@@ -11,8 +11,8 @@ import java.util.function.Function;
  *
  * @author jiage
  */
+@Getter(AccessLevel.PACKAGE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
 public enum G_Setting {
 
     /**

@@ -1,4 +1,4 @@
-package com.doro.core.service;
+package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -20,21 +20,21 @@ public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, Globa
     /**
      * 获取全部
      */
-    public List<GlobalSettingBean> getAll() {
+    public List<GlobalSettingBean> getAllSetting() {
         return this.list();
     }
 
     /**
      * 批量删除指定的 ID 集合
      */
-    public boolean deleteByIdList(Collection<?> idCollection) {
+    public boolean deleteSettingByIds(Collection<?> idCollection) {
         return this.removeByIds(idCollection);
     }
 
     /**
      * 批量保存
      */
-    public boolean saveList(Collection<GlobalSettingBean> list) {
+    public boolean saveSettingList(Collection<GlobalSettingBean> list) {
         return this.saveBatch(list);
     }
 
