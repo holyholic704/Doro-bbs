@@ -17,7 +17,7 @@ public class RequestPost extends BaseRequest {
     private String title;
 
     /**
-     * 作者 ID
+     * 作者
      */
     private Long authorId;
 
@@ -27,8 +27,13 @@ public class RequestPost extends BaseRequest {
     private String text;
 
     /**
-     * 版块 ID
+     * 版块
      */
     private Long sectionId;
+
+    /**
+     * 标签列表
+     */
+    private String tagIds;
 
 }

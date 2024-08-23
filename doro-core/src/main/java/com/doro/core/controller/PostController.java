@@ -4,16 +4,15 @@ import com.doro.orm.request.RequestPost;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.CorePostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 文章管理
  *
  * @author jiage
  */
-@RestController("post")
+@RestController
+@RequestMapping("post")
 public class PostController {
 
     private final CorePostService corePostService;
@@ -24,7 +23,12 @@ public class PostController {
     }
 
     @PostMapping("save")
-    public ResponseResult<?> savePost(@RequestBody RequestPost requestPost) {
-        return corePostService.savePost(requestPost);
+    public ResponseResult<?> save(@RequestBody RequestPost requestPost) {
+        return corePostService.save(requestPost);
+    }
+
+    @PostMapping("getById")
+    public ResponseResult<?> getById(@RequestParam Long postId) {
+        return corePostService.getById(postId);
     }
 }

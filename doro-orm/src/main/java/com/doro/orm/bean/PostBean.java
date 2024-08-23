@@ -34,11 +34,11 @@ public class PostBean extends BaseBean {
      */
     private String text;
 
-    /**
-     * 文章类型 ID
-     * TODO 是否需要？
-     */
-    private Long typeId;
+//    /**
+//     * 文章类型 ID
+//     * TODO 是否需要？
+//     */
+//    private Long typeId;
 
     /**
      * 版块 ID

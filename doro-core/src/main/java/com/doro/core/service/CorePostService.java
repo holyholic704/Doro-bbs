@@ -25,7 +25,7 @@ public class CorePostService {
         this.postService = postService;
     }
 
-    public ResponseResult<?> savePost(RequestPost requestPost) {
+    public ResponseResult<?> save(RequestPost requestPost) {
         valid(requestPost);
         // 可以认为一定能获取到用户 ID
         Long authorId = UserUtil.getUserId();
@@ -42,6 +42,12 @@ public class CorePostService {
         return postService.savePost(postBean) ? ResponseResult.success("保存成功") : ResponseResult.error("保存失败");
     }
 
+    public ResponseResult<?> getById(Long postId) {
+        // TODO 浏览量，在一定时间内多次获取同一帖子，不增加浏览量
+        PostBean post = postService.getById(postId);
+        return post != null ? ResponseResult.success(post) : ResponseResult.error("没有数据");
+    }
+
     private void valid(RequestPost requestPost) {
         // TODO 版块校验规则，标题的最大、最小长度，正文的最大、最小长度
         if (StrUtil.isEmpty(requestPost.getTitle())) {
@@ -56,6 +62,8 @@ public class CorePostService {
         if (requestPost.getText().length() > 10000) {
             throw new ValidException("文本长度过长");
         }
+
+        // TODO 标签暂时非必须
     }
 
 }

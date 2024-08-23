@@ -34,5 +34,5 @@ public class BaseBean extends BaseModel {
      * 逻辑删除
      */
     @TableLogic
-    private Boolean del;
+    private Boolean del = false;
 }
