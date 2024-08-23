@@ -12,16 +12,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseEnum {
 
-    /**
-     * 为了与 HTTP 状态码作区分，规定范围为 10000 ~ 99999
-     */
-    SUCCESS(10001, "请求成功"),
-    ERROR(10000, "请求失败"),
-    SYSTEM_ERROR(10002, "系统异常"),
+    SUCCESS(1, "请求成功"),
+    ERROR(0, "请求失败"),
     ;
 
     /**
-     * 状态码
+     * 响应码
      */
     private final int code;
 

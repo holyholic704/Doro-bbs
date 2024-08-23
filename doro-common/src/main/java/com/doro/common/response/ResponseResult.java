@@ -1,6 +1,8 @@
 package com.doro.common.response;
 
+import com.doro.common.enumeration.ErrorMessage;
 import com.doro.common.enumeration.ResponseEnum;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,7 @@ import java.io.Serializable;
  * @author jiage
  */
 @Getter
-@Setter
+@Setter(AccessLevel.PRIVATE)
 public class ResponseResult<T> implements Serializable {
 
     /**
@@ -36,51 +38,36 @@ public class ResponseResult<T> implements Serializable {
     private ResponseResult() {
     }
 
-    private ResponseResult(T data) {
-        this.code = ResponseEnum.SUCCESS.getCode();
-        this.message = ResponseEnum.SUCCESS.getMessage();
+    private ResponseResult(int code, String message, T data) {
+        this.code = code;
+        this.message = message;
         this.data = data;
     }
 
-    private ResponseResult(String message) {
-        this.code = ResponseEnum.ERROR.getCode();
-        this.message = message;
-    }
-
     private ResponseResult(int code, String message) {
-        this.code = code;
-        this.message = message;
-    }
-
-    private ResponseResult(ResponseEnum responseEnum) {
-        this.code = responseEnum.getCode();
-        this.message = responseEnum.getMessage();
+        this(code, message, null);
     }
 
     public static <T> ResponseResult<T> success() {
-        return ResponseResult.ofEnum(ResponseEnum.SUCCESS);
+        return new ResponseResult<>(ResponseEnum.SUCCESS.getCode(), ResponseEnum.SUCCESS.getMessage());
     }
 
     public static <T> ResponseResult<T> success(T data) {
-        return new ResponseResult<>(data);
-    }
-
-    public static <T> ResponseResult<T> error() {
-        return ResponseResult.ofEnum(ResponseEnum.ERROR);
+        return new ResponseResult<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                data);
     }
 
     public static <T> ResponseResult<T> error(String message) {
-        return new ResponseResult<>(message);
+        return new ResponseResult<>(ResponseEnum.ERROR.getCode(), message);
     }
 
-    /**
-     * 使用枚举创建
-     *
-     * @param responseEnum 枚举
-     * @return 响应对象
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    public static <T> ResponseResult<T> ofEnum(ResponseEnum responseEnum) {
-        return new ResponseResult(responseEnum);
+    public static <T> ResponseResult<T> error() {
+        return ResponseResult.error(ResponseEnum.ERROR.getMessage());
+    }
+
+    public static <T> ResponseResult<T> error(ErrorMessage errorMessage) {
+        return ResponseResult.error(errorMessage.getMessage());
     }
 }
