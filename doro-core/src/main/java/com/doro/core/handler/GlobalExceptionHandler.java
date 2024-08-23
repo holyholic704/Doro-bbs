@@ -1,6 +1,6 @@
 package com.doro.core.handler;
 
-import com.doro.common.enumeration.ResponseEnum;
+import com.doro.common.enumeration.ErrorMessage;
 import com.doro.common.exception.SystemException;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
@@ -9,6 +9,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.sql.SQLException;
 
 /**
  * 全局异常处理
@@ -42,10 +44,10 @@ public class GlobalExceptionHandler {
      * 系统异常
      */
     @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(SystemException.class)
+    @ExceptionHandler({SystemException.class, SQLException.class})
     public ResponseResult<String> handleSystemException(Exception e) {
         e.printStackTrace();
-        return ResponseResult.ofEnum(ResponseEnum.SYSTEM_ERROR);
+        return ResponseResult.error(ErrorMessage.SYSTEM_ERROR);
     }
 
     /**

@@ -22,6 +22,7 @@ class MybatisPlusFillHandler implements MetaObjectHandler {
         Date now = new Date();
         this.setFieldValByName("createTime", now, metaObject);
         this.setFieldValByName("updateTime", now, metaObject);
+        this.setFieldValByName("del", false, metaObject);
     }
 
     /**
