@@ -12,6 +12,7 @@ import com.doro.core.service.setting.GlobalSettingAcquire;
  * @author jiage
  */
 public class EmailLoginValid extends AbstractLoginValid {
+
     @Override
     public MyAuthenticationToken valid(RequestUser requestUser) {
         if (LoginConstant.USE_EMAIL.equals(requestUser.getLoginType())) {
