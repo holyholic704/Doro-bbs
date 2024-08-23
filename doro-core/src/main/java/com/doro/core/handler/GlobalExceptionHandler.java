@@ -6,7 +6,6 @@ import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -28,16 +27,16 @@ public class GlobalExceptionHandler {
         return ResponseResult.error(e.getMessage());
     }
 
-    /**
-     * 参数校验异常
-     * Spring 的权限校验，灵活性不足，只少量使用
-     */
-    @SuppressWarnings("ConstantConditions")
-    @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return ResponseResult.error(e.getBindingResult().getFieldError().getDefaultMessage());
-    }
+//    /**
+//     * 参数校验异常
+//     * Spring 的权限校验，灵活性不足，只少量使用
+//     */
+//    @SuppressWarnings("ConstantConditions")
+//    @ResponseStatus(HttpStatus.OK)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+//        return ResponseResult.error(e.getBindingResult().getFieldError().getDefaultMessage());
+//    }
 
     /**
      * 系统异常
