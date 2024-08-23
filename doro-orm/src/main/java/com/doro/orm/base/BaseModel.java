@@ -2,23 +2,24 @@ package com.doro.orm.base;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.doro.common.base.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
- * 基础实体
- * 使用自增主键
+ * 基础模型
+ * 所有实体类都要直接或间接继承该类
  *
  * @author jiage
  */
 @Setter
 @Getter
-public class BaseAutoIdBean extends BaseModel {
+public class BaseModel implements Serializable {
 
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
 }

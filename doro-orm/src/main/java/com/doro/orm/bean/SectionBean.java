@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("section")
+@TableName("doro_bbs_section")
 public class SectionBean extends BaseBean {
 
     /**

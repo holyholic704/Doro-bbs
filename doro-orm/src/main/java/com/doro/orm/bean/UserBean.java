@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("user")
+@TableName("doro_bbs_user")
 public class UserBean extends BaseBean {
 
     /**

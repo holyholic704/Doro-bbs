@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("post")
+@TableName("doro_bbs_post")
 public class PostBean extends BaseBean {
 
     /**

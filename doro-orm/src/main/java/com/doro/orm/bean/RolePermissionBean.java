@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("role_permission")
+@TableName("doro_bbs_role_permission")
 public class RolePermissionBean extends BaseBean {
 
     /**

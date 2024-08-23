@@ -1,7 +1,7 @@
 package com.doro.orm.bean;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.doro.orm.base.BaseAutoIdBean;
+import com.doro.orm.base.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,8 +16,8 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("post_info")
-public class PostInfoBean extends BaseAutoIdBean {
+@TableName("doro_bbs_post_info")
+public class PostInfoBean extends BaseModel {
 
     /**
      * 帖子
@@ -28,22 +28,6 @@ public class PostInfoBean extends BaseAutoIdBean {
      * 浏览
      */
     private Long view;
-
-    /**
-     * 点赞
-     */
-    private Long like;
-
-    /**
-     * 点踩
-     * TODO 后续实现
-     */
-    private Long dislike;
-
-    /**
-     * 收藏
-     */
-    private Long collection;
 
     /**
      * 分享

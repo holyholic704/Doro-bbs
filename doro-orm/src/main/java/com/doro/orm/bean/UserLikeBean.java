@@ -8,7 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * 用户角色
+ * 用户的赞与踩
  *
  * @author jiage
  */
@@ -16,16 +16,22 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("doro_bbs_user_role")
-public class UserRoleBean extends BaseBean {
+@TableName("doro_bbs_user_like")
+public class UserLikeBean extends BaseBean {
 
     /**
-     * 用户ID
+     * 用户
      */
     private Long userId;
 
     /**
-     * 角色ID
+     * 帖子
      */
-    private Long roleId;
+    private Long postId;
+
+    /**
+     * true：赞
+     * false：踩
+     */
+    private Boolean like;
 }

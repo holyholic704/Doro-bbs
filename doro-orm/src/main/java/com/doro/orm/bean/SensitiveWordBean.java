@@ -1,7 +1,7 @@
 package com.doro.orm.bean;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.doro.orm.base.BaseAutoIdBean;
+import com.doro.orm.base.BaseModel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,8 +16,8 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("sensitive_word")
-public class SensitiveWordBean extends BaseAutoIdBean {
+@TableName("doro_bbs_sensitive_word")
+public class SensitiveWordBean extends BaseModel {
 
     /**
      * 敏感词

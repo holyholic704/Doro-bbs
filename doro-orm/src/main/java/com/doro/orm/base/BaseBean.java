@@ -1,8 +1,9 @@
 package com.doro.orm.base;
 
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.doro.common.base.BaseModel;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,12 +17,6 @@ import java.util.Date;
 @Setter
 @Getter
 public class BaseBean extends BaseModel {
-
-    /**
-     * 主键
-     */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
 
     /**
      * 创建时间

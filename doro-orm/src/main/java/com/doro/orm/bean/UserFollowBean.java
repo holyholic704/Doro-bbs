@@ -8,7 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * 用户角色
+ * 用户的关注
  *
  * @author jiage
  */
@@ -16,16 +16,16 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("doro_bbs_user_role")
-public class UserRoleBean extends BaseBean {
+@TableName("doro_bbs_user_collection")
+public class UserFollowBean extends BaseBean {
 
     /**
-     * 用户ID
+     * 用户
      */
     private Long userId;
 
     /**
-     * 角色ID
+     * 关注的用户
      */
-    private Long roleId;
+    private Long followId;
 }
