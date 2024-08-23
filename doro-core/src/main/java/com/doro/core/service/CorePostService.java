@@ -1,8 +1,8 @@
 package com.doro.core.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.doro.common.response.ResponseResult;
 import com.doro.common.exception.ValidException;
+import com.doro.common.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.request.RequestPost;
@@ -18,8 +18,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class CorePostService {
 
+    private final PostService postService;
+
     @Autowired
-    private PostService postService;
+    public CorePostService(PostService postService) {
+        this.postService = postService;
+    }
 
     public ResponseResult<?> savePost(RequestPost requestPost) {
         valid(requestPost);

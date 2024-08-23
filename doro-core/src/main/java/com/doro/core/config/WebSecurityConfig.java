@@ -46,11 +46,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     MyAuthenticationProvider myAuthenticationProvider() {
-        return new MyAuthenticationProvider(userDetailsServiceImpl, bCryptPasswordEncoder);
+        return new MyAuthenticationProvider(bCryptPasswordEncoder, userDetailsServiceImpl);
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         // 自定义认证方式
         auth.authenticationProvider(myAuthenticationProvider());
     }

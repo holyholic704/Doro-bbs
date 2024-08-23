@@ -16,8 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController("post")
 public class PostController {
 
+    private final CorePostService corePostService;
+
     @Autowired
-    private CorePostService corePostService;
+    public PostController(CorePostService corePostService) {
+        this.corePostService = corePostService;
+    }
 
     @PostMapping("save")
     public ResponseResult<?> savePost(@RequestBody RequestPost requestPost) {

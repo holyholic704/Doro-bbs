@@ -1,11 +1,11 @@
-package com.doro.core.service.login;
+package com.doro.core.valid;
 
-import com.doro.orm.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.valid.login.AbstractLoginValid;
 import com.doro.core.valid.login.EmailLoginValid;
 import com.doro.core.valid.login.PasswordLoginValid;
 import com.doro.core.valid.login.PhoneLoginValid;
+import com.doro.orm.request.RequestUser;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
  * @author jiage
  */
 @Component
-public class ValidAndInitService {
+public class ValidService {
 
     private final AbstractLoginValid first = new PhoneLoginValid();
     private final AbstractLoginValid second = new EmailLoginValid();
     private final AbstractLoginValid third = new PasswordLoginValid();
 
     /**
-     * 检验参数
+     * 登录注册检验参数
      *
      * @param requestUser 请求信息
      * @return 校验通过返回认证信息

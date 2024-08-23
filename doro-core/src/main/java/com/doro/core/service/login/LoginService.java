@@ -1,13 +1,14 @@
 package com.doro.core.service.login;
 
 import com.doro.common.constant.LoginConstant;
-import com.doro.common.response.ResponseResult;
 import com.doro.common.exception.ValidException;
+import com.doro.common.response.ResponseResult;
 import com.doro.core.response.ResponseUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
+import com.doro.core.valid.ValidService;
 import com.doro.orm.bean.UserBean;
 import com.doro.orm.request.RequestUser;
 import com.doro.orm.service.UserService;
@@ -29,14 +30,14 @@ public class LoginService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final ValidAndInitService validAndInitService;
+    private final ValidService validService;
     private final UserService userService;
 
     @Autowired
-    public LoginService(BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, ValidAndInitService validAndInitService, UserService userService) {
+    public LoginService(BCryptPasswordEncoder bCryptPasswordEncoder, AuthenticationManager authenticationManager, ValidService validService, UserService userService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.authenticationManager = authenticationManager;
-        this.validAndInitService = validAndInitService;
+        this.validService = validService;
         this.userService = userService;
     }
 
@@ -48,7 +49,7 @@ public class LoginService {
      */
     public ResponseResult<?> login(RequestUser requestUser) {
         // 参数校验、生成认证信息
-        Authentication authenticationToken = validAndInitService.validAndInit(requestUser);
+        Authentication authenticationToken = validService.validAndInit(requestUser);
         // 认证，失败抛出异常
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         ResponseUser responseUser = initToken(authentication);
@@ -63,7 +64,7 @@ public class LoginService {
      */
     @Transactional(rollbackFor = Exception.class)
     public ResponseResult<?> register(RequestUser requestUser) {
-        MyAuthenticationToken authenticationToken = validAndInitService.validAndInit(requestUser);
+        MyAuthenticationToken authenticationToken = validService.validAndInit(requestUser);
         // 检查是否有重复的用户
         isUserExisted((String) authenticationToken.getPrincipal(), authenticationToken.getLoginType());
 

@@ -13,7 +13,7 @@ import java.util.List;
  * @author jiage
  */
 @Component
-public class Run implements ApplicationRunner {
+class Run implements ApplicationRunner {
 
     private final List<Runner> runnerList;
 
@@ -22,7 +22,7 @@ public class Run implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         for (Runner runner : runnerList) {
             runner.run();
         }
