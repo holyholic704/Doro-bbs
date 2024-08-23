@@ -1,8 +1,8 @@
 package com.doro.core.handler;
 
 import com.doro.common.enumeration.ResponseEnum;
-import com.doro.core.exception.SystemException;
-import com.doro.core.exception.ValidException;
+import com.doro.common.exception.SystemException;
+import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

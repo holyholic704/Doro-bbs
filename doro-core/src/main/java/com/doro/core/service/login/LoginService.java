@@ -2,7 +2,7 @@ package com.doro.core.service.login;
 
 import com.doro.common.constant.LoginConstant;
 import com.doro.common.response.ResponseResult;
-import com.doro.core.exception.ValidException;
+import com.doro.common.exception.ValidException;
 import com.doro.core.response.ResponseUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;

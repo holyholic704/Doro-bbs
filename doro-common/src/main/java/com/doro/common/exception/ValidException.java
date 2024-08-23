@@ -1,4 +1,4 @@
-package com.doro.core.exception;
+package com.doro.common.exception;
 
 /**
  * 参数校验异常

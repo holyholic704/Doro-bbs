@@ -1,4 +1,4 @@
-package com.doro.core.exception;
+package com.doro.common.exception;
 
 /**
  * 系统异常
