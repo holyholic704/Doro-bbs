@@ -1,13 +1,14 @@
 package com.doro.core.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.exception.ValidException;
 import com.doro.core.model.request.RequestPost;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.bean.Post;
-import com.doro.orm.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.doro.orm.mapper.PostMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class CorePostService {
-
-    @Autowired
-    private PostService postService;
+public class PostService extends ServiceImpl<PostMapper, Post> {
 
     public ResponseResult<?> savePost(RequestPost requestPost) {
         valid(requestPost);
@@ -35,7 +33,15 @@ public class CorePostService {
         // TODO 是否需要审核，审核规则？不审核、手动审核、敏感词过滤，谁来审核，版主？管理员？坛主？
         // TODO 字数限制
         // TODO 添加缓存，字数限制
-        return postService.savePost(post) ? ResponseResult.success("保存成功") : ResponseResult.error("保存失败");
+        return this.savePost(post) ? ResponseResult.success("保存成功") : ResponseResult.error("保存失败");
+    }
+
+    public boolean savePost(Post post) {
+        return this.save(post);
+    }
+
+    public Page<Post> page(RequestPost requestPost) {
+        return this.page(requestPost.asPage());
     }
 
     private void valid(RequestPost requestPost) {

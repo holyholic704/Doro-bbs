@@ -1,6 +1,6 @@
 package com.doro.core.config;
 
-import com.doro.core.filter.JwtFilter;
+import com.doro.core.filter.RequestFilter;
 import com.doro.core.service.login.provider.MyAuthenticationProvider;
 import com.doro.core.service.login.provider.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @SuppressWarnings("deprecation")
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final RequestFilter requestFilter;
+
     @Autowired
-    private UserDetailsServiceImpl userDetailsServiceImpl;
-    @Autowired
-    private JwtFilter jwtFilter;
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl, RequestFilter requestFilter) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.requestFilter = requestFilter;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,7 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated();
         // 添加 JWT 过滤器
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(requestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

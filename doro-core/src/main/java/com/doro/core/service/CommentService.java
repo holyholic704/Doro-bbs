@@ -1,4 +1,4 @@
-package com.doro.orm.service;
+package com.doro.core.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.orm.bean.Comment;
@@ -12,4 +12,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CommentService extends ServiceImpl<CommentMapper, Comment> {
+
+    public boolean saveComment(Comment comment) {
+        return this.save(comment);
+    }
 }

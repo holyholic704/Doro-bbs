@@ -31,6 +31,11 @@ public class Comment extends BaseBean {
     private Long postId;
 
     /**
+     * 回复
+     */
+    private Long replyId;
+
+    /**
      * 内容
      */
     private String content;

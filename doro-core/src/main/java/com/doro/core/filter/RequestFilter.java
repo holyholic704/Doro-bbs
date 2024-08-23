@@ -27,7 +27,7 @@ import java.io.IOException;
  * @author jiage
  */
 @Component
-public class JwtFilter extends OncePerRequestFilter {
+public class RequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
