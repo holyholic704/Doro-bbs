@@ -1,6 +1,6 @@
 package com.doro.core.service.login.provider;
 
-import com.doro.orm.bean.User;
+import com.doro.orm.bean.UserBean;
 import com.doro.common.constant.LoginConstant;
 import com.doro.core.exception.ValidException;
 import com.doro.core.service.UserService;
@@ -31,9 +31,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public UserDetails loadUserByUsername(String username, String loginType) throws UsernameNotFoundException {
-        User user = this.getUserByType(username, loginType);
-        userNotExist(user != null);
-        return this.buildFromUser(user);
+        UserBean userBean = this.getUserByType(username, loginType);
+        userNotExist(userBean != null);
+        return this.buildFromUser(userBean);
     }
 
     /**
@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @param loginType 登录方式
      * @return 用户信息
      */
-    private User getUserByType(String username, String loginType) {
+    private UserBean getUserByType(String username, String loginType) {
         if (LoginConstant.USE_PHONE.equals(loginType)) {
             return userService.getUserByPhone(username);
         } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
@@ -60,10 +60,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
-    private UserDetails buildFromUser(User user) {
+    private UserDetails buildFromUser(UserBean userBean) {
         return new MyUserDetails()
-                .setId(user.getId())
-                .setUsername(user.getUsername())
-                .setPassword(user.getPassword());
+                .setId(userBean.getId())
+                .setUsername(userBean.getUsername())
+                .setPassword(userBean.getPassword());
     }
 }

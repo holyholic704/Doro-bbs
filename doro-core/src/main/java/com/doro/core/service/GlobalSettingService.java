@@ -2,7 +2,7 @@ package com.doro.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.bean.GlobalSetting;
+import com.doro.orm.bean.GlobalSettingBean;
 import com.doro.orm.mapper.GlobalSettingMapper;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +15,12 @@ import java.util.List;
  * @author jiage
  */
 @Service
-public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, GlobalSetting> {
+public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, GlobalSettingBean> {
 
     /**
      * 获取全部
      */
-    public List<GlobalSetting> getAll() {
+    public List<GlobalSettingBean> getAll() {
         return this.list();
     }
 
@@ -34,7 +34,7 @@ public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, Globa
     /**
      * 批量保存
      */
-    public boolean saveList(Collection<GlobalSetting> list) {
+    public boolean saveList(Collection<GlobalSettingBean> list) {
         return this.saveBatch(list);
     }
 
@@ -42,8 +42,8 @@ public class GlobalSettingService extends ServiceImpl<GlobalSettingMapper, Globa
      * 版本号更新
      */
     public boolean updateVersion() {
-        return this.update(new LambdaUpdateWrapper<GlobalSetting>()
-                .eq(GlobalSetting::getK, "VERSION")
+        return this.update(new LambdaUpdateWrapper<GlobalSettingBean>()
+                .eq(GlobalSettingBean::getK, "VERSION")
                 .setSql("v = v + 1"));
     }
 }

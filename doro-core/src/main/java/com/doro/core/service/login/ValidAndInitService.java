@@ -1,6 +1,6 @@
 package com.doro.core.service.login;
 
-import com.doro.core.model.request.RequestUser;
+import com.doro.orm.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.valid.login.AbstractLoginValid;
 import com.doro.core.valid.login.EmailLoginValid;

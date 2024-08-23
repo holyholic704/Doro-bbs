@@ -1,12 +1,12 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.orm.bean.Post;
+import com.doro.orm.bean.PostBean;
 
 /**
  * 帖子
  *
  * @author jiage
  */
-public interface PostMapper extends BaseMapper<Post> {
+public interface PostMapper extends BaseMapper<PostBean> {
 }

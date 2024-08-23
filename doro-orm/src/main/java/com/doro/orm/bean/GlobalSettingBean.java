@@ -4,24 +4,22 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doro.common.base.BaseModel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * 敏感词
+ * 全局配置
  *
  * @author jiage
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Accessors(chain = true)
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-@TableName("sensitive_word")
-public class SensitiveWord extends BaseModel {
+@TableName("global_setting")
+public class GlobalSettingBean extends BaseModel {
 
     /**
      * 主键
@@ -30,7 +28,12 @@ public class SensitiveWord extends BaseModel {
     private Integer id;
 
     /**
-     * 敏感词
+     * 字段
      */
-    private String word;
+    private String k;
+
+    /**
+     * 值
+     */
+    private String v;
 }

@@ -1,7 +1,7 @@
 package com.doro.core.service.login;
 
 import com.doro.core.exception.ValidException;
-import com.doro.core.model.request.RequestUser;
+import com.doro.orm.request.RequestUser;
 import com.doro.core.model.response.ResponseUser;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.UserService;
@@ -9,7 +9,7 @@ import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
-import com.doro.orm.bean.User;
+import com.doro.orm.bean.UserBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -68,7 +68,7 @@ public class LoginService {
 
         boolean userNeedActive = GlobalSettingAcquire.get(G_Setting.USER_NEED_ACTIVE);
 
-        User register = new User()
+        UserBean register = new UserBean()
                 .setUsername(requestUser.getUsername())
                 .setPassword(bCryptPasswordEncoder.encode(requestUser.getPassword()))
                 .setEnable(!userNeedActive);
@@ -102,9 +102,9 @@ public class LoginService {
     /**
      * 注册用户是否需要激活
      *
-     * @param user 用户信息
+     * @param userBean 用户信息
      */
-    private void registerNeedActive(User user) {
+    private void registerNeedActive(UserBean userBean) {
         // TODO 激活功能
     }
 

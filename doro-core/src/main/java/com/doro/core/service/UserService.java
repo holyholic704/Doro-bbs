@@ -2,7 +2,7 @@ package com.doro.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.bean.User;
+import com.doro.orm.bean.UserBean;
 import com.doro.common.constant.LoginConstant;
 import com.doro.orm.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -13,30 +13,30 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class UserService extends ServiceImpl<UserMapper, User> {
+public class UserService extends ServiceImpl<UserMapper, UserBean> {
 
     /**
      * 根据用户名获取用户信息
      */
-    public User getUserByUsername(String username) {
-        return this.getOne(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, username));
+    public UserBean getUserByUsername(String username) {
+        return this.getOne(new LambdaQueryWrapper<UserBean>()
+                .eq(UserBean::getUsername, username));
     }
 
     /**
      * 根据手机号获取用户信息
      */
-    public User getUserByPhone(String phone) {
-        return this.getOne(new LambdaQueryWrapper<User>()
-                .eq(User::getPhone, phone));
+    public UserBean getUserByPhone(String phone) {
+        return this.getOne(new LambdaQueryWrapper<UserBean>()
+                .eq(UserBean::getPhone, phone));
     }
 
     /**
      * 根据邮箱获取用户信息
      */
-    public User getUserByEmail(String email) {
-        return this.getOne(new LambdaQueryWrapper<User>()
-                .eq(User::getEmail, email));
+    public UserBean getUserByEmail(String email) {
+        return this.getOne(new LambdaQueryWrapper<UserBean>()
+                .eq(UserBean::getEmail, email));
     }
 
     /**
@@ -60,30 +60,30 @@ public class UserService extends ServiceImpl<UserMapper, User> {
      * 是否有使用该用户名的用户
      */
     public boolean hasUser(String username) {
-        return this.count(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, username)) > 0;
+        return this.count(new LambdaQueryWrapper<UserBean>()
+                .eq(UserBean::getUsername, username)) > 0;
     }
 
     /**
      * 是否有使用该手机的用户
      */
     public boolean hasEmailUser(String email) {
-        return this.count(new LambdaQueryWrapper<User>()
-                .eq(User::getEmail, email)) > 0;
+        return this.count(new LambdaQueryWrapper<UserBean>()
+                .eq(UserBean::getEmail, email)) > 0;
     }
 
     /**
      * 是否有使用该手机的用户
      */
     public boolean hasPhoneUser(String phone) {
-        return this.count(new LambdaQueryWrapper<User>()
-                .eq(User::getUsername, phone)) > 0;
+        return this.count(new LambdaQueryWrapper<UserBean>()
+                .eq(UserBean::getUsername, phone)) > 0;
     }
 
     /**
      * 保存一个用户
      */
-    public boolean saveUser(User user) {
-        return this.save(user);
+    public boolean saveUser(UserBean userBean) {
+        return this.save(userBean);
     }
 }

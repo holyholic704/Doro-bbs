@@ -3,7 +3,7 @@ package com.doro.core.valid.login;
 import cn.hutool.core.util.ReUtil;
 import com.doro.common.constant.LoginConstant;
 import com.doro.common.constant.Regex;
-import com.doro.core.model.request.RequestUser;
+import com.doro.orm.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;

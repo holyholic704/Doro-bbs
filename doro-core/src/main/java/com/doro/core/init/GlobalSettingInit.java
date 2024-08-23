@@ -9,7 +9,7 @@ import com.doro.common.constant.LockConstant;
 import com.doro.core.service.GlobalSettingService;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
-import com.doro.orm.bean.GlobalSetting;
+import com.doro.orm.bean.GlobalSettingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -55,10 +55,10 @@ public class GlobalSettingInit implements Runner {
     private void check() {
         Map<String, G_Setting> globalSettingTemplateMap = Arrays.stream(G_Setting.values()).collect(Collectors.toMap(G_Setting::name, Function.identity()));
 
-        Map<String, GlobalSetting> globalSettingMap = null;
-        List<GlobalSetting> globalSettingList = globalSettingService.getAll();
-        if (CollUtil.isNotEmpty(globalSettingList)) {
-            globalSettingMap = globalSettingList.stream().collect(Collectors.toMap(GlobalSetting::getK, Function.identity()));
+        Map<String, GlobalSettingBean> globalSettingMap = null;
+        List<GlobalSettingBean> globalSettingBeanList = globalSettingService.getAll();
+        if (CollUtil.isNotEmpty(globalSettingBeanList)) {
+            globalSettingMap = globalSettingBeanList.stream().collect(Collectors.toMap(GlobalSettingBean::getK, Function.identity()));
             // 过滤
             filterMap(globalSettingTemplateMap, globalSettingMap);
         }
@@ -69,7 +69,7 @@ public class GlobalSettingInit implements Runner {
     /**
      * 新增或删除数据库中的配置
      */
-    private void doInsertOrDelete(Map<String, G_Setting> gSettingMap, Map<String, GlobalSetting> globalSettingMap) {
+    private void doInsertOrDelete(Map<String, G_Setting> gSettingMap, Map<String, GlobalSettingBean> globalSettingMap) {
         // 使用编程式事务：方法可以设置为 private，避免自调用失效，事务更小
         TransactionStatus status = null;
 
@@ -77,9 +77,9 @@ public class GlobalSettingInit implements Runner {
         if (MapUtil.isNotEmpty(gSettingMap)) {
             status = this.createStatus(null);
             Collection<G_Setting> gSettings = gSettingMap.values();
-            List<GlobalSetting> list = new ArrayList<>();
+            List<GlobalSettingBean> list = new ArrayList<>();
             for (G_Setting gSetting : gSettings) {
-                list.add(new GlobalSetting()
+                list.add(new GlobalSettingBean()
                         .setK(gSetting.name())
                         .setV(String.valueOf(gSetting.getDefaultValue())));
             }
@@ -90,7 +90,7 @@ public class GlobalSettingInit implements Runner {
         // 删除数据库中多余的字段
         if (MapUtil.isNotEmpty(globalSettingMap)) {
             status = this.createStatus(status);
-            globalSettingService.deleteByIdList(globalSettingMap.values().stream().map(GlobalSetting::getId).collect(Collectors.toList()));
+            globalSettingService.deleteByIdList(globalSettingMap.values().stream().map(GlobalSettingBean::getId).collect(Collectors.toList()));
         }
 
         if (status != null) {
@@ -107,10 +107,10 @@ public class GlobalSettingInit implements Runner {
     /**
      * 字段过滤，保留数据库中没有或多余的字段
      */
-    private void filterMap(Map<String, G_Setting> gSettingMap, Map<String, GlobalSetting> globalSettingMap) {
-        Iterator<Map.Entry<String, GlobalSetting>> iterator = globalSettingMap.entrySet().iterator();
+    private void filterMap(Map<String, G_Setting> gSettingMap, Map<String, GlobalSettingBean> globalSettingMap) {
+        Iterator<Map.Entry<String, GlobalSettingBean>> iterator = globalSettingMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<String, GlobalSetting> entry = iterator.next();
+            Map.Entry<String, GlobalSettingBean> entry = iterator.next();
             // 只关心字段有没有，不关心值是否相同
             if (gSettingMap.containsKey(entry.getKey())) {
                 iterator.remove();

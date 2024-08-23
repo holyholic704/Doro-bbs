@@ -1,10 +1,10 @@
 package com.doro.orm.bean;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import com.doro.orm.base.BaseBean;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
@@ -12,13 +12,12 @@ import lombok.experimental.Accessors;
  *
  * @author jiage
  */
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@ToString
 @Accessors(chain = true)
-@NoArgsConstructor
-@AllArgsConstructor
 @TableName("section")
-public class Section extends BaseBean {
+public class SectionBean extends BaseBean {
 
     /**
      * 名称

@@ -1,4 +1,4 @@
-package com.doro.core.model.request;
+package com.doro.orm.base;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Getter;

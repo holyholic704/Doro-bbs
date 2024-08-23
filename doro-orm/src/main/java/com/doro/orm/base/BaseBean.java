@@ -1,4 +1,4 @@
-package com.doro.orm.bean;
+package com.doro.orm.base;
 
 
 import com.baomidou.mybatisplus.annotation.*;

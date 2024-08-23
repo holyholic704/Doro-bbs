@@ -1,12 +1,12 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.orm.bean.User;
+import com.doro.orm.bean.UserBean;
 
 /**
  * 用户
  *
  * @author jiage
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends BaseMapper<UserBean> {
 }
