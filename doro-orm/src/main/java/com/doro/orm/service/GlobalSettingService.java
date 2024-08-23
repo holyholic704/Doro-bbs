@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 全局配置服务
+ * 全局配置
  *
  * @author jiage
  */

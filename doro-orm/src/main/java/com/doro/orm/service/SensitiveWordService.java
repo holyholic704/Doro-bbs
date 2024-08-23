@@ -6,8 +6,10 @@ import com.doro.orm.mapper.SensitiveWordMapper;
 import org.springframework.stereotype.Service;
 
 /**
+ * 敏感词
+ *
  * @author jiage
  */
 @Service
-public class SensitiveWordService  extends ServiceImpl<SensitiveWordMapper, SensitiveWord> {
+public class SensitiveWordService extends ServiceImpl<SensitiveWordMapper, SensitiveWord> {
 }

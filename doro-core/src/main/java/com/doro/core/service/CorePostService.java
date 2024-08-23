@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 发帖服务
+ * 帖子服务
  *
  * @author jiage
  */

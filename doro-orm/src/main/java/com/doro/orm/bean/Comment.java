@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * 帖子
+ * 评论
  *
  * @author jiage
  */
@@ -17,38 +17,21 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-@TableName("post")
-public class Post extends BaseBean {
+@TableName("comment")
+public class Comment extends BaseBean {
 
     /**
-     * 标题
-     */
-    private String title;
-
-    /**
-     * 作者 ID
+     * 评论人
      */
     private Long authorId;
 
     /**
-     * 正文
+     * 帖子
      */
-    private String text;
+    private Long postId;
 
     /**
-     * 文章类型 ID
-     * TODO 是否需要？
+     * 内容
      */
-    private Long typeId;
-
-    /**
-     * 版块 ID
-     */
-    private Long sectionId;
-
-    /**
-     * 是否有效
-     */
-    private Boolean activated;
-
+    private String content;
 }

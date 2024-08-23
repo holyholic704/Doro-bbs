@@ -7,6 +7,8 @@ import com.doro.orm.mapper.PostMapper;
 import org.springframework.stereotype.Service;
 
 /**
+ * 帖子
+ *
  * @author jiage
  */
 @Service
