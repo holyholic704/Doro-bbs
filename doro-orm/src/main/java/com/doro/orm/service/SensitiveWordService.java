@@ -11,5 +11,5 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class SensitiveWordService extends ServiceImpl<SensitiveWordMapper, SensitiveWordBean> {
+class SensitiveWordService extends ServiceImpl<SensitiveWordMapper, SensitiveWordBean> {
 }

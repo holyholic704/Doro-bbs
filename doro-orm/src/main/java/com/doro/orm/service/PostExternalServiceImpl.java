@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class PostExternalServiceImpl extends ServiceImpl<PostExternalMapper, PostExternalBean> implements PostExternalService {
+class PostExternalServiceImpl extends ServiceImpl<PostExternalMapper, PostExternalBean> implements PostExternalService {
 
 }

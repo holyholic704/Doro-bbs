@@ -16,7 +16,7 @@ import java.util.List;
  * @author jiage
  */
 @Service
-public class GlobalSettingServiceImpl extends ServiceImpl<GlobalSettingMapper, GlobalSettingBean> implements GlobalSettingService {
+class GlobalSettingServiceImpl extends ServiceImpl<GlobalSettingMapper, GlobalSettingBean> implements GlobalSettingService {
 
     @Override
     public List<GlobalSettingBean> getAllSetting() {

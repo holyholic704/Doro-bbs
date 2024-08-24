@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
+class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
 
     @Override
     public boolean saveComment(CommentBean commentBean) {

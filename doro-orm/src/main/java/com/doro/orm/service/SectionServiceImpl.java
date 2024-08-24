@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class SectionServiceImpl extends ServiceImpl<SectionMapper, SectionBean> implements SectionService {
+class SectionServiceImpl extends ServiceImpl<SectionMapper, SectionBean> implements SectionService {
 }

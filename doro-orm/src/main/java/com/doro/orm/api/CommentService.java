@@ -9,5 +9,8 @@ import com.doro.orm.bean.CommentBean;
  */
 public interface CommentService {
 
+    /**
+     * 保存一个评论
+     */
     boolean saveComment(CommentBean commentBean);
 }
