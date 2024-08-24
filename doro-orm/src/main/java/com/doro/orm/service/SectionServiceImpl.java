@@ -1,6 +1,7 @@
 package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.doro.orm.api.SectionService;
 import com.doro.orm.bean.SectionBean;
 import com.doro.orm.mapper.SectionMapper;
 import org.springframework.stereotype.Service;
@@ -11,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class SectionService extends ServiceImpl<SectionMapper, SectionBean> {
+public class SectionServiceImpl extends ServiceImpl<SectionMapper, SectionBean> implements SectionService {
 }

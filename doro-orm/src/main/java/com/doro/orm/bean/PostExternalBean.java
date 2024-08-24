@@ -16,8 +16,8 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("doro_bbs_post_info")
-public class PostInfoBean extends BaseModel {
+@TableName("doro_bbs_post_external")
+public class PostExternalBean extends BaseModel {
 
     /**
      * 帖子

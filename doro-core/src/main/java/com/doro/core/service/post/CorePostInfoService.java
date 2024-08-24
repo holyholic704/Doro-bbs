@@ -1,6 +1,6 @@
 package com.doro.core.service.post;
 
-import com.doro.orm.service.PostInfoService;
+import com.doro.orm.api.PostExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class CorePostInfoService {
 
-    private final PostInfoService postInfoService;
+    private final PostExternalService postExternalService;
 
     @Autowired
-    public CorePostInfoService(PostInfoService postInfoService) {
-        this.postInfoService = postInfoService;
+    public CorePostInfoService(PostExternalService postExternalService) {
+        this.postExternalService = postExternalService;
     }
 }
