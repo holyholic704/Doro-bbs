@@ -2,7 +2,7 @@ package com.doro.core.controller;
 
 import com.doro.orm.request.RequestPost;
 import com.doro.common.response.ResponseResult;
-import com.doro.core.service.CorePostService;
+import com.doro.core.service.post.CorePostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

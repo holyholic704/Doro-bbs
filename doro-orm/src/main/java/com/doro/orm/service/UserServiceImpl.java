@@ -2,6 +2,7 @@ package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.doro.orm.api.UserService;
 import com.doro.orm.bean.UserBean;
 import com.doro.orm.mapper.UserMapper;
 import org.springframework.stereotype.Service;
@@ -12,59 +13,45 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class UserService extends ServiceImpl<UserMapper, UserBean> {
+class UserServiceImpl extends ServiceImpl<UserMapper, UserBean> implements UserService {
 
-    /**
-     * 根据用户名获取用户信息
-     */
+    @Override
     public UserBean getUserByUsername(String username) {
         return this.getOne(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getUsername, username));
     }
 
-    /**
-     * 根据手机号获取用户信息
-     */
+    @Override
     public UserBean getUserByPhone(String phone) {
         return this.getOne(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getPhone, phone));
     }
 
-    /**
-     * 根据邮箱获取用户信息
-     */
+    @Override
     public UserBean getUserByEmail(String email) {
         return this.getOne(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getEmail, email));
     }
 
-    /**
-     * 是否有使用该用户名的用户
-     */
+    @Override
     public boolean hasUser(String username) {
         return this.count(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getUsername, username)) > 0;
     }
 
-    /**
-     * 是否有使用该手机的用户
-     */
+    @Override
     public boolean hasEmailUser(String email) {
         return this.count(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getEmail, email)) > 0;
     }
 
-    /**
-     * 是否有使用该手机的用户
-     */
+    @Override
     public boolean hasPhoneUser(String phone) {
         return this.count(new LambdaQueryWrapper<UserBean>()
                 .eq(UserBean::getUsername, phone)) > 0;
     }
 
-    /**
-     * 保存一个用户
-     */
+    @Override
     public boolean saveUser(UserBean userBean) {
         return this.save(userBean);
     }

@@ -12,6 +12,7 @@ import com.doro.core.utils.IpUtil;
 import com.doro.core.utils.JwtUtil;
 import com.doro.core.utils.UserUtil;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,17 +29,18 @@ import java.io.IOException;
  * @author jiage
  */
 @Component
+@Slf4j
 public class RequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(IpUtil.getIp(request));
-        System.out.println(UserUtil.getUsername());
+        log.info(IpUtil.getIp(request));
+        log.info(UserUtil.getUsername());
 //        if (fromGateway(request) && checkToken(request)) {
         if (checkToken(request)) {
             // TODO 网关过滤
         }
-        System.out.println(UserUtil.getUsername());
+        log.info(UserUtil.getUsername());
         filterChain.doFilter(request, response);
     }
 

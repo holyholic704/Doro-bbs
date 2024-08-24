@@ -35,3 +35,4 @@ build/
 
 *.yaml
 /doro-test/
+*.log

@@ -1,12 +1,12 @@
-package com.doro.core.service;
+package com.doro.core.service.post;
 
 import cn.hutool.core.util.StrUtil;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
+import com.doro.orm.api.PostService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.request.RequestPost;
-import com.doro.orm.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +44,12 @@ public class CorePostService {
 
     public ResponseResult<?> getById(Long postId) {
         // TODO 浏览量，在一定时间内多次获取同一帖子，不增加浏览量
-        PostBean post = postService.getById(postId);
+        PostBean post = postService.getPostById(postId);
         return post != null ? ResponseResult.success(post) : ResponseResult.error("没有数据");
+    }
+
+    public ResponseResult<?> page(RequestPost requestPost) {
+        return ResponseResult.success(postService.page(requestPost));
     }
 
     private void valid(RequestPost requestPost) {

@@ -1,16 +1,15 @@
 package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.bean.PostInfoBean;
-import com.doro.orm.mapper.PostInfoMapper;
+import com.doro.orm.bean.SectionBean;
+import com.doro.orm.mapper.SectionMapper;
 import org.springframework.stereotype.Service;
 
 /**
- * 帖子相关
+ * 版块
  *
  * @author jiage
  */
 @Service
-public class PostInfoService extends ServiceImpl<PostInfoMapper, PostInfoBean> {
-
+public class SectionService extends ServiceImpl<SectionMapper, SectionBean> {
 }
