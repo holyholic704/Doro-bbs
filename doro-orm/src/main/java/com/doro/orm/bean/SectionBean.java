@@ -25,6 +25,11 @@ public class SectionBean extends BaseBean {
     private String name;
 
     /**
+     * 父版块
+     */
+    private Long parentId;
+
+    /**
      * 创建人
      */
     private Long createUserId;

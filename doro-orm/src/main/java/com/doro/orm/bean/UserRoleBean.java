@@ -20,12 +20,12 @@ import lombok.experimental.Accessors;
 public class UserRoleBean extends BaseBean {
 
     /**
-     * 用户ID
+     * 用户
      */
     private Long userId;
 
     /**
-     * 角色ID
+     * 角色
      */
     private Long roleId;
 }

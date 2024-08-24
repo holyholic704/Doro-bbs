@@ -9,5 +9,13 @@ import lombok.Getter;
 @Getter
 public class RequestSection extends BaseRequest {
 
+    /**
+     * 版块名称
+     */
     private String name;
+
+    /**
+     * 父版块
+     */
+    private Long parentId;
 }

@@ -25,7 +25,7 @@ public class PostBean extends BaseBean {
     private String title;
 
     /**
-     * 作者 ID
+     * 作者
      */
     private Long authorId;
 
@@ -35,7 +35,7 @@ public class PostBean extends BaseBean {
     private String content;
 
 //    /**
-//     * 文章类型 ID
+//     * 帖子类型
 //     * TODO 是否需要？
 //     */
 //    private Long typeId;
