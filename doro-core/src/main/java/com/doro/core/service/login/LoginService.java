@@ -1,6 +1,6 @@
 package com.doro.core.service.login;
 
-import com.doro.common.constant.LoginConstant;
+import com.doro.common.constant.LoginConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.model.response.ResponseUser;
@@ -117,11 +117,11 @@ public class LoginService {
      * @param loginType 登录方式，这里为查询方式
      */
     private void isUserExisted(String username, String loginType) {
-        // 注意这里不要改为 swicth，后续 LoginConstant 可能会改为变量
+        // 注意这里不要改为 swicth，后续 LoginConst 可能会改为变量
         boolean existed;
-        if (LoginConstant.USE_PHONE.equals(loginType)) {
+        if (LoginConst.USE_PHONE.equals(loginType)) {
             existed = userService.hasPhoneUser(username);
-        } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
+        } else if (LoginConst.USE_EMAIL.equals(loginType)) {
             existed = userService.hasEmailUser(username);
         } else {
             existed = userService.hasUser(username);

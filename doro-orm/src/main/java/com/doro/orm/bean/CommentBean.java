@@ -22,7 +22,7 @@ public class CommentBean extends BaseBean {
     /**
      * 评论人
      */
-    private Long authorId;
+    private Long userId;
 
     /**
      * 帖子

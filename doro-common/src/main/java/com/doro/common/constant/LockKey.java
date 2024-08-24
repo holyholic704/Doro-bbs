@@ -5,7 +5,7 @@ package com.doro.common.constant;
  *
  * @author jiage
  */
-public class LockConstant {
+public class LockKey {
 
     /**
      * 全局配置初始化

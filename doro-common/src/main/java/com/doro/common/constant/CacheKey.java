@@ -5,7 +5,7 @@ package com.doro.common.constant;
  *
  * @author jiage
  */
-public class CacheConstant {
+public class CacheKey {
 
     /**
      * JWT 缓存前缀

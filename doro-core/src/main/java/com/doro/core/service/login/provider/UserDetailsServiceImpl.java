@@ -1,6 +1,6 @@
 package com.doro.core.service.login.provider;
 
-import com.doro.common.constant.LoginConstant;
+import com.doro.common.constant.LoginConst;
 import com.doro.common.exception.ValidException;
 import com.doro.orm.api.UserService;
 import com.doro.orm.bean.UserBean;
@@ -45,9 +45,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * @return 用户信息
      */
     private UserBean getUserByType(String username, String loginType) {
-        if (LoginConstant.USE_PHONE.equals(loginType)) {
+        if (LoginConst.USE_PHONE.equals(loginType)) {
             return userService.getUserByPhone(username);
-        } else if (LoginConstant.USE_EMAIL.equals(loginType)) {
+        } else if (LoginConst.USE_EMAIL.equals(loginType)) {
             return userService.getUserByEmail(username);
         } else {
             return userService.getUserByUsername(username);

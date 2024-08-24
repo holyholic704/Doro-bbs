@@ -2,7 +2,7 @@ package com.doro.core.service.setting;
 
 import cn.hutool.core.collection.CollUtil;
 import com.doro.cache.utils.MultiCacheUtil;
-import com.doro.common.constant.CacheConstant;
+import com.doro.common.constant.CacheKey;
 import com.doro.common.exception.SystemException;
 import com.doro.orm.api.GlobalSettingService;
 import com.doro.orm.bean.GlobalSettingBean;
@@ -33,7 +33,7 @@ public class GlobalSettingAcquire {
      * 获取配置的值
      */
     public static <T> T get(G_Setting gSetting) {
-        Map<String, String> map = MultiCacheUtil.get(CacheConstant.GLOBAL_SETTING);
+        Map<String, String> map = MultiCacheUtil.get(CacheKey.GLOBAL_SETTING);
         // 集合不为空，就可认为该字段一定存在
         if (map != null) {
             return convert(map.get(gSetting.name()), gSetting.getConvert());
@@ -60,7 +60,7 @@ public class GlobalSettingAcquire {
         Map<String, String> map = globalSettingBeanList
                 .stream()
                 .collect(Collectors.toMap(GlobalSettingBean::getK, GlobalSettingBean::getV));
-        MultiCacheUtil.put(CacheConstant.GLOBAL_SETTING, map);
+        MultiCacheUtil.put(CacheKey.GLOBAL_SETTING, map);
         return map;
     }
 }

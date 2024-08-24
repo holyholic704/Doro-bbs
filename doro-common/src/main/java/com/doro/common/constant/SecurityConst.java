@@ -5,7 +5,7 @@ package com.doro.common.constant;
  *
  * @author jiage
  */
-public class SecurityConstant {
+public class SecurityConst {
 
     public static final String GATEWAY_HEAD = "gateway_header";
 }

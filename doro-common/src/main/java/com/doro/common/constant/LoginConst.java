@@ -5,7 +5,7 @@ package com.doro.common.constant;
  *
  * @author jiage
  */
-public class LoginConstant {
+public class LoginConst {
 
     /**
      * 登录方式：使用密码

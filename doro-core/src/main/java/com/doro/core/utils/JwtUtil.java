@@ -2,8 +2,8 @@ package com.doro.core.utils;
 
 import cn.hutool.core.date.DateUtil;
 import com.doro.cache.utils.RemoteCacheUtil;
-import com.doro.common.constant.CacheConstant;
-import com.doro.common.constant.LoginConstant;
+import com.doro.common.constant.CacheKey;
+import com.doro.common.constant.LoginConst;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import io.jsonwebtoken.Claims;
@@ -34,7 +34,7 @@ public class JwtUtil {
      */
     public static String generate(String username, Long userId) {
         Map<String, Long> claims = new HashMap<>(1);
-        claims.put(LoginConstant.CLAIMS_USER_ID, userId);
+        claims.put(LoginConst.CLAIMS_USER_ID, userId);
 
         Date now = new Date();
 
@@ -63,7 +63,7 @@ public class JwtUtil {
     public static String generateAndCache(String username, Long userId) {
         String token = generate(username, userId);
         int jwtExpiration = GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION);
-        RemoteCacheUtil.put(CacheConstant.JWT_PREFIX + username, token, Duration.ofSeconds(jwtExpiration));
+        RemoteCacheUtil.put(CacheKey.JWT_PREFIX + username, token, Duration.ofSeconds(jwtExpiration));
         return token;
     }
 
@@ -109,14 +109,14 @@ public class JwtUtil {
      * 获取用户 ID
      */
     public static Long getUserId(String token) {
-        return getPayload(token).get(LoginConstant.CLAIMS_USER_ID, Long.class);
+        return getPayload(token).get(LoginConst.CLAIMS_USER_ID, Long.class);
     }
 
     /**
      * 获取用户 ID
      */
     public static Long getUserId(Claims claims) {
-        return claims.get(LoginConstant.CLAIMS_USER_ID, Long.class);
+        return claims.get(LoginConst.CLAIMS_USER_ID, Long.class);
     }
 
     /**

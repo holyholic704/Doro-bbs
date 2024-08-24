@@ -2,9 +2,9 @@ package com.doro.core.filter;
 
 import cn.hutool.core.util.StrUtil;
 import com.doro.cache.utils.RemoteCacheUtil;
-import com.doro.common.constant.CacheConstant;
-import com.doro.common.constant.LoginConstant;
-import com.doro.common.constant.SecurityConstant;
+import com.doro.common.constant.CacheKey;
+import com.doro.common.constant.LoginConst;
+import com.doro.common.constant.SecurityConst;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
@@ -45,13 +45,13 @@ public class RequestFilter extends OncePerRequestFilter {
     }
 
     private boolean checkToken(HttpServletRequest request) {
-        String token = request.getHeader(LoginConstant.JWT_HEADER);
-        if (StrUtil.isNotEmpty(token) && StrUtil.startWith(token, LoginConstant.JWT_SUFFIX)) {
-            token = token.substring(LoginConstant.JWT_SUFFIX.length()).trim();
+        String token = request.getHeader(LoginConst.JWT_HEADER);
+        if (StrUtil.isNotEmpty(token) && StrUtil.startWith(token, LoginConst.JWT_SUFFIX)) {
+            token = token.substring(LoginConst.JWT_SUFFIX.length()).trim();
 
             Claims claims = JwtUtil.getPayload(token);
             String username = JwtUtil.getUsername(claims);
-            String storeToken = RemoteCacheUtil.get(CacheConstant.JWT_PREFIX + username);
+            String storeToken = RemoteCacheUtil.get(CacheKey.JWT_PREFIX + username);
 
             // 传入的 Token 是否与系统存储的相同，是否
             if (token.equals(storeToken) && !JwtUtil.isExpired(token)) {
@@ -66,7 +66,7 @@ public class RequestFilter extends OncePerRequestFilter {
     }
 
     private boolean fromGateway(HttpServletRequest request) {
-        String from = request.getHeader(SecurityConstant.GATEWAY_HEAD);
+        String from = request.getHeader(SecurityConst.GATEWAY_HEAD);
         String gatewayHeader = GlobalSettingAcquire.get(G_Setting.GATEWAY_HEADER);
         return gatewayHeader.equals(from);
     }
