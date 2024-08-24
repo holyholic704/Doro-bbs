@@ -25,9 +25,14 @@ public class PostBean extends BaseBean {
     private String title;
 
     /**
-     * 作者
+     * 作者 ID
      */
     private Long authorId;
+
+    /**
+     * 作者
+     */
+    private String authorName;
 
     /**
      * 正文
@@ -46,8 +51,18 @@ public class PostBean extends BaseBean {
     private Long sectionId;
 
     /**
+     * 版块
+     */
+    private String sectionName;
+
+    /**
      * 是否有效
      */
     private Boolean activated;
+
+    /**
+     * 浏览量
+     */
+    private Integer views;
 
 }

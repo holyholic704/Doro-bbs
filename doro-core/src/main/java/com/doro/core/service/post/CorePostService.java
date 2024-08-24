@@ -1,6 +1,8 @@
 package com.doro.core.service.post;
 
 import cn.hutool.core.util.StrUtil;
+import com.doro.cache.api.MyLock;
+import com.doro.cache.utils.LockUtil;
 import com.doro.common.constant.PostConst;
 import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
@@ -10,6 +12,8 @@ import com.doro.orm.api.PostService;
 import com.doro.orm.api.SectionService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.model.request.RequestPost;
+import org.redisson.api.RMap;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +25,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class CorePostService {
 
+    private final CorePostExternalService corePostExternalService;
     private final SectionService sectionService;
+    private final RedissonClient redissonClient;
     private final PostService postService;
 
     @Autowired
-    public CorePostService(SectionService sectionService, PostService postService) {
+    public CorePostService(CorePostExternalService corePostExternalService, SectionService sectionService, RedissonClient redissonClient, PostService postService) {
+        this.corePostExternalService = corePostExternalService;
         this.sectionService = sectionService;
+        this.redissonClient = redissonClient;
         this.postService = postService;
     }
 
@@ -49,9 +57,31 @@ public class CorePostService {
     }
 
     public ResponseResult<?> getById(Long postId) {
-        // TODO 浏览量，在一定时间内多次获取同一帖子，不增加浏览量
+        // TODO 浏览量，在一定时间内同一用户或同一IP多次获取同一帖子，不增加浏览量
         PostBean post = postService.getPostById(postId);
-        return post != null ? ResponseResult.success(post) : ResponseResult.error(MessageEnum.NO_DATA_ERROR);
+        // TODO 多线程?
+        if (post != null) {
+            post.setViews(incrAndGetViews(postId, post.getViews()));
+            return ResponseResult.success(post);
+        }
+        return ResponseResult.error(MessageEnum.NO_DATA_ERROR);
+    }
+
+    public Integer incrAndGetViews(Long postId, Integer views) {
+        RMap<Long, Integer> postView = redissonClient.getMap("POST_VIEW");
+        Integer cacheViews = postView.get(postId);
+        if (cacheViews != null) {
+            views = postView.addAndGet(postId, 1);
+        } else {
+            MyLock lock = LockUtil.tryLock("INIT_POST_VIEW" + postId, 5, 5);
+            views = views + 1;
+            Integer temp = postView.putIfAbsent(postId, views);
+            if (temp != null) {
+                views = temp + 1;
+            }
+            lock.unlock();
+        }
+        return views;
     }
 
     public ResponseResult<?> page(RequestPost requestPost) {

@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 远程缓存（Redis）工具类
+ * TODO 互斥锁
  *
  * @author jiage
  */

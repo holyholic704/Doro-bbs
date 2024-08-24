@@ -6,4 +6,6 @@ package com.doro.orm.api;
  * @author jiage
  */
 public interface PostExternalService {
+
+    Integer getPostViews(Long postId);
 }

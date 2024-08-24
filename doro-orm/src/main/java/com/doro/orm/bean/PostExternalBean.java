@@ -27,7 +27,7 @@ public class PostExternalBean extends BaseModel {
     /**
      * 浏览
      */
-    private Long view;
+    private Integer view;
 
     /**
      * 分享
