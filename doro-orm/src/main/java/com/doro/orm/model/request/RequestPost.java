@@ -2,13 +2,11 @@ package com.doro.orm.model.request;
 
 import com.doro.orm.base.BaseRequest;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * @author jiage
  */
 @Getter
-@Setter
 public class RequestPost extends BaseRequest {
 
     /**
@@ -24,7 +22,7 @@ public class RequestPost extends BaseRequest {
     /**
      * 正文
      */
-    private String text;
+    private String content;
 
     /**
      * 版块

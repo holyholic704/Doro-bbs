@@ -1,6 +1,6 @@
 package com.doro.common.response;
 
-import com.doro.common.enumeration.ErrorMessage;
+import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.enumeration.ResponseEnum;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -59,6 +59,13 @@ public class ResponseResult<T> implements Serializable {
                 data);
     }
 
+    public static ResponseResult<String> success(MessageEnum messageEnum) {
+        return new ResponseResult<>(
+                ResponseEnum.SUCCESS.getCode(),
+                ResponseEnum.SUCCESS.getMessage(),
+                messageEnum.getMessage());
+    }
+
     public static <T> ResponseResult<T> error(String message) {
         return new ResponseResult<>(ResponseEnum.ERROR.getCode(), message);
     }
@@ -67,7 +74,7 @@ public class ResponseResult<T> implements Serializable {
         return ResponseResult.error(ResponseEnum.ERROR.getMessage());
     }
 
-    public static <T> ResponseResult<T> error(ErrorMessage errorMessage) {
-        return ResponseResult.error(errorMessage.getMessage());
+    public static <T> ResponseResult<T> error(MessageEnum messageEnum) {
+        return ResponseResult.error(messageEnum.getMessage());
     }
 }

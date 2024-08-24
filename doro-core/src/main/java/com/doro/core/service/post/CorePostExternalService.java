@@ -8,12 +8,12 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service
-public class CorePostInfoService {
+public class CorePostExternalService {
 
     private final PostExternalService postExternalService;
 
     @Autowired
-    public CorePostInfoService(PostExternalService postExternalService) {
+    public CorePostExternalService(PostExternalService postExternalService) {
         this.postExternalService = postExternalService;
     }
 }

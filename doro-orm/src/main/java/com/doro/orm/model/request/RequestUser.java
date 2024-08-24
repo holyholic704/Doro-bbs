@@ -8,7 +8,6 @@ import lombok.Setter;
  * @author jiage
  */
 @Getter
-@Setter
 public class RequestUser extends BaseRequest {
 
     /**

@@ -32,7 +32,7 @@ public class PostBean extends BaseBean {
     /**
      * 正文
      */
-    private String text;
+    private String content;
 
 //    /**
 //     * 文章类型 ID

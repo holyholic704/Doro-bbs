@@ -1,6 +1,6 @@
 package com.doro.core.handler;
 
-import com.doro.common.enumeration.ErrorMessage;
+import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.SystemException;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({SystemException.class, SQLException.class})
     public ResponseResult<String> handleSystemException(Exception e) {
         e.printStackTrace();
-        return ResponseResult.error(ErrorMessage.SYSTEM_ERROR);
+        return ResponseResult.error(MessageEnum.SYSTEM_ERROR);
     }
 
     /**

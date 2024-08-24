@@ -2,7 +2,6 @@ package com.doro.orm.base;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 基础请求模型
@@ -11,7 +10,6 @@ import lombok.Setter;
  * @author jiage
  */
 @Getter
-@Setter
 public class BaseRequest {
 
     /**

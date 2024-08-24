@@ -23,4 +23,10 @@ public class SectionBean extends BaseBean {
      * 名称
      */
     private String name;
+
+    /**
+     * 创建人
+     */
+    private Long createUserId;
+
 }
