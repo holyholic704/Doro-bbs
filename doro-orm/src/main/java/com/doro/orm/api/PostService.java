@@ -2,7 +2,7 @@ package com.doro.orm.api;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doro.orm.bean.PostBean;
-import com.doro.orm.request.RequestPost;
+import com.doro.orm.model.request.RequestPost;
 
 /**
  * 帖子

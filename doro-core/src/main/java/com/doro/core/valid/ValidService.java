@@ -5,7 +5,7 @@ import com.doro.core.valid.login.AbstractLoginValid;
 import com.doro.core.valid.login.EmailLoginValid;
 import com.doro.core.valid.login.PasswordLoginValid;
 import com.doro.core.valid.login.PhoneLoginValid;
-import com.doro.orm.request.RequestUser;
+import com.doro.orm.model.request.RequestUser;
 import org.springframework.stereotype.Component;
 
 /**

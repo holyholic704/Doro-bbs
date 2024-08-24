@@ -1,6 +1,6 @@
 package com.doro.core.controller;
 
-import com.doro.orm.request.RequestPost;
+import com.doro.orm.model.request.RequestPost;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.post.CorePostService;
 import org.springframework.beans.factory.annotation.Autowired;

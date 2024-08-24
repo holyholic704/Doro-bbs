@@ -1,4 +1,4 @@
-package com.doro.orm.request;
+package com.doro.orm.model.request;
 
 import com.doro.orm.base.BaseRequest;
 import lombok.Getter;

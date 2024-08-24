@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.orm.api.PostService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.mapper.PostMapper;
-import com.doro.orm.request.RequestPost;
+import com.doro.orm.model.request.RequestPost;
 import org.springframework.stereotype.Service;
 
 /**

@@ -6,7 +6,7 @@ import com.doro.common.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.PostService;
 import com.doro.orm.bean.PostBean;
-import com.doro.orm.request.RequestPost;
+import com.doro.orm.model.request.RequestPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

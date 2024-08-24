@@ -1,4 +1,4 @@
-package com.doro.core.response;
+package com.doro.core.model.response;
 
 import lombok.Getter;
 import lombok.Setter;
