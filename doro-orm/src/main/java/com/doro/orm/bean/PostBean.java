@@ -1,5 +1,6 @@
 package com.doro.orm.bean;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doro.orm.base.BaseBean;
 import lombok.Getter;
@@ -63,6 +64,17 @@ public class PostBean extends BaseBean {
     /**
      * 浏览量
      */
-    private Integer views;
+    private Long views;
 
+    /**
+     * 点赞
+     */
+    @TableField(exist = false)
+    private Integer likes;
+
+    /**
+     * 喜欢
+     */
+//    @TableField(exist = false)
+//    private Integer fa;
 }

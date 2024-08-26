@@ -36,8 +36,7 @@ public class RedissonConfig {
      * 初始化配置
      */
     private Config initConfig() {
-        Config config = new Config()
-                .setCodec(new JsonJacksonCodec());
+        Config config = new Config();
 
         if (redisProperties.getCluster() != null) {
             config.useClusterServers()

@@ -31,7 +31,7 @@ public class CoreCommentService {
         CommentBean commentBean = new CommentBean()
                 .setUserId(userId)
                 .setPostId(requestComment.getPostId())
-                .setReplyId(requestComment.getReplyId() == null ? 0 : requestComment.getReplyId())
+                .setReplyId(requestComment.getReplyId())
                 .setContent(requestComment.getContent());
 
         return commentService.saveComment(commentBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);

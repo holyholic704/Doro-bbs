@@ -3,19 +3,23 @@ package com.doro.core.service.post;
 import cn.hutool.core.util.StrUtil;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
+import com.doro.cache.utils.RedisUtil;
+import com.doro.cache.utils.RemoteCacheUtil;
 import com.doro.common.constant.PostConst;
 import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
+import com.doro.core.service.CoreUserPostLikeService;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.PostService;
 import com.doro.orm.api.SectionService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.model.request.RequestPost;
-import org.redisson.api.RMap;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.RBucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.Duration;
 
 /**
  * 帖子服务
@@ -25,16 +29,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class CorePostService {
 
-    private final CorePostExternalService corePostExternalService;
+    private final CoreUserPostLikeService coreUserPostLikeService;
     private final SectionService sectionService;
-    private final RedissonClient redissonClient;
     private final PostService postService;
 
     @Autowired
-    public CorePostService(CorePostExternalService corePostExternalService, SectionService sectionService, RedissonClient redissonClient, PostService postService) {
-        this.corePostExternalService = corePostExternalService;
+    public CorePostService(CoreUserPostLikeService coreUserPostLikeService, SectionService sectionService, PostService postService) {
+        this.coreUserPostLikeService = coreUserPostLikeService;
         this.sectionService = sectionService;
-        this.redissonClient = redissonClient;
         this.postService = postService;
     }
 
@@ -58,7 +60,11 @@ public class CorePostService {
 
     public ResponseResult<?> getById(Long postId) {
         // TODO 浏览量，在一定时间内同一用户或同一IP多次获取同一帖子，不增加浏览量
-        PostBean post = postService.getPostById(postId);
+        PostBean post = RemoteCacheUtil.get("POST:" + postId);
+        if (post == null) {
+            post = postService.getPostById(postId);
+            RemoteCacheUtil.putIfAbsent("POST:" + postId, post);
+        }
         // TODO 多线程?
         if (post != null) {
             post.setViews(incrAndGetViews(postId, post.getViews()));
@@ -67,20 +73,29 @@ public class CorePostService {
         return ResponseResult.error(MessageEnum.NO_DATA_ERROR);
     }
 
-    public Integer incrAndGetViews(Long postId, Integer views) {
-        RMap<Long, Integer> postView = redissonClient.getMap("POST_VIEW");
-        Integer cacheViews = postView.get(postId);
-        if (cacheViews != null) {
-            views = postView.addAndGet(postId, 1);
-        } else {
-            MyLock lock = LockUtil.tryLock("INIT_POST_VIEW" + postId, 5, 5);
-            views = views + 1;
-            Integer temp = postView.putIfAbsent(postId, views);
-            if (temp != null) {
-                views = temp + 1;
-            }
-            lock.unlock();
-        }
+    private Long incrAndGetViews(Long postId, Long views) {
+        String lockKey = "INIT_POST_VIEW:" + postId;
+        MyLock lock = LockUtil.tryLock(lockKey, 5, 5);
+        views = incrViews(postId, views);
+        lock.unlock();
+        return views;
+    }
+
+    private Long incrViews(Long postId, Long views) {
+        String key = "POST_VIEW:" + postId;
+        // 不使用自增：无法同时设置值与超时时间，需使用批量操作
+        // 不使用 CAS 操作：分布式锁确保了同时只有一个线程能对浏览量进行修改
+        // 不使用 getex 每次访问 key 自动延长时间：key 不存在无法延长
+        RBucket<Long> bucket = RedisUtil.createBucket(key);
+
+        Long cacheViews = bucket.get();
+
+        // 如果没有缓存就使用数据库中的值
+        // 不用担心执行到这，key 正好过期
+        // TODO 键过期自动刷新到数据库？定时任务？
+        views = cacheViews == null ? (views + 1) : (cacheViews + 1);
+        // 每次更新重新设置超时时间
+        bucket.set(views, Duration.ofMinutes(5));
         return views;
     }
 
@@ -99,8 +114,8 @@ public class CorePostService {
             throw new ValidException(String.format("请输入正文（%s ~ %s 个字）", PostConst.MIN_CONTENT_LENGTH, PostConst.MAX_CONTENT_LENGTH));
         }
 
-        if (requestPost.getSectionId() == null || !sectionService.hasSection(requestPost.getSectionId())) {
-            throw new ValidException("请选择正确的版块");
+        if (requestPost.getSectionId() == null) {
+            throw new ValidException("请选择发帖的版块");
         }
     }
 

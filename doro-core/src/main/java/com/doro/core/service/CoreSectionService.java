@@ -32,6 +32,7 @@ public class CoreSectionService {
         Long createUserId = UserUtil.getUserId();
         SectionBean sectionBean = new SectionBean()
                 .setCreateUserId(createUserId)
+                .setParentId(requestSection.getParentId())
                 .setName(requestSection.getName());
         return sectionService.saveSection(sectionBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
     }

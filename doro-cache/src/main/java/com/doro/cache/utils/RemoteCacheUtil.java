@@ -70,7 +70,6 @@ public class RemoteCacheUtil {
         RBatch rBatch = createBatch();
         rBatch.getBucket(key).getAsync();
         rBatch.getBucket(key).setIfAbsentAsync(value, duration);
-        rBatch.execute();
 
         BatchResult<?> batchResult = rBatch.execute();
         List<?> responses = batchResult.getResponses();
