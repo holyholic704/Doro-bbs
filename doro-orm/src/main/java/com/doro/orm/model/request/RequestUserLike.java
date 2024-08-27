@@ -7,12 +7,17 @@ import lombok.Getter;
  * @author jiage
  */
 @Getter
-public class RequestUserPostLike extends BaseRequest {
+public class RequestUserLike extends BaseRequest {
 
     /**
-     * 帖子
+     * 点赞/踩对象类型
      */
-    private Long postId;
+    private Short type;
+
+    /**
+     * 点赞/踩对象
+     */
+    private Long objId;
 
     /**
      * true：赞

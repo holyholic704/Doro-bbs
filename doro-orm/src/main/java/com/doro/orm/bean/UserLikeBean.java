@@ -1,6 +1,5 @@
 package com.doro.orm.bean;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doro.orm.base.BaseBean;
 import lombok.Getter;
@@ -17,8 +16,8 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("doro_bbs_user_post_like")
-public class UserPostLikeBean extends BaseBean {
+@TableName("doro_bbs_user_like")
+public class UserLikeBean extends BaseBean {
 
     /**
      * 用户
@@ -26,19 +25,18 @@ public class UserPostLikeBean extends BaseBean {
     private Long userId;
 
     /**
-     * 帖子
+     * 点赞/踩对象类型
      */
-    private Long postId;
+    private Short type;
+
+    /**
+     * 点赞/踩对象
+     */
+    private Long objId;
 
     /**
      * true：赞
      * false：踩
      */
     private Boolean positive;
-
-    /**
-     * 数量
-     */
-    @TableField(exist = false)
-    private Integer nums;
 }
