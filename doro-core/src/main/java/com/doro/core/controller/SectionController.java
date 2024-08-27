@@ -1,5 +1,6 @@
 package com.doro.core.controller;
 
+import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.CoreSectionService;
 import com.doro.orm.model.request.RequestSection;
@@ -27,6 +28,6 @@ public class SectionController {
 
     @PostMapping("save")
     public ResponseResult<?> saveSection(@RequestBody RequestSection requestSection) {
-        return coreSectionService.saveSection(requestSection);
+        return coreSectionService.saveSection(requestSection) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
     }
 }

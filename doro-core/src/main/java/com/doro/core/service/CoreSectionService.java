@@ -2,9 +2,7 @@ package com.doro.core.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.doro.common.constant.SectionConst;
-import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
-import com.doro.common.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.SectionService;
 import com.doro.orm.bean.SectionBean;
@@ -27,14 +25,14 @@ public class CoreSectionService {
         this.sectionService = sectionService;
     }
 
-    public ResponseResult<?> saveSection(RequestSection requestSection) {
+    public boolean saveSection(RequestSection requestSection) {
         valid(requestSection);
         Long createUserId = UserUtil.getUserId();
         SectionBean sectionBean = new SectionBean()
                 .setCreateUserId(createUserId)
                 .setParentId(requestSection.getParentId())
                 .setName(requestSection.getName());
-        return sectionService.saveSection(sectionBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
+        return sectionService.saveSection(sectionBean);
     }
 
     private void valid(RequestSection requestSection) {

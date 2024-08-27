@@ -1,5 +1,6 @@
 package com.doro.core.controller;
 
+import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.CoreCommentService;
 import com.doro.orm.model.request.RequestComment;
@@ -27,6 +28,6 @@ public class CommentController {
 
     @PostMapping("save")
     public ResponseResult<?> save(@RequestBody RequestComment requestComment) {
-        return coreCommentService.save(requestComment);
+        return coreCommentService.save(requestComment) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
     }
 }

@@ -35,7 +35,7 @@ public class CoreCommentService {
         this.commentService = commentService;
     }
 
-    public ResponseResult<?> save(RequestComment requestComment) {
+    public boolean save(RequestComment requestComment) {
         valid(requestComment);
         Long userId = UserUtil.getUserId();
         CommentBean commentBean = new CommentBean()
@@ -44,7 +44,7 @@ public class CoreCommentService {
                 .setReplyId(requestComment.getReplyId())
                 .setContent(requestComment.getContent());
 
-        return commentService.saveComment(commentBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
+        return commentService.saveComment(commentBean);
     }
 
     public List<CommentBean> getPostFirstFewComment(Long postId) {

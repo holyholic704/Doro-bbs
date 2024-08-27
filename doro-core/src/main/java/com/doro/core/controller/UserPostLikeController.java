@@ -1,5 +1,6 @@
 package com.doro.core.controller;
 
+import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.CoreUserLikeService;
 import com.doro.orm.model.request.RequestUserLike;
@@ -27,6 +28,6 @@ public class UserPostLikeController {
 
     @PostMapping("like")
     public ResponseResult<?> like(@RequestBody RequestUserLike requestUserLike) {
-        return userPostLikeService.like(requestUserLike);
+        return userPostLikeService.like(requestUserLike) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
     }
 }

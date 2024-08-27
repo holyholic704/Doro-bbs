@@ -7,14 +7,12 @@ import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
-import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.CoreCommentService;
 import com.doro.core.service.CoreUserLikeService;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.PostService;
-import com.doro.orm.api.SectionService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.model.request.RequestPost;
 import org.redisson.api.RAtomicLong;
@@ -48,7 +46,7 @@ public class CorePostService {
         this.postService = postService;
     }
 
-    public ResponseResult<?> save(RequestPost requestPost) {
+    public boolean save(RequestPost requestPost) {
         valid(requestPost);
         // 可以认为一定能获取到用户 ID
         Long authorId = UserUtil.getUserId();
@@ -63,7 +61,7 @@ public class CorePostService {
         // TODO 字数限制
         // TODO 添加缓存，字数限制
         // TODO 防灌水
-        return postService.savePost(postBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
+        return postService.savePost(postBean);
     }
 
     /**
@@ -72,7 +70,7 @@ public class CorePostService {
      * @param postId
      * @return
      */
-    public ResponseResult<?> getById(Long postId) {
+    public PostBean getById(Long postId) {
         String cacheKey = CacheKey.POST_PREFIX + postId;
         String cacheViewsKey = CacheKey.POST_VIEWS_PREFIX + postId;
 
@@ -102,9 +100,9 @@ public class CorePostService {
             if (views != null && views > 0) {
                 post.setViews(views);
             }
-            return ResponseResult.success(post);
+            return post;
         }
-        return ResponseResult.error(MessageEnum.NO_DATA_ERROR);
+        return null;
     }
 
     private List<?> getPostAndViewsCache(String cacheKey, String cacheViewsKey) {

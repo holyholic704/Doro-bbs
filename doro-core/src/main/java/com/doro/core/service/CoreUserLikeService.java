@@ -31,7 +31,7 @@ public class CoreUserLikeService {
     /**
      * TODO 缓存？异步？
      */
-    public ResponseResult<?> like(RequestUserLike requestUserLike) {
+    public boolean like(RequestUserLike requestUserLike) {
         valid(requestUserLike);
         Long userId = UserUtil.getUserId();
         String key = "USER_LIKE" + userId;
@@ -41,7 +41,7 @@ public class CoreUserLikeService {
                 .setPositive(requestUserLike.getPositive())
                 .setType(requestUserLike.getType())
                 .setObjId(requestUserLike.getObjId());
-        return userLikeService.like(userLikeBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
+        return userLikeService.like(userLikeBean);
     }
 
     private void valid(RequestUserLike requestUserLike) {

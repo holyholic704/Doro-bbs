@@ -47,13 +47,12 @@ public class LoginService {
      * @param requestUser 请求信息
      * @return 是否成功登录
      */
-    public ResponseResult<?> login(RequestUser requestUser) {
+    public ResponseUser login(RequestUser requestUser) {
         // 参数校验、生成认证信息
         Authentication authenticationToken = validService.validAndInit(requestUser);
         // 认证，失败抛出异常
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        ResponseUser responseUser = initToken(authentication);
-        return responseUser != null ? ResponseResult.success(responseUser) : ResponseResult.error("登录失败");
+        return initToken(authentication);
     }
 
     /**
