@@ -11,4 +11,6 @@ public class LockKey {
      * 全局配置初始化
      */
     public static final String INIT_GLOBAL_SETTING = "INIT_GLOBAL_SETTING";
+
+    public static final String INIT_POST_CACHE_PREFIX = "INIT_POST_CACHE:";
 }

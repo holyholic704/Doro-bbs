@@ -1,8 +1,8 @@
 package com.doro.core.controller;
 
 import com.doro.common.response.ResponseResult;
-import com.doro.core.service.CoreUserPostLikeService;
-import com.doro.orm.model.request.RequestUserPostLike;
+import com.doro.core.service.CoreUserLikeService;
+import com.doro.orm.model.request.RequestUserLike;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,15 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("like")
 public class UserPostLikeController {
 
-    private final CoreUserPostLikeService userPostLikeService;
+    private final CoreUserLikeService userPostLikeService;
 
     @Autowired
-    public UserPostLikeController(CoreUserPostLikeService userPostLikeService) {
+    public UserPostLikeController(CoreUserLikeService userPostLikeService) {
         this.userPostLikeService = userPostLikeService;
     }
 
     @PostMapping("like")
-    public ResponseResult<?> like(@RequestBody RequestUserPostLike requestUserPostLike) {
-        return userPostLikeService.like(requestUserPostLike);
+    public ResponseResult<?> like(@RequestBody RequestUserLike requestUserLike) {
+        return userPostLikeService.like(requestUserLike);
     }
 }

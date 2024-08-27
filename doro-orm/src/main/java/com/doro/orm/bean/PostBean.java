@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * 帖子
  *
@@ -75,6 +77,6 @@ public class PostBean extends BaseBean {
     /**
      * 喜欢
      */
-//    @TableField(exist = false)
-//    private Integer fa;
+    @TableField(exist = false)
+    private List<CommentBean> comments;
 }

@@ -1,5 +1,7 @@
 package com.doro.common.constant;
 
+import java.time.Duration;
+
 /**
  * 帖子相关常量
  *
@@ -14,4 +16,8 @@ public class PostConst {
     public static final int MIN_CONTENT_LENGTH = 10;
 
     public static final int MAX_CONTENT_LENGTH = 2000;
+
+    public static final Duration CACHE_DURATION = Duration.ofMinutes(5);
+
+    public static final Duration CACHE_VIEWS_DURATION = CACHE_DURATION;
 }
