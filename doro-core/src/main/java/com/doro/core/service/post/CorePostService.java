@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
+import com.doro.common.constant.CacheKey;
+import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
 import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
@@ -36,15 +38,13 @@ public class CorePostService {
     private final CoreUserLikeService coreUserLikeService;
     private final CoreCommentService coreCommentService;
     private final ThreadPoolTaskExecutor coreTask;
-    private final SectionService sectionService;
     private final PostService postService;
 
     @Autowired
-    public CorePostService(CoreUserLikeService coreUserLikeService, CoreCommentService coreCommentService, ThreadPoolTaskExecutor coreTask, SectionService sectionService, PostService postService) {
+    public CorePostService(CoreUserLikeService coreUserLikeService, CoreCommentService coreCommentService, ThreadPoolTaskExecutor coreTask, PostService postService) {
         this.coreUserLikeService = coreUserLikeService;
         this.coreCommentService = coreCommentService;
         this.coreTask = coreTask;
-        this.sectionService = sectionService;
         this.postService = postService;
     }
 
@@ -66,36 +66,67 @@ public class CorePostService {
         return postService.savePost(postBean) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
     }
 
+    /**
+     * TODO 与浏览量增加区分开来，进入帖子页面后五秒调用增加浏览量方法
+     *
+     * @param postId
+     * @return
+     */
     public ResponseResult<?> getById(Long postId) {
-        // TODO 浏览量，在一定时间内同一用户或同一IP多次获取同一帖子，不增加浏览量
-        String key = "POST:" + postId;
-        RBucket<PostBean> rBucket = RedisUtil.createBucket(key);
-        PostBean post = rBucket.getAndExpire(Duration.ofMinutes(5));
+        String cacheKey = CacheKey.POST_PREFIX + postId;
+        String cacheViewsKey = CacheKey.POST_VIEWS_PREFIX + postId;
 
-//        RequestComment requestComment = new RequestComment();
-//        requestComment.setPostId(583023745363973L);
-//        requestComment.setSize(20);
-//        requestComment.setCurrent(1);
-//        coreCommentService.getByPostId(requestComment);
+        // 异步添加帖子的前几个评论到缓存
+        coreTask.execute(() -> coreCommentService.getPostFirstFewComment(postId));
+
+        List<?> postAndViewsCache = getPostAndViewsCache(cacheKey, cacheViewsKey);
+
+        // 获取帖子的缓存
+        PostBean post = (PostBean) postAndViewsCache.get(0);
 
         if (post == null) {
-            System.out.println("初始化");
-
-            String lockKey = "INIT_POST_VIEW:" + postId;
+            // 互斥锁
+            String lockKey = LockKey.INIT_POST_CACHE_PREFIX + postId;
+            RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
             MyLock lock = LockUtil.lock(lockKey, 10);
-            if (!rBucket.isExists()) {
+            if (!bucket.isExists()) {
                 System.out.println("only");
                 post = postService.getPostById(postId);
-                rBucket.setIfAbsent(post, Duration.ofMinutes(5));
+                bucket.setIfAbsent(post, Duration.ofMinutes(5));
             }
-            lock.unlock();
+            LockUtil.unlock(lock);
         }
-        // TODO 多线程?
         if (post != null) {
-            post.setViews(incrAndGetViews(postId, post.getViews()));
+            // 获取浏览量的缓存
+            Long views = (Long) postAndViewsCache.get(2);
+            if (views != null && views > 0) {
+                post.setViews(views);
+            }
             return ResponseResult.success(post);
         }
         return ResponseResult.error(MessageEnum.NO_DATA_ERROR);
+    }
+
+    private List<?> getPostAndViewsCache(String cacheKey, String cacheViewsKey) {
+        RBatch rBatch = RedisUtil.createBatch();
+        // 获取帖子缓存
+        rBatch.getBucket(cacheKey).getAndExpireAsync(PostConst.CACHE_DURATION);
+        // 为浏览量缓存延长超时时间
+        rBatch.getAtomicLong(cacheViewsKey).expireIfSetAsync(PostConst.CACHE_VIEWS_DURATION);
+        // 获取浏览量
+        rBatch.getAtomicLong(cacheViewsKey).getAsync();
+        return rBatch.execute().getResponses();
+    }
+
+    private Long getCacheViews(Long postId) {
+        String key = "POST_VIEW:" + postId;
+        Duration duration = Duration.ofMinutes(5);
+
+        RBatch rBatch = RedisUtil.createBatch();
+        rBatch.getAtomicLong(key).expireIfSetAsync(duration);
+        rBatch.getAtomicLong(key).getAsync();
+        List<?> result = rBatch.execute().getResponses();
+        return (Long) result.get(1);
     }
 
     private Long incrAndGetViews(Long postId, Long views) {

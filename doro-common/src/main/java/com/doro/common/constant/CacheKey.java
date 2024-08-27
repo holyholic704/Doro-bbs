@@ -16,4 +16,10 @@ public class CacheKey {
      * 全局配置缓存
      */
     public static final String GLOBAL_SETTING = "GLOBAL_SETTING";
+
+    public static final String POST_PREFIX = "POST:";
+
+    public static final String POST_VIEWS_PREFIX = "POST_VIEWS:";
+
+
 }
