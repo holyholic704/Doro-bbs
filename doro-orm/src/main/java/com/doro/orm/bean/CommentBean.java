@@ -1,11 +1,14 @@
 package com.doro.orm.bean;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.doro.orm.base.BaseBean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 /**
  * 评论
@@ -38,4 +41,21 @@ public class CommentBean extends BaseBean {
      * 内容
      */
     private String content;
+
+    @TableField(exist = false)
+    private List<CommentBean> children;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof CommentBean && getId() != null) {
+            CommentBean compareBean = (CommentBean) obj;
+            return getId().equals(compareBean.getId());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.getId().hashCode();
+    }
 }
