@@ -37,6 +37,7 @@ public class IpUtil {
     }
 
     private static String getRemoteAddr(HttpServletRequest request) {
+        // 本机调试时可能会出现获取到 0:0:0:0:0:0:0:1
         String ipAddr = request.getRemoteAddr();
         if (NetUtil.isInnerIP(ipAddr)) {
             return null;

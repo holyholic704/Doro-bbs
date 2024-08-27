@@ -1,9 +1,6 @@
 package com.doro.cache.utils;
 
-import org.redisson.api.RBatch;
-import org.redisson.api.RBucket;
-import org.redisson.api.RMapCache;
-import org.redisson.api.RedissonClient;
+import org.redisson.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,4 +29,15 @@ public class RedisUtil {
         return redissonClient.getMapCache(name);
     }
 
+    public static <T> RScoredSortedSet<T> createSortedset(String name) {
+        return redissonClient.getScoredSortedSet(name);
+    }
+
+    public static <T> RList<T> createList(String name) {
+        return redissonClient.getList(name);
+    }
+
+    public static RAtomicLong createAtomicLong(String name) {
+        return redissonClient.getAtomicLong(name);
+    }
 }

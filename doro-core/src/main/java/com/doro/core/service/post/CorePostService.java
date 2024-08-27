@@ -4,22 +4,26 @@ import cn.hutool.core.util.StrUtil;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
-import com.doro.cache.utils.RemoteCacheUtil;
 import com.doro.common.constant.PostConst;
 import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
-import com.doro.core.service.CoreUserPostLikeService;
+import com.doro.core.service.CoreCommentService;
+import com.doro.core.service.CoreUserLikeService;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.PostService;
 import com.doro.orm.api.SectionService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.model.request.RequestPost;
+import org.redisson.api.RAtomicLong;
+import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * 帖子服务
@@ -29,13 +33,17 @@ import java.time.Duration;
 @Service
 public class CorePostService {
 
-    private final CoreUserPostLikeService coreUserPostLikeService;
+    private final CoreUserLikeService coreUserLikeService;
+    private final CoreCommentService coreCommentService;
+    private final ThreadPoolTaskExecutor coreTask;
     private final SectionService sectionService;
     private final PostService postService;
 
     @Autowired
-    public CorePostService(CoreUserPostLikeService coreUserPostLikeService, SectionService sectionService, PostService postService) {
-        this.coreUserPostLikeService = coreUserPostLikeService;
+    public CorePostService(CoreUserLikeService coreUserLikeService, CoreCommentService coreCommentService, ThreadPoolTaskExecutor coreTask, SectionService sectionService, PostService postService) {
+        this.coreUserLikeService = coreUserLikeService;
+        this.coreCommentService = coreCommentService;
+        this.coreTask = coreTask;
         this.sectionService = sectionService;
         this.postService = postService;
     }
@@ -60,10 +68,27 @@ public class CorePostService {
 
     public ResponseResult<?> getById(Long postId) {
         // TODO 浏览量，在一定时间内同一用户或同一IP多次获取同一帖子，不增加浏览量
-        PostBean post = RemoteCacheUtil.get("POST:" + postId);
+        String key = "POST:" + postId;
+        RBucket<PostBean> rBucket = RedisUtil.createBucket(key);
+        PostBean post = rBucket.getAndExpire(Duration.ofMinutes(5));
+
+//        RequestComment requestComment = new RequestComment();
+//        requestComment.setPostId(583023745363973L);
+//        requestComment.setSize(20);
+//        requestComment.setCurrent(1);
+//        coreCommentService.getByPostId(requestComment);
+
         if (post == null) {
-            post = postService.getPostById(postId);
-            RemoteCacheUtil.putIfAbsent("POST:" + postId, post);
+            System.out.println("初始化");
+
+            String lockKey = "INIT_POST_VIEW:" + postId;
+            MyLock lock = LockUtil.lock(lockKey, 10);
+            if (!rBucket.isExists()) {
+                System.out.println("only");
+                post = postService.getPostById(postId);
+                rBucket.setIfAbsent(post, Duration.ofMinutes(5));
+            }
+            lock.unlock();
         }
         // TODO 多线程?
         if (post != null) {
@@ -74,29 +99,30 @@ public class CorePostService {
     }
 
     private Long incrAndGetViews(Long postId, Long views) {
-        String lockKey = "INIT_POST_VIEW:" + postId;
-        MyLock lock = LockUtil.tryLock(lockKey, 5, 5);
-        views = incrViews(postId, views);
-        lock.unlock();
-        return views;
-    }
-
-    private Long incrViews(Long postId, Long views) {
-        String key = "POST_VIEW:" + postId;
-        // 不使用自增：无法同时设置值与超时时间，需使用批量操作
-        // 不使用 CAS 操作：分布式锁确保了同时只有一个线程能对浏览量进行修改
-        // 不使用 getex 每次访问 key 自动延长时间：key 不存在无法延长
-        RBucket<Long> bucket = RedisUtil.createBucket(key);
-
-        Long cacheViews = bucket.get();
-
-        // 如果没有缓存就使用数据库中的值
-        // 不用担心执行到这，key 正好过期
         // TODO 键过期自动刷新到数据库？定时任务？
-        views = cacheViews == null ? (views + 1) : (cacheViews + 1);
-        // 每次更新重新设置超时时间
-        bucket.set(views, Duration.ofMinutes(5));
-        return views;
+        String key = "POST_VIEW:" + postId;
+        RAtomicLong atomicLong = RedisUtil.createAtomicLong(key);
+
+        Duration duration = Duration.ofMinutes(5);
+
+        RBatch rBatch = RedisUtil.createBatch();
+        rBatch.getAtomicLong(key).expireIfSetAsync(duration);
+        rBatch.getAtomicLong(key).getAsync();
+        List<?> result = rBatch.execute().getResponses();
+
+        Long cacheViews = (Long) result.get(1);
+
+        if (cacheViews != null && cacheViews == 0) {
+            rBatch = RedisUtil.createBatch();
+            rBatch.getAtomicLong(key).compareAndSetAsync(0, views + 1);
+            rBatch.getAtomicLong(key).expireIfNotSetAsync(duration);
+            result = rBatch.execute().getResponses();
+            Boolean isSuccess = (Boolean) result.get(0);
+            if (isSuccess) {
+                return views + 1;
+            }
+        }
+        return atomicLong.incrementAndGet();
     }
 
     public ResponseResult<?> page(RequestPost requestPost) {
