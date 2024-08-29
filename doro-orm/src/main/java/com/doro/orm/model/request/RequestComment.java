@@ -15,9 +15,19 @@ public class RequestComment extends BaseRequest {
     private Long postId;
 
     /**
-     * 回复
+     * 父评论
      */
-    private Long replyId;
+    private Long parentId;
+
+    /**
+     * 被回复的评论
+     */
+    private Long repliedId;
+
+    /**
+     * 被回复人
+     */
+    private Long repliedUserId;
 
     /**
      * 内容

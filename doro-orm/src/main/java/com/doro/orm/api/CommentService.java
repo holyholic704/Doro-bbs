@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doro.orm.bean.CommentBean;
 import com.doro.orm.model.request.RequestComment;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public interface CommentService {
 
     Page<CommentBean> getAllByPostId(RequestComment requestComment);
 
-    List<CommentBean> page(RequestComment requestComment);
+    Page<CommentBean> page(RequestComment requestComment);
 
     List<CommentBean> pageByIds(List<Long> ids);
 
@@ -28,5 +29,5 @@ public interface CommentService {
 
     long getPostCommentCount(RequestComment requestComment);
 
-    List<CommentBean> sub(List<Long> ids);
+    List<CommentBean> subCommentList(Collection<Long> ids);
 }

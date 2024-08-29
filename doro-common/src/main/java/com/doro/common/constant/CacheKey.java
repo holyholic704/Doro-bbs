@@ -23,5 +23,7 @@ public class CacheKey {
 
     public static final String POST_COMMENTS_PREFIX = "POST_COMMENTS:";
 
+    public static final String POST_PAGE_IDS_PREFIX = "POST_PAGE_IDS:";
+
 
 }

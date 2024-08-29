@@ -38,6 +38,21 @@ public class CommentBean extends BaseBean {
     private String content;
 
     /**
+     * 父评论
+     */
+    private Long parentId;
+
+    /**
+     * 被回复的评论
+     */
+    private Long repliedId;
+
+    /**
+     * 被回复人
+     */
+    private Long repliedUserId;
+
+    /**
      * 子评论数
      */
     private Long comments;

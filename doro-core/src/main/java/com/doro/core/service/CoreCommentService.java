@@ -1,8 +1,11 @@
 package com.doro.core.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.doro.cache.utils.RedisUtil;
+import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommentConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
@@ -10,15 +13,17 @@ import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.CommentService;
 import com.doro.orm.bean.CommentBean;
 import com.doro.orm.model.request.RequestComment;
+import org.redisson.api.RBatch;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -37,33 +42,118 @@ public class CoreCommentService {
     }
 
     public boolean save(RequestComment requestComment) {
-        valid(requestComment);
+//        valid(requestComment);
         Long userId = UserUtil.getUserId();
         CommentBean commentBean = new CommentBean()
                 .setUserId(userId)
                 .setPostId(requestComment.getPostId())
                 .setContent(requestComment.getContent());
 
-        return commentService.saveComment(commentBean);
+        // 不为空为子评论
+        if (requestComment.getParentId() != null) {
+            commentBean.setParentId(requestComment.getParentId())
+                    .setRepliedId(requestComment.getRepliedId())
+                    .setRepliedUserId(requestComment.getRepliedUserId());
+        }
+
+        if (commentService.saveComment(commentBean)) {
+//            if (requestComment.getParentId() == null) {
+//                String cacheKey = CacheKey.POST_PAGE_IDS_PREFIX + requestComment.getPostId();
+//                RBatch batch = RedisUtil.createBatch();
+//                batch.getList(cacheKey).expireAsync(Duration.ofMinutes(5));
+//                batch.getList(cacheKey).isExistsAsync();
+//
+//                List<?> responses = batch.execute().getResponses();
+//                Boolean isExists = (Boolean) responses.get(1);
+//
+//                if (isExists != null && isExists) {
+//
+//                }
+//            }
+            return true;
+        }
+
+        return false;
+    }
+
+    private void incrCacheComments(Long postId, Long parentId) {
+        String cacheKey = CacheKey.POST_COMMENTS_PREFIX + postId;
+        Duration duration = Duration.ofMinutes(5);
+        RBatch batch = RedisUtil.createBatch();
+        batch.getMap(cacheKey, StringCodec.INSTANCE).expireAsync(duration);
+        batch.getMap(cacheKey, StringCodec.INSTANCE).addAndGetAsync("COMMENTS", 1);
+        batch.getMap(cacheKey, StringCodec.INSTANCE).addAndGetAsync("583030340190213L", 1);
+    }
+
+    private void setSubCommentList(List<CommentBean> commentList) {
+        if (CollUtil.isNotEmpty(commentList)) {
+            Map<Long, CommentBean> idMap = commentList.stream().filter(v -> v.getComments() > 0).collect(Collectors.toMap(CommentBean::getId, Function.identity()));
+            if (MapUtil.isNotEmpty(idMap)) {
+                List<CommentBean> subCommentList = commentService.subCommentList(idMap.keySet());
+                for (CommentBean subComment : subCommentList) {
+                    CommentBean commentBean = idMap.get(subComment.getParentId());
+                    List<CommentBean> subList = commentBean.getSubList();
+                    if (subList == null) {
+                        commentBean.setSubList(subList = new ArrayList<>());
+                    }
+                    subList.add(subComment);
+                }
+            }
+        }
     }
 
     public Page<CommentBean> page(RequestComment requestComment) {
-        List<CommentBean> commentList = commentService.page(requestComment);
-        Future<Long> countFuture = coreTask.submit(() -> commentService.getPostCommentCount(requestComment));
+//        String cacheKey = CacheKey.POST_PAGE_IDS_PREFIX + requestComment.getPostId();
+//        RBatch batch = RedisUtil.createBatch();
+//        batch.getList(cacheKey).expireAsync(Duration.ofMinutes(5));
+//
+//        int current = requestComment.getCurrent();
+//        int size = requestComment.getSize();
+//        int from = (current == 0 ? current : current - 1) * size;
+//        int to = from + size - 1;
+//        batch.getList(cacheKey).rangeAsync(from, to);
+//        batch.getList(cacheKey).sizeAsync();
+//
+//        List<?> responses = batch.execute().getResponses();
+//
+//        List<Long> ids = (List<Long>) responses.get(1);
+//
+//        if (CollUtil.isNotEmpty(ids)) {
+//            Page<CommentBean> page = requestComment.asPage();
+//            page.setRecords(commentService.pageByIds(ids));
+//            setSubCommentList(page.getRecords());
+//            Integer total = (Integer) responses.get(2);
+//            page.setTotal(total);
+//            return page;
+//        }
 
-        if (CollUtil.isNotEmpty(commentList)) {
-            List<Long> ids = commentList.stream().map(CommentBean::getId).collect(Collectors.toList());
-            System.out.println(commentService.sub(ids));
-        }
-        Page<CommentBean> page = requestComment.asPage();
+        Page<CommentBean> page = commentService.page(requestComment);
+        setSubCommentList(page.getRecords());
 
-        try {
-            Long count = countFuture.get(10, TimeUnit.SECONDS);
-            page.setRecords(commentList);
-            page.setTotal(count);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+//        if (page.getTotal() < 1000) {
+//            ids = commentService.getPageIds(requestComment.getPostId());
+//            batch = RedisUtil.createBatch();
+//            batch.getList(cacheKey).addAllAsync(ids);
+//            batch.getList(cacheKey).expireAsync(Duration.ofMinutes(5));
+//            batch.execute();
+//        }
+
+
+//        Future<Long> countFuture = coreTask.submit(() -> commentService.getPostCommentCount(requestComment));
+//
+//        if (CollUtil.isNotEmpty(commentList)) {
+//            List<Long> ids = commentList.stream().map(CommentBean::getId).collect(Collectors.toList());
+//            System.out.println(commentService.sub(ids));
+//        }
+//        Page<CommentBean> page = requestComment.asPage();
+//
+//        try {
+//            Long count = countFuture.get(10, TimeUnit.SECONDS);
+//            page.setRecords(commentList);
+//            page.setTotal(count);
+//        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+//            throw new RuntimeException(e);
+//        }
         return page;
     }
 //    public Page<CommentBean> page(RequestComment requestComment) {
@@ -83,10 +173,10 @@ public class CoreCommentService {
 //        return page;
 //    }
 
-    public List<CommentBean> pageByIds(RequestComment requestComment) {
-        List<Long> ids = commentService.getPageIds(requestComment.getPostId());
-        return commentService.pageByIds(ids);
-    }
+//    public List<CommentBean> pageByIds(RequestComment requestComment) {
+//        List<Long> ids = commentService.getPageIds(requestComment.getPostId());
+//        return commentService.pageByIds(ids);
+//    }
 
 
 //    public List<CommentBean> getFirstPageCache() {
@@ -169,9 +259,10 @@ public class CoreCommentService {
     }
 
     public void valid(RequestComment requestComment) {
-        if (requestComment.getPostId() == null) {
-            throw new ValidException("没有关联的帖子");
-        }
+        // TODO 帖子是否允许评论
+//        if (requestComment.getPostId() == null) {
+//            throw new ValidException("没有关联的帖子");
+//        }
 
         if (StrUtil.isEmpty(requestComment.getContent()) || requestComment.getContent().length() > CommentConst.MAX_CONTENT_LENGTH) {
             throw new ValidException("请输入评论");
