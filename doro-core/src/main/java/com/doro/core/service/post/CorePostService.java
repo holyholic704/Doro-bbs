@@ -1,6 +1,7 @@
 package com.doro.core.service.post;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
@@ -8,21 +9,18 @@ import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
 import com.doro.common.exception.ValidException;
-import com.doro.common.response.ResponseResult;
 import com.doro.core.service.CoreCommentService;
 import com.doro.core.service.CoreUserLikeService;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.PostService;
 import com.doro.orm.bean.PostBean;
 import com.doro.orm.model.request.RequestPost;
-import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -74,9 +72,7 @@ public class CorePostService {
         String cacheKey = CacheKey.POST_PREFIX + postId;
         String cacheViewsKey = CacheKey.POST_VIEWS_PREFIX + postId;
 
-        // 异步添加帖子的前几个评论到缓存
-        coreTask.execute(() -> coreCommentService.getPostFirstFewComment(postId));
-
+        // 尝试从缓存中获取帖子和浏览量
         List<?> postAndViewsCache = getPostAndViewsCache(cacheKey, cacheViewsKey);
 
         // 获取帖子的缓存
@@ -85,15 +81,19 @@ public class CorePostService {
         if (post == null) {
             // 互斥锁
             String lockKey = LockKey.INIT_POST_CACHE_PREFIX + postId;
-            RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
             MyLock lock = LockUtil.lock(lockKey, 10);
+
+            RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
+            // 二次检查
             if (!bucket.isExists()) {
-                System.out.println("only");
                 post = postService.getPostById(postId);
-                bucket.setIfAbsent(post, Duration.ofMinutes(5));
+                if (post != null) {
+                    bucket.setIfAbsent(post, PostConst.CACHE_DURATION);
+                }
             }
             LockUtil.unlock(lock);
         }
+
         if (post != null) {
             // 获取浏览量的缓存
             Long views = (Long) postAndViewsCache.get(2);
@@ -105,6 +105,13 @@ public class CorePostService {
         return null;
     }
 
+    /**
+     * 获取缓存中的帖子和浏览量
+     *
+     * @param cacheKey      帖子缓存 key
+     * @param cacheViewsKey 浏览量缓存 key
+     * @return 缓存
+     */
     private List<?> getPostAndViewsCache(String cacheKey, String cacheViewsKey) {
         RBatch rBatch = RedisUtil.createBatch();
         // 获取帖子缓存
@@ -116,46 +123,8 @@ public class CorePostService {
         return rBatch.execute().getResponses();
     }
 
-    private Long getCacheViews(Long postId) {
-        String key = "POST_VIEW:" + postId;
-        Duration duration = Duration.ofMinutes(5);
-
-        RBatch rBatch = RedisUtil.createBatch();
-        rBatch.getAtomicLong(key).expireIfSetAsync(duration);
-        rBatch.getAtomicLong(key).getAsync();
-        List<?> result = rBatch.execute().getResponses();
-        return (Long) result.get(1);
-    }
-
-    private Long incrAndGetViews(Long postId, Long views) {
-        // TODO 键过期自动刷新到数据库？定时任务？
-        String key = "POST_VIEW:" + postId;
-        RAtomicLong atomicLong = RedisUtil.createAtomicLong(key);
-
-        Duration duration = Duration.ofMinutes(5);
-
-        RBatch rBatch = RedisUtil.createBatch();
-        rBatch.getAtomicLong(key).expireIfSetAsync(duration);
-        rBatch.getAtomicLong(key).getAsync();
-        List<?> result = rBatch.execute().getResponses();
-
-        Long cacheViews = (Long) result.get(1);
-
-        if (cacheViews != null && cacheViews == 0) {
-            rBatch = RedisUtil.createBatch();
-            rBatch.getAtomicLong(key).compareAndSetAsync(0, views + 1);
-            rBatch.getAtomicLong(key).expireIfNotSetAsync(duration);
-            result = rBatch.execute().getResponses();
-            Boolean isSuccess = (Boolean) result.get(0);
-            if (isSuccess) {
-                return views + 1;
-            }
-        }
-        return atomicLong.incrementAndGet();
-    }
-
-    public ResponseResult<?> page(RequestPost requestPost) {
-        return ResponseResult.success(postService.page(requestPost));
+    public Page<PostBean> page(RequestPost requestPost) {
+        return postService.page(requestPost);
     }
 
     private void valid(RequestPost requestPost) {

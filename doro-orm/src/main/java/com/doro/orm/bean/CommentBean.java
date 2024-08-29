@@ -33,17 +33,20 @@ public class CommentBean extends BaseBean {
     private Long postId;
 
     /**
-     * 回复
-     */
-    private Long replyId;
-
-    /**
      * 内容
      */
     private String content;
 
+    /**
+     * 子评论数
+     */
+    private Long comments;
+
+    /**
+     * 子评论列表
+     */
     @TableField(exist = false)
-    private List<CommentBean> children;
+    private List<CommentBean> subList;
 
     @Override
     public boolean equals(Object obj) {

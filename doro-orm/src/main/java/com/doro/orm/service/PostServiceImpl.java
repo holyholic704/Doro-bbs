@@ -1,5 +1,6 @@
 package com.doro.orm.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.orm.api.PostService;
@@ -30,4 +31,13 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
     public Page<PostBean> page(RequestPost requestPost) {
         return this.page(requestPost.asPage());
     }
+
+    @Override
+    public Long getPostViews(Long postId) {
+        PostBean postBean = this.getOne(new LambdaQueryWrapper<PostBean>()
+                .select(PostBean::getViews)
+                .eq(PostBean::getId, postId));
+        return postBean != null ? postBean.getViews() : null;
+    }
+
 }

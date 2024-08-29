@@ -20,5 +20,13 @@ public interface CommentService {
 
     Page<CommentBean> getAllByPostId(RequestComment requestComment);
 
-    List<CommentBean> getBySize(long postId, int size);
+    List<CommentBean> page(RequestComment requestComment);
+
+    List<CommentBean> pageByIds(List<Long> ids);
+
+    List<Long> getPageIds(Long postId);
+
+    long getPostCommentCount(RequestComment requestComment);
+
+    List<CommentBean> sub(List<Long> ids);
 }

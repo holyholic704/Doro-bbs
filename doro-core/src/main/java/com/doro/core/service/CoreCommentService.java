@@ -3,24 +3,23 @@ package com.doro.core.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.doro.cache.api.MyLock;
-import com.doro.cache.utils.LockUtil;
-import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CommentConst;
-import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.exception.ValidException;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.CommentService;
 import com.doro.orm.bean.CommentBean;
 import com.doro.orm.model.request.RequestComment;
-import org.redisson.api.RScoredSortedSet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 /**
  * @author jiage
@@ -28,10 +27,12 @@ import java.util.Map;
 @Service
 public class CoreCommentService {
 
+    private final ThreadPoolTaskExecutor coreTask;
     private final CommentService commentService;
 
     @Autowired
-    public CoreCommentService(CommentService commentService) {
+    public CoreCommentService(ThreadPoolTaskExecutor coreTask, CommentService commentService) {
+        this.coreTask = coreTask;
         this.commentService = commentService;
     }
 
@@ -41,38 +42,87 @@ public class CoreCommentService {
         CommentBean commentBean = new CommentBean()
                 .setUserId(userId)
                 .setPostId(requestComment.getPostId())
-                .setReplyId(requestComment.getReplyId())
                 .setContent(requestComment.getContent());
 
         return commentService.saveComment(commentBean);
     }
 
-    public List<CommentBean> getPostFirstFewComment(Long postId) {
-        String key = "POST_COMMENTS:" + postId;
-        RScoredSortedSet<CommentBean> scoredSortedSet = RedisUtil.createSortedset(key);
-        List<CommentBean> list = (List<CommentBean>) scoredSortedSet.readAll();
-        if (CollUtil.isEmpty(list)) {
-            MyLock lock = LockUtil.lock(key);
-            System.out.println("oooooooooooooooo");
-            list = commentService.getBySize(postId, CommentConst.NORMAL_PAGE_SIZE);
-            Map<CommentBean, Double> map = new HashMap<>(list.size());
-            for (CommentBean comment : list) {
-                if (comment.getDel()) {
-                    comment.setContent("已删除");
-                }
-                double score = comment.getCreateTime().getTime();
-                map.put(comment, score);
-            }
-            // TODO 空的也添加
-            scoredSortedSet.addAll(map);
-            lock.unlock();
+    public Page<CommentBean> page(RequestComment requestComment) {
+        List<CommentBean> commentList = commentService.page(requestComment);
+        Future<Long> countFuture = coreTask.submit(() -> commentService.getPostCommentCount(requestComment));
+
+        if (CollUtil.isNotEmpty(commentList)) {
+            List<Long> ids = commentList.stream().map(CommentBean::getId).collect(Collectors.toList());
+            System.out.println(commentService.sub(ids));
         }
-        return list;
+        Page<CommentBean> page = requestComment.asPage();
+
+        try {
+            Long count = countFuture.get(10, TimeUnit.SECONDS);
+            page.setRecords(commentList);
+            page.setTotal(count);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+        return page;
+    }
+//    public Page<CommentBean> page(RequestComment requestComment) {
+//        Future<List<CommentBean>> commentListFuture = coreTask.submit(() -> commentService.page(requestComment));
+//        Future<Long> countFuture = coreTask.submit(() -> commentService.getPostCommentCount(requestComment));
+//
+//        Page<CommentBean> page = requestComment.asPage();
+//
+//        try {
+//            List<CommentBean> commentList = commentListFuture.get(10, TimeUnit.SECONDS);
+//            Long count = countFuture.get(10, TimeUnit.SECONDS);
+//            page.setRecords(commentList);
+//            page.setTotal(count);
+//        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+//            throw new RuntimeException(e);
+//        }
+//        return page;
+//    }
+
+    public List<CommentBean> pageByIds(RequestComment requestComment) {
+        List<Long> ids = commentService.getPageIds(requestComment.getPostId());
+        return commentService.pageByIds(ids);
     }
 
-    public List<CommentBean> getBySize(Long postId, Integer size) {
-        return commentService.getBySize(postId, size);
-    }
+
+//    public List<CommentBean> getFirstPageCache() {
+//        RedisUtil.createList().
+//    }
+//
+//    public List<CommentBean> getPostFirstFewComments(Long postId) {
+//        String cacheKey = CacheKey.POST_COMMENTS_PREFIX + postId;
+//        RScoredSortedSet<CommentBean> scoredSortedSet = RedisUtil.createSortedset(cacheKey);
+//        List<CommentBean> list = (List<CommentBean>) scoredSortedSet.readAll();
+//
+//        if (CollUtil.isEmpty(list)) {
+//            MyLock lock = LockUtil.lock(cacheKey);
+//            list = multiCheck.getIfPresent(postId);
+//            if (list == null) {
+//                System.out.println("oooooooooooooooo");
+//                list = commentService.page(postId, CommentConst.NORMAL_PAGE_SIZE);
+//                Map<CommentBean, Double> map = new HashMap<>(list.size());
+//                for (CommentBean comment : list) {
+//                    if (comment.getDel()) {
+//                        comment.setContent("已删除");
+//                    }
+//                    double score = comment.getCreateTime().getTime();
+//                    map.put(comment, score);
+//                }
+//                // TODO 空的也添加
+//                scoredSortedSet.addAll(map);
+//            }
+//            LockUtil.unlock(lock);
+//        }
+//        return list;
+//    }
+//
+//    public List<CommentBean> getBySize(Long postId, Integer size) {
+//        return commentService.page(postId, size);
+//    }
 
     public ResponseResult<?> getByPostId(RequestComment requestComment) {
         // TODO 已删除的评论如何处理

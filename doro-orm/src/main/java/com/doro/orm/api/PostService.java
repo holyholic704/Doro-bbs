@@ -25,4 +25,6 @@ public interface PostService {
      * 分页查询
      */
     Page<PostBean> page(RequestPost requestPost);
+
+    Long getPostViews(Long postId);
 }

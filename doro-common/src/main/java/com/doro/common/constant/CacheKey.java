@@ -21,5 +21,7 @@ public class CacheKey {
 
     public static final String POST_VIEWS_PREFIX = "POST_VIEWS:";
 
+    public static final String POST_COMMENTS_PREFIX = "POST_COMMENTS:";
+
 
 }
