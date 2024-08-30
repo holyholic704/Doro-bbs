@@ -1,6 +1,5 @@
 package com.doro.orm.service;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 评论
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
  * @author jiage
  */
 @Service
-class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
+public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
 
     @Override
     public boolean saveComment(CommentBean commentBean) {
@@ -36,16 +34,11 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
     }
 
     @Override
-    public Page<CommentBean> page(RequestComment requestComment) {
-        return this.page(requestComment.asPage(), new LambdaQueryWrapper<CommentBean>()
-                .eq(CommentBean::getPostId, requestComment.getPostId())
-                .eq(CommentBean::getParentId, 0)
-                .orderByAsc(CommentBean::getCreateTime)
-        );
-//        int current = requestComment.getCurrent();
-//        int size = requestComment.getSize();
-//        int from = (current == 0 ? current : current - 1) * size;
-//        return this.getBaseMapper().page(requestComment.getPostId(), from, size);
+    public List<CommentBean> page(RequestComment requestComment) {
+        int current = requestComment.getCurrent();
+        int size = requestComment.getSize();
+        int from = (current == 0 ? current : current - 1) * size;
+        return this.getBaseMapper().page(requestComment.getPostId(), from, size);
     }
 
     @Override
@@ -57,16 +50,11 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
     }
 
     @Override
-    public List<Long> getPageIds(Long postId) {
-        List<CommentBean> commentList = this.list(new LambdaQueryWrapper<CommentBean>()
+    public List<CommentBean> getPageIds(Long postId) {
+        return this.list(new LambdaQueryWrapper<CommentBean>()
                 .select(CommentBean::getId, CommentBean::getCreateTime)
                 .eq(CommentBean::getPostId, postId)
                 .eq(CommentBean::getParentId, 0));
-
-        if (CollUtil.isNotEmpty(commentList)) {
-            return commentList.stream().map(CommentBean::getId).collect(Collectors.toList());
-        }
-        return null;
     }
 
     public long getPostCommentIdList(long postId) {
@@ -82,6 +70,16 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
     public long getPostCommentCount(RequestComment requestComment) {
         return this.count(new LambdaQueryWrapper<CommentBean>()
                 .eq(CommentBean::getPostId, requestComment.getPostId()));
+    }
+
+    @Override
+    public List<Long> everyFewId(Long postId) {
+        return this.getBaseMapper().everyFewId(postId);
+    }
+
+    @Override
+    public List<CommentBean> pageUseMinId(long postId, long minId, int current, int size) {
+        return this.getBaseMapper().pageUseMinId(postId, minId, current, size);
     }
 
     @Override

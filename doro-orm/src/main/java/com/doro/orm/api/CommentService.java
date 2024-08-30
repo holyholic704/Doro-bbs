@@ -21,13 +21,17 @@ public interface CommentService {
 
     Page<CommentBean> getAllByPostId(RequestComment requestComment);
 
-    Page<CommentBean> page(RequestComment requestComment);
+    List<CommentBean> page(RequestComment requestComment);
 
     List<CommentBean> pageByIds(List<Long> ids);
 
-    List<Long> getPageIds(Long postId);
+    List<CommentBean> getPageIds(Long postId);
 
     long getPostCommentCount(RequestComment requestComment);
+
+    List<Long> everyFewId(Long postId);
+
+    List<CommentBean> pageUseMinId(long postId, long minId, int current, int size);
 
     List<CommentBean> subCommentList(Collection<Long> ids);
 }

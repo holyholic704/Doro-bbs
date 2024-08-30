@@ -4,16 +4,18 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.doro.cache.api.MyLock;
+import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommentConst;
 import com.doro.common.exception.ValidException;
-import com.doro.common.response.ResponseResult;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.CommentService;
 import com.doro.orm.bean.CommentBean;
 import com.doro.orm.model.request.RequestComment;
 import org.redisson.api.RBatch;
+import org.redisson.api.RList;
 import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -27,6 +29,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * 评论服务
+ * <p>
+ * 评论只要保存成功，就无法修改，只能删除，所以不应有修改操作（允许修改的话，其他评论如果引用了该评论，可能会产生歧义）
+ *
  * @author jiage
  */
 @Service
@@ -41,6 +47,18 @@ public class CoreCommentService {
         this.commentService = commentService;
     }
 
+    /**
+     * 可能会出现的问题：频繁插入，数据库压力过大；插入慢
+     * <pre>
+     * 批量插入（维护一个集合，将几秒内的数据合在一起插入，可能会出现数据丢失）
+     * 先放入缓存（分页查询逻辑复杂，实时性较差）
+     * 异步保存（可能会出现丢失的情况）
+     * 发送到 MQ（保证消息不丢失，可以起到限流的作用，有一定的延迟）
+     * </pre>
+     *
+     * @param requestComment 请求信息
+     * @return 是否保存成功
+     */
     public boolean save(RequestComment requestComment) {
 //        valid(requestComment);
         Long userId = UserUtil.getUserId();
@@ -56,24 +74,8 @@ public class CoreCommentService {
                     .setRepliedUserId(requestComment.getRepliedUserId());
         }
 
-        if (commentService.saveComment(commentBean)) {
-//            if (requestComment.getParentId() == null) {
-//                String cacheKey = CacheKey.POST_PAGE_IDS_PREFIX + requestComment.getPostId();
-//                RBatch batch = RedisUtil.createBatch();
-//                batch.getList(cacheKey).expireAsync(Duration.ofMinutes(5));
-//                batch.getList(cacheKey).isExistsAsync();
-//
-//                List<?> responses = batch.execute().getResponses();
-//                Boolean isExists = (Boolean) responses.get(1);
-//
-//                if (isExists != null && isExists) {
-//
-//                }
-//            }
-            return true;
-        }
-
-        return false;
+        // TODO 放入消息队列
+        return commentService.saveComment(commentBean);
     }
 
     private void incrCacheComments(Long postId, Long parentId) {
@@ -102,160 +104,76 @@ public class CoreCommentService {
         }
     }
 
+    private void initIdsCache(Long postId) {
+        MyLock lock = LockUtil.lock("COMMENT_MIN_ID:" + postId, 10);
+        RList<Long> list = RedisUtil.createList("COMMENT_MIN_ID:" + postId);
+        System.out.println("执行");
+        if (!list.isExists()) {
+            System.out.println("一次");
+            List<Long> ids = commentService.everyFewId(postId);
+            RBatch batch = RedisUtil.createBatch();
+            batch.getList("COMMENT_MIN_ID:" + postId).addAllAsync(ids);
+            batch.getList("COMMENT_MIN_ID:" + postId).expireAsync(Duration.ofMinutes(5));
+            batch.execute();
+        }
+        LockUtil.unlock(lock);
+    }
+
+    /**
+     * 分页查询
+     * <p>
+     * 可能会出现的问题：频繁调用，数据库压力过大；深度分页慢
+     * <pre>
+     * 使用缓存进行分页，将帖子一定数量内的 ID 放入缓存中（排序问题，可能会按时间或热度排序，维护多个列表？被删除的 ID 如何处理？使用 Zset，数据库与缓存的顺序不一样，使用 List，无法保证最后添加的一定是最新的）
+     * </pre>
+     * <p>
+     * 第一页通常是查看量最多的，如果在第一页就显示热度最高的几个评论，甚至很多人都不会去翻页。最后一页的访问量应该也不会很低，大多数人查看的页数一般就在前几页和最后几页，并且一般发送评论成功后都会自动跳到最后一页
+     * <p>
+     * 所以是否有必要将大量的 ID 列表放入缓存呢？如果数据量过大，别说缓存占用大，就是光从数据库中查询都很耗时，但换句话说，过大的数据量，MySQL 已经不合适了
+     *
+     * @param requestComment 请求信息
+     * @return 分页结果
+     */
     public Page<CommentBean> page(RequestComment requestComment) {
-//        String cacheKey = CacheKey.POST_PAGE_IDS_PREFIX + requestComment.getPostId();
-//        RBatch batch = RedisUtil.createBatch();
-//        batch.getList(cacheKey).expireAsync(Duration.ofMinutes(5));
-//
-//        int current = requestComment.getCurrent();
-//        int size = requestComment.getSize();
-//        int from = (current == 0 ? current : current - 1) * size;
-//        int to = from + size - 1;
-//        batch.getList(cacheKey).rangeAsync(from, to);
-//        batch.getList(cacheKey).sizeAsync();
-//
-//        List<?> responses = batch.execute().getResponses();
-//
-//        List<Long> ids = (List<Long>) responses.get(1);
-//
-//        if (CollUtil.isNotEmpty(ids)) {
-//            Page<CommentBean> page = requestComment.asPage();
-//            page.setRecords(commentService.pageByIds(ids));
-//            setSubCommentList(page.getRecords());
-//            Integer total = (Integer) responses.get(2);
-//            page.setTotal(total);
-//            return page;
-//        }
-
-        Page<CommentBean> page = commentService.page(requestComment);
-        setSubCommentList(page.getRecords());
-
-//        if (page.getTotal() < 1000) {
-//            ids = commentService.getPageIds(requestComment.getPostId());
-//            batch = RedisUtil.createBatch();
-//            batch.getList(cacheKey).addAllAsync(ids);
-//            batch.getList(cacheKey).expireAsync(Duration.ofMinutes(5));
-//            batch.execute();
-//        }
-
-
-//        Future<Long> countFuture = coreTask.submit(() -> commentService.getPostCommentCount(requestComment));
-//
-//        if (CollUtil.isNotEmpty(commentList)) {
-//            List<Long> ids = commentList.stream().map(CommentBean::getId).collect(Collectors.toList());
-//            System.out.println(commentService.sub(ids));
-//        }
-//        Page<CommentBean> page = requestComment.asPage();
-//
-//        try {
-//            Long count = countFuture.get(10, TimeUnit.SECONDS);
-//            page.setRecords(commentList);
-//            page.setTotal(count);
-//        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-//            throw new RuntimeException(e);
-//        }
+        Page<CommentBean> page = pageUseMinId(requestComment);
+        if (page == null) {
+            page = requestComment.asPage();
+            page.setRecords(commentService.page(requestComment));
+            page.setTotal(1);
+            setSubCommentList(page.getRecords());
+            coreTask.execute(() -> initIdsCache(requestComment.getPostId()));
+        }
         return page;
     }
-//    public Page<CommentBean> page(RequestComment requestComment) {
-//        Future<List<CommentBean>> commentListFuture = coreTask.submit(() -> commentService.page(requestComment));
-//        Future<Long> countFuture = coreTask.submit(() -> commentService.getPostCommentCount(requestComment));
-//
-//        Page<CommentBean> page = requestComment.asPage();
-//
-//        try {
-//            List<CommentBean> commentList = commentListFuture.get(10, TimeUnit.SECONDS);
-//            Long count = countFuture.get(10, TimeUnit.SECONDS);
-//            page.setRecords(commentList);
-//            page.setTotal(count);
-//        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return page;
-//    }
 
-//    public List<CommentBean> pageByIds(RequestComment requestComment) {
-//        List<Long> ids = commentService.getPageIds(requestComment.getPostId());
-//        return commentService.pageByIds(ids);
-//    }
+    public Page<CommentBean> pageUseMinId(RequestComment requestComment) {
+        long postId = requestComment.getPostId();
+        int current = requestComment.getCurrent();
+        int size = requestComment.getSize();
+        current = (current == 0 ? current : current - 1) * size;
+        int index = current / 100;
 
+        RBatch batch = RedisUtil.createBatch();
+        batch.getList("COMMENT_MIN_ID:" + postId).expireAsync(Duration.ofMinutes(5));
+        batch.getList("COMMENT_MIN_ID:" + postId).isExistsAsync();
+        batch.getList("COMMENT_MIN_ID:" + postId).getAsync(index);
+        List<?> list = batch.execute().getResponses();
 
-//    public List<CommentBean> getFirstPageCache() {
-//        RedisUtil.createList().
-//    }
-//
-//    public List<CommentBean> getPostFirstFewComments(Long postId) {
-//        String cacheKey = CacheKey.POST_COMMENTS_PREFIX + postId;
-//        RScoredSortedSet<CommentBean> scoredSortedSet = RedisUtil.createSortedset(cacheKey);
-//        List<CommentBean> list = (List<CommentBean>) scoredSortedSet.readAll();
-//
-//        if (CollUtil.isEmpty(list)) {
-//            MyLock lock = LockUtil.lock(cacheKey);
-//            list = multiCheck.getIfPresent(postId);
-//            if (list == null) {
-//                System.out.println("oooooooooooooooo");
-//                list = commentService.page(postId, CommentConst.NORMAL_PAGE_SIZE);
-//                Map<CommentBean, Double> map = new HashMap<>(list.size());
-//                for (CommentBean comment : list) {
-//                    if (comment.getDel()) {
-//                        comment.setContent("已删除");
-//                    }
-//                    double score = comment.getCreateTime().getTime();
-//                    map.put(comment, score);
-//                }
-//                // TODO 空的也添加
-//                scoredSortedSet.addAll(map);
-//            }
-//            LockUtil.unlock(lock);
-//        }
-//        return list;
-//    }
-//
-//    public List<CommentBean> getBySize(Long postId, Integer size) {
-//        return commentService.page(postId, size);
-//    }
+        Boolean isExist = (Boolean) list.get(1);
+        Long minId = (Long) list.get(2);
 
-    public ResponseResult<?> getByPostId(RequestComment requestComment) {
-        // TODO 已删除的评论如何处理
-        Page<CommentBean> page = commentService.getAllByPostId(requestComment);
+        if (isExist != null && isExist) {
+            if (minId != null) {
+                Page<CommentBean> page = requestComment.asPage();
+                List<CommentBean> records = commentService.pageUseMinId(postId, minId, current % 100, size);
+                page.setTotal(1);
+                page.setRecords(records);
+                setSubCommentList(page.getRecords());
+                return page;
+            }
+        }
 
-//        List<CommentBean> list = page.getRecords();
-//        List<Long> ll = new ArrayList<>();
-//        for (int i = 0; i < 10000; i++) {
-//            ll.add(583030491303942L);
-//        }
-//        RedisUtil.createList("woc").range(0, 5);
-
-
-//        Map<Object, Double> firstLevel = new HashMap<>(list.size());
-//        Map<Long, Map<Object, Double>> secondMap = new HashMap<>(list.size());
-//        Map<Object, Double> secondLevel = new HashMap<>(list.size());
-
-//        for (CommentBean comment : list) {
-//            double score = comment.getCreateTime().getTime();
-//            if (comment.getReplyId() == 0) {
-//                firstLevel.put(comment, score);
-//            } else {
-//                secondLevel.put(comment, score);
-//            }
-//        }
-//
-//        String firstLevelKey = "first_level:" + requestComment.getPostId();
-//        String secondLevelKey = "second_level:" + requestComment.getPostId();
-//
-//        RBatch batch = RedisUtil.createBatch();
-//        batch.getScoredSortedSet(firstLevelKey).addAllAsync(firstLevel);
-//        batch.getScoredSortedSet(secondLevelKey).addAllAsync(secondLevel);
-//
-//        batch.execute();
         return null;
-//        if (CollUtil.isNotEmpty(list)) {
-//            LinkedList<ResponseComment> result = new LinkedList<>();
-//            for (CommentBean comment : list) {
-//                if (comment.getDel()) {
-//                }
-//            }
-//        }
-
     }
 
     public void valid(RequestComment requestComment) {

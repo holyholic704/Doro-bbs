@@ -4,6 +4,10 @@ import com.doro.orm.base.BaseRequest;
 import lombok.Getter;
 
 /**
+ * 评论相关请求
+ * <p>
+ * 需要添加按照时间或热度排序吗，或者只按照时间先后排序，并在第一页显示一些热评
+ *
  * @author jiage
  */
 @Getter
