@@ -69,14 +69,14 @@ public class PostBean extends BaseBean {
     private Long views;
 
     /**
+     * 评论量
+     */
+    private Long comments;
+
+    /**
      * 点赞
      */
     @TableField(exist = false)
     private Integer likes;
 
-    /**
-     * 喜欢
-     */
-    @TableField(exist = false)
-    private List<CommentBean> comments;
 }

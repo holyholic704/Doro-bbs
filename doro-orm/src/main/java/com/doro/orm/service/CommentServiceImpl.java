@@ -16,7 +16,7 @@ import java.util.List;
  * @author jiage
  */
 @Service
-class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
+public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
 
     @Override
     public boolean saveComment(CommentBean commentBean) {
@@ -31,9 +31,8 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
         return this.getBaseMapper().page(requestComment.getPostId(), from, size);
     }
 
-    public long getPostCommentIdList(long postId) {
-        return this.count(new LambdaQueryWrapper<CommentBean>()
-                .eq(CommentBean::getPostId, postId));
+    public boolean updateComments(long id) {
+        return this.getBaseMapper().updateComments(id);
     }
 
     public boolean delById(Long id) {
@@ -50,7 +49,11 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
         return this.getBaseMapper().pageUseMinId(postId, minId, current, size);
     }
 
-    //    public boolean updateComments(Long id) {
-//        this.update();
-//    }
+    @Override
+    public long getComments(Long id) {
+        CommentBean commentBean = this.getOne(new LambdaQueryWrapper<CommentBean>()
+                .select(CommentBean::getComments)
+                .eq(CommentBean::getId, id));
+        return commentBean != null ? commentBean.getComments() : 0;
+    }
 }

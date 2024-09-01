@@ -21,4 +21,5 @@ public class CommentConst {
 
     public static final int NORMAL_SUB_COMMENT_COUNT = 5;
 
+    public static final Duration POST_COMMENTS_CACHE = Duration.ofMinutes(5);
 }

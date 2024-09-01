@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.doro.orm.bean.CommentBean;
 import org.apache.ibatis.annotations.Select;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,14 +19,22 @@ public interface CommentMapper extends BaseMapper<CommentBean> {
     @Select("SELECT id, user_id, post_id, content, comments, create_time FROM doro_bbs_comment WHERE post_id = #{postId} AND del = 0 AND id >= #{minId} ORDER BY create_time ASC, id ASC LIMIT #{current}, #{size}")
     List<CommentBean> pageUseMinId(long postId, long minId, int current, int size);
 
-    @Select("<script>" +
-            "SELECT * FROM ( SELECT *, ROW_NUMBER() OVER ( PARTITION BY parent_id ORDER BY create_time DESC ) AS num FROM doro_bbs_comment WHERE parent_id IN ( " +
-            "<foreach collection='ids' item='id' separator=','>" +
-            " #{id} " +
-            "</foreach>" +
-            " ) AND del = 0 ) AS temp WHERE num &lt;= 5" +
-            "</script>")
-    List<CommentBean> subCommentList(Collection<Long> ids);
+    @Select("select id from doro_bbs_comment where id = #{id} for update;UPDATE doro_bbs_comment SET comments = comments + 1 WHERE id = #{id}")
+    boolean updateComments(long id);
+
+    @Select("UPDATE doro_bbs_comment SET comments = comments + 1 WHERE id = #{id} AND comments = #{oldComments}")
+    boolean incrComments(long id, long oldComments);
+
+    /**
+     * 不必担心值相同会重复更新，如果值相同，MySQL 是不会更新的
+     * If you set a column to the value it currently has, MySQL notices this and does not update it.
+     *
+     * @param id
+     * @param newComments
+     * @return
+     */
+    @Select("UPDATE doro_bbs_comment SET comments = newComments WHERE id = #{id} AND comments <= #{newComments}")
+    boolean updateComments(long id, long newComments);
 
     @Select("SELECT id FROM ( SELECT ROW_NUMBER() over ( ORDER BY create_time ASC, id ASC ) rownum, id FROM doro_bbs_comment WHERE post_id = #{postId} AND del = 0 ) A WHERE rownum % #{idGap} = 1")
     List<Long> everyFewId(Long postId, int idGap);

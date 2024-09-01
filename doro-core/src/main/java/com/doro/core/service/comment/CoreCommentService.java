@@ -1,4 +1,4 @@
-package com.doro.core.service;
+package com.doro.core.service.comment;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
@@ -12,12 +12,12 @@ import com.doro.common.constant.CommentConst;
 import com.doro.common.exception.ValidException;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.CommentService;
+import com.doro.orm.api.PostService;
 import com.doro.orm.api.SubCommentService;
 import com.doro.orm.bean.CommentBean;
 import com.doro.orm.model.request.RequestComment;
-import org.redisson.api.RBatch;
+import org.redisson.api.RAtomicLong;
 import org.redisson.api.RList;
-import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -42,12 +42,14 @@ public class CoreCommentService {
     private final SubCommentService subCommentService;
     private final ThreadPoolTaskExecutor coreTask;
     private final CommentService commentService;
+    private final PostService postService;
 
     @Autowired
-    public CoreCommentService(SubCommentService subCommentService, ThreadPoolTaskExecutor coreTask, CommentService commentService) {
+    public CoreCommentService(SubCommentService subCommentService, ThreadPoolTaskExecutor coreTask, CommentService commentService, PostService postService) {
         this.subCommentService = subCommentService;
         this.coreTask = coreTask;
         this.commentService = commentService;
+        this.postService = postService;
     }
 
     /**
@@ -77,22 +79,74 @@ public class CoreCommentService {
                     .setRepliedUserId(requestComment.getRepliedUserId());
         }
 
-        return commentService.saveComment(commentBean);
+        if (commentService.saveComment(commentBean)) {
+            incrComments(CacheKey.POST_COMMENTS_PREFIX, CommentConst.POST_COMMENTS_CACHE, requestComment.getPostId());
+            if (requestComment.getParentId() != null) {
+                incrComments(CacheKey.COMMENT_COMMENTS_PREFIX, CommentConst.POST_COMMENTS_CACHE, commentBean.getId());
+            }
+            return true;
+        }
+
+        return false;
     }
 
-    private void incrCacheComments(Long postId, Long parentId) {
+    public long incrComments(String cachePrefix, Duration duration, Long id) {
+        String cacheKey = cachePrefix + id;
+        RAtomicLong rAtomicLong = RedisUtil.createAtomicLong(cacheKey);
+
+        List<?> responses = RedisUtil.initBatch(cacheKey)
+                .expire(duration)
+                .isExists()
+                .execute();
+
+        boolean isExist = (Boolean) responses.get(1);
+
+        if (!isExist) {
+            long comments;
+            if (CacheKey.POST_COMMENTS_PREFIX.equals(cachePrefix)) {
+                comments = postService.getPostComments(id);
+            } else {
+                comments = commentService.getComments(id);
+            }
+
+            responses = RedisUtil.initBatch(cacheKey)
+                    .atomicLongCas(0, comments + 1)
+                    .expire(duration)
+                    .execute();
+
+            boolean isSuccess = (Boolean) responses.get(0);
+            if (isSuccess) {
+                return comments + 1;
+            }
+        }
+        return rAtomicLong.incrementAndGet();
+    }
+
+    public long getCommentCount(Long postId) {
         String cacheKey = CacheKey.POST_COMMENTS_PREFIX + postId;
-        Duration duration = Duration.ofMinutes(5);
-        RBatch batch = RedisUtil.createBatch();
-        batch.getMap(cacheKey, StringCodec.INSTANCE).expireAsync(duration);
-        batch.getMap(cacheKey, StringCodec.INSTANCE).addAndGetAsync("COMMENTS", 1);
-        batch.getMap(cacheKey, StringCodec.INSTANCE).addAndGetAsync("583030340190213L", 1);
+        RAtomicLong rAtomicLong = RedisUtil.createAtomicLong(cacheKey);
+        long comments = rAtomicLong.get();
+        if (comments == 0) {
+            // 不需要判断是否为 0，可能该帖子就是没有评论
+            comments = postService.getPostComments(postId);
+            RedisUtil.initBatch(cacheKey)
+                    .atomicLongSet(comments)
+                    .expire(CommentConst.POST_COMMENTS_CACHE)
+                    .execute();
+        }
+        return comments;
     }
 
+    /**
+     * 根据评论获取子评论列表
+     *
+     * @param commentList
+     */
     private void setSubCommentList(List<CommentBean> commentList) {
         if (CollUtil.isNotEmpty(commentList)) {
             Map<Long, CommentBean> idMap = commentList.stream().filter(v -> v.getComments() > 0).collect(Collectors.toMap(CommentBean::getId, Function.identity()));
             if (MapUtil.isNotEmpty(idMap)) {
+                // 只查出前面几个评论，
                 List<CommentBean> subCommentList = subCommentService.getByParentIds(idMap.keySet(), CommentConst.NORMAL_SUB_COMMENT_COUNT);
                 for (CommentBean subComment : subCommentList) {
                     CommentBean commentBean = idMap.get(subComment.getParentId());
@@ -126,7 +180,7 @@ public class CoreCommentService {
         if (page == null) {
             page = requestComment.asPage();
             page.setRecords(commentService.page(requestComment));
-            page.setTotal(1);
+            page.setTotal(this.getCommentCount(requestComment.getPostId()));
             setSubCommentList(page.getRecords());
         }
         return page;
@@ -135,10 +189,11 @@ public class CoreCommentService {
     /**
      * 在进行分页查询时使用 id 范围查询（WHERE id >= minId），以提升深度分页的效率，仅在待查询的数据量超过一定范围后生效
      * <pre>
-     * 局限性：只能用于同一查询规则的的分页查询，任何条件不同，都只能查询到错误数据
+     * 局限性：只能用于同一查询规则的的分页查询，任何条件不同，都只能查询到错误数据，如果增删频繁（不允许修改），可能会查到错误数据，甚至反而影响查询效率
      * 10w 条以内的数据量进行深度分页能在 40ms 左右返回结果，相比之下延迟关联（先查出一个分页范围的 id 列表，再用这个列表去查询）需要 1s 左右，普通分页要 4s 左右
      * 数据量特别大的情况，应当使用 Clickhouse、ElasticSearch 等
      * 每隔 CommentConst.ID_GAP 条记录取一个 id，并将 id 列表放入缓存，间隔应在 100 ~ 500 之间，过小，id 列表就会过大，初始化缓存的效率也会变低（查询数据慢，缓存占用空间大），过大影响查询效率
+     * 删除评论时同时删除缓存，添加评论并不会立即删除缓存，如果会出现需要的 minId 不在缓存中的情况，才会删除缓存，必须要保证查询的范围是合法的范围 TODO 范围合法性校验
      * </pre>
      *
      * @param requestComment 请求信息
@@ -156,32 +211,31 @@ public class CoreCommentService {
 
             String cacheKey = CacheKey.COMMENT_MIN_ID_PREFIX + postId;
 
-            RBatch batch = RedisUtil.createBatch();
-            batch.getList(cacheKey).expireAsync(CommentConst.MIN_ID_CACHE_DURATION);
-            batch.getList(cacheKey).isExistsAsync();
-            batch.getList(cacheKey).getAsync(index);
-            List<?> list = batch.execute().getResponses();
+            List<?> list = RedisUtil.initBatch(cacheKey)
+                    .expire(CommentConst.MIN_ID_CACHE_DURATION)
+                    .listSize()
+                    .listGet(index)
+                    .execute();
 
-            Boolean isExist = (Boolean) list.get(1);
+            int cacheSize = (Integer) list.get(1);
             Long minId = (Long) list.get(2);
 
             // 要做区分，一种是缓存中真的没有，一种是有缓存但不在范围中（传入的页码可能会大于实际的最大页码数）
-            if (isExist != null && isExist) {
-                // 要做好缓存的维护，增删数据要更新缓存，否则会查出错误数据
-                Page<CommentBean> page = requestComment.asPage();
+            if (cacheSize > 0) {
                 if (minId != null) {
+                    // 要做好缓存的维护，增删数据要更新缓存，否则会查出错误数据
                     List<CommentBean> records = commentService.pageUseMinId(postId, minId, current % CommentConst.ID_GAP, size);
-                    // TODO 总数
-                    page.setTotal(1);
-                    page.setRecords(records);
                     // 添加子评论
-                    setSubCommentList(page.getRecords());
+                    setSubCommentList(records);
+
+                    Page<CommentBean> page = requestComment.asPage();
+                    page.setTotal(this.getCommentCount(postId));
+                    page.setRecords(records);
+                    return page;
                 }
-                return page;
-            } else {
-                // 异步添加缓存
-                coreTask.execute(() -> initIdsCache(requestComment.getPostId()));
             }
+            // 异步添加缓存
+            coreTask.execute(() -> initIdsCache(requestComment.getPostId(), cacheSize));
         }
 
         return null;
@@ -192,24 +246,32 @@ public class CoreCommentService {
      *
      * @param postId
      */
-    private void initIdsCache(Long postId) {
+    private void initIdsCache(Long postId, Integer cacheSize) {
         String cacheKey = CacheKey.COMMENT_MIN_ID_PREFIX + postId;
         MyLock lock = LockUtil.lock(cacheKey, 10);
         RList<Long> list = RedisUtil.createList(cacheKey);
-        if (!list.isExists()) {
+        int currentCacheSize = list.size();
+        // 当前缓存的大小要大于之前记录的缓存大小
+        // cacheSize 为 0 表示之前没有缓存
+        // cacheSize 大于 0 表示有缓存，但缓存中没有满足的 minId
+        // 只要保证查询的范围在合法的范围内（例如只有 100 条数据，要查第 101 条数据），那么经过下面一轮的逻辑，并发的其他线程再查询到的 currentCacheSize 总是大于 cacheSize 的
+        if (currentCacheSize <= cacheSize) {
             List<Long> ids = commentService.everyFewId(postId, CommentConst.ID_GAP);
-            RBatch batch = RedisUtil.createBatch();
-            batch.getList(cacheKey).addAllAsync(ids);
-            batch.getList(cacheKey).expireAsync(CommentConst.MIN_ID_CACHE_DURATION);
-            batch.execute();
+            RedisUtil.initBatch(cacheKey)
+                    .delete()
+                    .listAddAll(ids)
+                    .expire(CommentConst.MIN_ID_CACHE_DURATION)
+                    .execute();
         }
         LockUtil.unlock(lock);
     }
 
     /**
+     * 删除间隔 id 列表缓存
+     *
      * @param postId
      */
-    private void updateIdsCache(Long postId) {
+    private void delIdsCache(Long postId) {
         String cacheKey = CacheKey.COMMENT_MIN_ID_PREFIX + postId;
         RList<Long> list = RedisUtil.createList(cacheKey);
         list.delete();

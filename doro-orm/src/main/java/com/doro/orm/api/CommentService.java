@@ -25,4 +25,6 @@ public interface CommentService {
 
     List<CommentBean> pageUseMinId(long postId, long minId, int current, int size);
 
+    long getComments(Long id);
+
 }

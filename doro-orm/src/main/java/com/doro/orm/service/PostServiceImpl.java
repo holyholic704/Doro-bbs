@@ -40,4 +40,12 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
         return postBean != null ? postBean.getViews() : null;
     }
 
+    @Override
+    public long getPostComments(Long postId) {
+        PostBean postBean = this.getOne(new LambdaQueryWrapper<PostBean>()
+                .select(PostBean::getComments)
+                .eq(PostBean::getId, postId));
+        return postBean != null ? postBean.getComments() : 0;
+    }
+
 }

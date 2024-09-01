@@ -3,7 +3,7 @@ package com.doro.core.controller;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.response.ResponseResult;
-import com.doro.core.service.CoreCommentService;
+import com.doro.core.service.comment.CoreCommentService;
 import com.doro.orm.bean.CommentBean;
 import com.doro.orm.model.request.RequestComment;
 import org.springframework.beans.factory.annotation.Autowired;

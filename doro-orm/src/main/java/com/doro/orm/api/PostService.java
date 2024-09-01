@@ -27,4 +27,6 @@ public interface PostService {
     Page<PostBean> page(RequestPost requestPost);
 
     Long getPostViews(Long postId);
+
+    long getPostComments(Long postId);
 }

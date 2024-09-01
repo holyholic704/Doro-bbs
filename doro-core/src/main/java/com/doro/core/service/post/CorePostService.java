@@ -9,7 +9,7 @@ import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
 import com.doro.common.exception.ValidException;
-import com.doro.core.service.CoreCommentService;
+import com.doro.core.service.comment.CoreCommentService;
 import com.doro.core.service.CoreUserLikeService;
 import com.doro.core.utils.UserUtil;
 import com.doro.orm.api.PostService;
