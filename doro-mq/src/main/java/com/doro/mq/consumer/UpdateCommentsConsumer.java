@@ -1,7 +1,7 @@
 package com.doro.mq.consumer;
 
 import com.doro.cache.utils.RedisUtil;
-import com.doro.common.api.Runner;
+import com.doro.api.common.Runner;
 import com.doro.common.constant.TopicConst;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
@@ -51,6 +51,6 @@ public class UpdateCommentsConsumer implements Runner {
             // 默认消费成功
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         });
-        consumer.start();
+//        consumer.start();
     }
 }

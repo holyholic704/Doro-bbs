@@ -1,6 +1,6 @@
 package com.doro.api.orm;
 
-import com.doro.api.bean.GlobalSettingBean;
+import com.doro.bean.GlobalSettingBean;
 
 import java.util.Collection;
 import java.util.List;

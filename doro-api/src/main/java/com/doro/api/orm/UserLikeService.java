@@ -1,6 +1,6 @@
 package com.doro.api.orm;
 
-import com.doro.api.bean.UserLikeBean;
+import com.doro.bean.UserLikeBean;
 
 /**
  * 用户的赞与踩

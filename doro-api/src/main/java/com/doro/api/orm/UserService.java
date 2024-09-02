@@ -1,6 +1,6 @@
 package com.doro.api.orm;
 
-import com.doro.api.bean.UserBean;
+import com.doro.bean.UserBean;
 
 /**
  * 用户

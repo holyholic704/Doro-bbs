@@ -1,6 +1,6 @@
 package com.doro.core.init;
 
-import com.doro.common.api.Runner;
+import com.doro.api.common.Runner;
 import com.github.yitter.contract.IdGeneratorOptions;
 import com.github.yitter.idgen.YitIdHelper;
 import org.springframework.beans.factory.annotation.Value;

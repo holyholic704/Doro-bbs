@@ -76,7 +76,7 @@ public class CommentCountService {
         boolean isExist = (Boolean) result.get(1);
 
         if (isExist) {
-            RMap<String, Long> rMap = RedisUtil.createMap(cacheKey);
+            RMap<String, Integer> rMap = RedisUtil.createMap(cacheKey);
             return rMap.get(CommentConst.COMMENTS_COUNTS);
         } else {
             // 不需要判断是否为 0，可能该帖子就是没有评论

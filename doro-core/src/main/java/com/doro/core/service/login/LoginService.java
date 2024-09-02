@@ -10,7 +10,7 @@ import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.core.utils.JwtUtil;
 import com.doro.core.valid.ValidService;
 import com.doro.api.orm.UserService;
-import com.doro.api.bean.UserBean;
+import com.doro.bean.UserBean;
 import com.doro.api.model.request.RequestUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

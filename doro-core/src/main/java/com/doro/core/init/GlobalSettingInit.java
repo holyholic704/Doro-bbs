@@ -4,12 +4,12 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
-import com.doro.common.api.Runner;
+import com.doro.api.common.Runner;
 import com.doro.common.constant.LockKey;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
 import com.doro.api.orm.GlobalSettingService;
-import com.doro.api.bean.GlobalSettingBean;
+import com.doro.bean.GlobalSettingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
  * @author jiage
  */
 @Component
-//@DependsOn("lockUtil")
 public class GlobalSettingInit implements Runner {
 
     private final PlatformTransactionManager transactionManager;

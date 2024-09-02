@@ -2,7 +2,7 @@ package com.doro.orm.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.api.bean.PermissionBean;
+import com.doro.bean.PermissionBean;
 
 /**
  * 权限

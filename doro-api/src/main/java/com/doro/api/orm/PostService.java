@@ -1,8 +1,8 @@
 package com.doro.api.orm;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.doro.api.bean.PostBean;
+import com.doro.bean.PostBean;
 import com.doro.api.model.request.RequestPost;
+import com.doro.common.model.Page;
 
 /**
  * 帖子

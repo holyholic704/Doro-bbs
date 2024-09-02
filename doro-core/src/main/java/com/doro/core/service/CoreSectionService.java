@@ -5,7 +5,7 @@ import com.doro.common.constant.SectionConst;
 import com.doro.common.exception.ValidException;
 import com.doro.core.utils.UserUtil;
 import com.doro.api.orm.SectionService;
-import com.doro.api.bean.SectionBean;
+import com.doro.bean.SectionBean;
 import com.doro.api.model.request.RequestSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

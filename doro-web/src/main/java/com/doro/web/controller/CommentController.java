@@ -1,10 +1,10 @@
 package com.doro.web.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doro.common.enumeration.MessageEnum;
+import com.doro.common.model.Page;
 import com.doro.common.response.ResponseResult;
 import com.doro.core.service.comment.CoreCommentService;
-import com.doro.api.bean.CommentBean;
+import com.doro.bean.CommentBean;
 import com.doro.api.model.request.RequestComment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

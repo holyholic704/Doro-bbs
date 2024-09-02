@@ -19,5 +19,11 @@
             <artifactId>doro-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.doro</groupId>
+            <artifactId>doro-bean</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

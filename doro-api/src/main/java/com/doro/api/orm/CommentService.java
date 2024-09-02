@@ -1,6 +1,6 @@
 package com.doro.api.orm;
 
-import com.doro.api.bean.CommentBean;
+import com.doro.bean.CommentBean;
 import com.doro.api.model.request.RequestComment;
 
 import java.util.List;

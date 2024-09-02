@@ -1,7 +1,6 @@
 package com.doro.core.service.post;
 
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
@@ -9,11 +8,12 @@ import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
 import com.doro.common.exception.ValidException;
+import com.doro.common.model.Page;
 import com.doro.core.service.comment.CoreCommentService;
 import com.doro.core.service.CoreUserLikeService;
 import com.doro.core.utils.UserUtil;
 import com.doro.api.orm.PostService;
-import com.doro.api.bean.PostBean;
+import com.doro.bean.PostBean;
 import com.doro.api.model.request.RequestPost;
 import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;

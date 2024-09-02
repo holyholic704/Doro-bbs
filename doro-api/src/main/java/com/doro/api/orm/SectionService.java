@@ -1,6 +1,6 @@
 package com.doro.api.orm;
 
-import com.doro.api.bean.SectionBean;
+import com.doro.bean.SectionBean;
 
 /**
  * 版块

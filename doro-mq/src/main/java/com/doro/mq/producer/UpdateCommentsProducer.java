@@ -1,6 +1,6 @@
 package com.doro.mq.producer;
 
-import com.doro.common.api.Runner;
+import com.doro.api.common.Runner;
 import com.doro.common.constant.TopicConst;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
@@ -37,7 +37,7 @@ public class UpdateCommentsProducer implements Runner {
     public void run() throws MQClientException {
         producer.setProducerGroup(producerGroup);
         producer.setNamesrvAddr(nameServer);
-        producer.start();
+//        producer.start();
         System.out.println("启动");
     }
 

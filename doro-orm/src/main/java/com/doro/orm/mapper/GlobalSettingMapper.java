@@ -1,7 +1,7 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.api.bean.GlobalSettingBean;
+import com.doro.bean.GlobalSettingBean;
 
 /**
  * 全局配置

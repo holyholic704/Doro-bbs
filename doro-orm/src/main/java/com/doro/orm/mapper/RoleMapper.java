@@ -1,7 +1,7 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.api.bean.RoleBean;
+import com.doro.bean.RoleBean;
 
 /**
  * 角色

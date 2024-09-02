@@ -3,7 +3,7 @@ package com.doro.core.service;
 import com.doro.common.exception.ValidException;
 import com.doro.core.utils.UserUtil;
 import com.doro.api.orm.UserLikeService;
-import com.doro.api.bean.UserLikeBean;
+import com.doro.bean.UserLikeBean;
 import com.doro.api.model.request.RequestUserLike;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;

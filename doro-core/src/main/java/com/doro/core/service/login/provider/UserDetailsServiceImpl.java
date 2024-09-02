@@ -3,7 +3,7 @@ package com.doro.core.service.login.provider;
 import com.doro.common.constant.LoginConst;
 import com.doro.common.exception.ValidException;
 import com.doro.api.orm.UserService;
-import com.doro.api.bean.UserBean;
+import com.doro.bean.UserBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

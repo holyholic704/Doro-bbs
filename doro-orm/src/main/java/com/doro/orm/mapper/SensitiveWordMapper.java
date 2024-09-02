@@ -1,7 +1,7 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.api.bean.SensitiveWordBean;
+import com.doro.bean.SensitiveWordBean;
 
 /**
  * 敏感词

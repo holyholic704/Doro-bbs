@@ -1,6 +1,6 @@
 package com.doro.api.model.request;
 
-import com.doro.common.base.BaseRequest;
+import com.doro.api.model.request.base.BaseRequest;
 import lombok.Getter;
 
 /**
