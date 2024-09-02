@@ -21,6 +21,8 @@
         <module>doro-gateway</module>
         <module>doro-core</module>
         <module>doro-orm</module>
+        <module>doro-mq</module>
+        <module>doro-web</module>
     </modules>
 
     <properties>
@@ -40,6 +42,7 @@
         <jackson.version>2.17.2</jackson.version>
         <redisson.version>3.34.1</redisson.version>
         <jwt.version>0.12.6</jwt.version>
+        <rocketmq.version>2.3.0</rocketmq.version>
     </properties>
 
     <dependencies>
@@ -78,6 +81,13 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- ORM 支持 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis-plus.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,7 +1,7 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.orm.bean.UserBean;
+import com.doro.api.bean.UserBean;
 
 /**
  * 用户

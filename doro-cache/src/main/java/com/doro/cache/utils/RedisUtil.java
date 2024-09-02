@@ -1,12 +1,14 @@
 package com.doro.cache.utils;
 
 import org.redisson.api.*;
+import org.redisson.client.codec.StringCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author jiage
@@ -21,6 +23,10 @@ public class RedisUtil {
         RedisUtil.redissonClient = redissonClient;
     }
 
+    public static boolean isExists(String name) {
+        return redissonClient.getBucket(name).isExists();
+    }
+
     public static <T> RBucket<T> createBucket(String name) {
         return redissonClient.getBucket(name);
     }
@@ -30,7 +36,12 @@ public class RedisUtil {
     }
 
     public static RBatch createBatch() {
-        return redissonClient.createBatch();
+        // 保证原子性
+        return redissonClient.createBatch(BatchOptions.defaults().executionMode(BatchOptions.ExecutionMode.IN_MEMORY_ATOMIC));
+    }
+
+    public static <K, V> RMap<K, V> createMap(String name) {
+        return redissonClient.getMap(name, StringCodec.INSTANCE);
     }
 
     public static <K, V> RMapCache<K, V> createMapCache(String name) {
@@ -39,6 +50,9 @@ public class RedisUtil {
 
     public static <T> RScoredSortedSet<T> createSortedset(String name) {
         return redissonClient.getScoredSortedSet(name);
+    }
+    public static RKeys getKeys() {
+        return redissonClient.getKeys();
     }
 
     public static <T> RList<T> createList(String name) {
@@ -91,6 +105,26 @@ public class RedisUtil {
             return this;
         }
 
+        public <K, V> RedisBatch mapPut(K k, V v) {
+            batch.getMap(name, StringCodec.INSTANCE).putAsync(k, v);
+            return this;
+        }
+
+        public <K, V> RedisBatch mapPutAll(Map<? extends K, ? extends V> map) {
+            batch.getMap(name, StringCodec.INSTANCE).putAllAsync(map);
+            return this;
+        }
+
+        public <K> RedisBatch mapGet(K k) {
+            batch.getMap(name, StringCodec.INSTANCE).getAsync(k);
+            return this;
+        }
+
+        public <K, V> RedisBatch putIfAbsent(K k, V v) {
+            batch.getMap(name, StringCodec.INSTANCE).putIfAbsentAsync(k, v);
+            return this;
+        }
+
         public RedisBatch listSize() {
             batch.getList(name).sizeAsync();
             return this;
@@ -103,6 +137,11 @@ public class RedisUtil {
 
         public <T> RedisBatch listAddAll(Collection<? extends T> c) {
             batch.getList(name).addAllAsync(c);
+            return this;
+        }
+
+        public RedisBatch setReadAll() {
+            batch.getSet(name).readAllAsync();
             return this;
         }
 

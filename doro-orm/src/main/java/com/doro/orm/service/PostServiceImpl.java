@@ -3,10 +3,10 @@ package com.doro.orm.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.api.PostService;
-import com.doro.orm.bean.PostBean;
+import com.doro.api.orm.PostService;
+import com.doro.api.bean.PostBean;
 import com.doro.orm.mapper.PostMapper;
-import com.doro.orm.model.request.RequestPost;
+import com.doro.api.model.request.RequestPost;
 import org.springframework.stereotype.Service;
 
 /**

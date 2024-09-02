@@ -1,11 +1,12 @@
 package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.api.CommentService;
-import com.doro.orm.bean.CommentBean;
+import com.doro.api.orm.CommentService;
+import com.doro.api.bean.CommentBean;
 import com.doro.orm.mapper.CommentMapper;
-import com.doro.orm.model.request.RequestComment;
+import com.doro.api.model.request.RequestComment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author jiage
  */
 @Service
-public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
+class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> implements CommentService {
 
     @Override
     public boolean saveComment(CommentBean commentBean) {
@@ -31,10 +32,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> 
         return this.getBaseMapper().page(requestComment.getPostId(), from, size);
     }
 
-    public boolean updateComments(long id) {
-        return this.getBaseMapper().updateComments(id);
+    @Override
+    public boolean updateComments(long id, long oldComments, long newComments) {
+        return this.update(new LambdaUpdateWrapper<CommentBean>()
+                .set(CommentBean::getComments, newComments)
+                .eq(CommentBean::getId, id)
+                .eq(CommentBean::getComments, oldComments));
     }
 
+    @Override
     public boolean delById(Long id) {
         return this.removeById(id);
     }

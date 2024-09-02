@@ -22,7 +22,7 @@ class Run implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws Exception {
         for (Runner runner : runnerList) {
             runner.run();
         }

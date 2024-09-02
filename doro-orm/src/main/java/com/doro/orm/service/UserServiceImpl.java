@@ -2,8 +2,8 @@ package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.api.UserService;
-import com.doro.orm.bean.UserBean;
+import com.doro.api.orm.UserService;
+import com.doro.api.bean.UserBean;
 import com.doro.orm.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 

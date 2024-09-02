@@ -11,18 +11,16 @@ import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommentConst;
 import com.doro.common.exception.ValidException;
 import com.doro.core.utils.UserUtil;
-import com.doro.orm.api.CommentService;
-import com.doro.orm.api.PostService;
-import com.doro.orm.api.SubCommentService;
-import com.doro.orm.bean.CommentBean;
-import com.doro.orm.model.request.RequestComment;
-import org.redisson.api.RAtomicLong;
+import com.doro.api.orm.CommentService;
+import com.doro.api.orm.PostService;
+import com.doro.api.orm.SubCommentService;
+import com.doro.api.bean.CommentBean;
+import com.doro.api.model.request.RequestComment;
 import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +37,15 @@ import java.util.stream.Collectors;
 @Service
 public class CoreCommentService {
 
+    private final CommentCountService commentCountService;
     private final SubCommentService subCommentService;
     private final ThreadPoolTaskExecutor coreTask;
     private final CommentService commentService;
     private final PostService postService;
 
     @Autowired
-    public CoreCommentService(SubCommentService subCommentService, ThreadPoolTaskExecutor coreTask, CommentService commentService, PostService postService) {
+    public CoreCommentService(CommentCountService commentCountService, SubCommentService subCommentService, ThreadPoolTaskExecutor coreTask, CommentService commentService, PostService postService) {
+        this.commentCountService = commentCountService;
         this.subCommentService = subCommentService;
         this.coreTask = coreTask;
         this.commentService = commentService;
@@ -80,9 +80,9 @@ public class CoreCommentService {
         }
 
         if (commentService.saveComment(commentBean)) {
-            incrComments(CacheKey.POST_COMMENTS_PREFIX, CommentConst.POST_COMMENTS_CACHE, requestComment.getPostId());
+            commentCountService.updateComments(CacheKey.POST_COMMENTS_PREFIX, requestComment.getPostId());
             if (requestComment.getParentId() != null) {
-                incrComments(CacheKey.COMMENT_COMMENTS_PREFIX, CommentConst.POST_COMMENTS_CACHE, commentBean.getId());
+                commentCountService.updateComments(CacheKey.COMMENT_COMMENTS_PREFIX, commentBean.getId());
             }
             return true;
         }
@@ -90,52 +90,10 @@ public class CoreCommentService {
         return false;
     }
 
-    public long incrComments(String cachePrefix, Duration duration, Long id) {
-        String cacheKey = cachePrefix + id;
-        RAtomicLong rAtomicLong = RedisUtil.createAtomicLong(cacheKey);
-
-        List<?> responses = RedisUtil.initBatch(cacheKey)
-                .expire(duration)
-                .isExists()
-                .execute();
-
-        boolean isExist = (Boolean) responses.get(1);
-
-        if (!isExist) {
-            long comments;
-            if (CacheKey.POST_COMMENTS_PREFIX.equals(cachePrefix)) {
-                comments = postService.getPostComments(id);
-            } else {
-                comments = commentService.getComments(id);
-            }
-
-            responses = RedisUtil.initBatch(cacheKey)
-                    .atomicLongCas(0, comments + 1)
-                    .expire(duration)
-                    .execute();
-
-            boolean isSuccess = (Boolean) responses.get(0);
-            if (isSuccess) {
-                return comments + 1;
-            }
-        }
-        return rAtomicLong.incrementAndGet();
-    }
-
-    public long getCommentCount(Long postId) {
-        String cacheKey = CacheKey.POST_COMMENTS_PREFIX + postId;
-        RAtomicLong rAtomicLong = RedisUtil.createAtomicLong(cacheKey);
-        long comments = rAtomicLong.get();
-        if (comments == 0) {
-            // 不需要判断是否为 0，可能该帖子就是没有评论
-            comments = postService.getPostComments(postId);
-            RedisUtil.initBatch(cacheKey)
-                    .atomicLongSet(comments)
-                    .expire(CommentConst.POST_COMMENTS_CACHE)
-                    .execute();
-        }
-        return comments;
-    }
+//    public boolean deleteById(Long id) {
+//        commentService.delById();
+//        subCommentService.delById();
+//    }
 
     /**
      * 根据评论获取子评论列表
@@ -180,7 +138,7 @@ public class CoreCommentService {
         if (page == null) {
             page = requestComment.asPage();
             page.setRecords(commentService.page(requestComment));
-            page.setTotal(this.getCommentCount(requestComment.getPostId()));
+            page.setTotal(commentCountService.getCommentCount(requestComment.getPostId()));
             setSubCommentList(page.getRecords());
         }
         return page;
@@ -229,7 +187,7 @@ public class CoreCommentService {
                     setSubCommentList(records);
 
                     Page<CommentBean> page = requestComment.asPage();
-                    page.setTotal(this.getCommentCount(postId));
+                    page.setTotal(commentCountService.getCommentCount(postId));
                     page.setRecords(records);
                     return page;
                 }

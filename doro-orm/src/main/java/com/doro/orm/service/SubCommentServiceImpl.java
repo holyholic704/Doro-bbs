@@ -1,9 +1,9 @@
 package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.api.SubCommentService;
-import com.doro.orm.bean.CommentBean;
-import com.doro.orm.bean.SubCommentBean;
+import com.doro.api.orm.SubCommentService;
+import com.doro.api.bean.CommentBean;
+import com.doro.api.bean.SubCommentBean;
 import com.doro.orm.mapper.SubCommentMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +21,11 @@ class SubCommentServiceImpl extends ServiceImpl<SubCommentMapper, SubCommentBean
     @Override
     public List<CommentBean> getByParentIds(Collection<Long> ids, int subCommentCount) {
         return this.getBaseMapper().getByParentIds(ids, subCommentCount);
+    }
+
+    @Override
+    public boolean delById(Long id) {
+        return this.removeById(id);
     }
 
 }

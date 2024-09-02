@@ -1,8 +1,8 @@
 package com.doro.orm.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.doro.orm.bean.CommentBean;
-import com.doro.orm.bean.SubCommentBean;
+import com.doro.api.bean.CommentBean;
+import com.doro.api.bean.SubCommentBean;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Collection;

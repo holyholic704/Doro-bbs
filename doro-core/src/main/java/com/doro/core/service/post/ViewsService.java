@@ -6,7 +6,7 @@ import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
-import com.doro.orm.api.PostService;
+import com.doro.api.orm.PostService;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.redisson.api.RBatch;

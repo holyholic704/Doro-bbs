@@ -10,5 +10,5 @@ public interface Runner {
     /**
      * 待运行的逻辑
      */
-    void run();
+    void run() throws Exception;
 }

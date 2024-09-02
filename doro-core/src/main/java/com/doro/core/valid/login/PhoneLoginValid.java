@@ -4,7 +4,7 @@ import com.doro.common.constant.LoginConst;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
-import com.doro.orm.model.request.RequestUser;
+import com.doro.api.model.request.RequestUser;
 
 /**
  * 使用手机登录校验

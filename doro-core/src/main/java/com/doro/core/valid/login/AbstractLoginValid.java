@@ -3,7 +3,7 @@ package com.doro.core.valid.login;
 import cn.hutool.core.util.ReUtil;
 import com.doro.common.constant.Regex;
 import com.doro.common.exception.ValidException;
-import com.doro.orm.model.request.RequestUser;
+import com.doro.api.model.request.RequestUser;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.common.api.Valid;
 

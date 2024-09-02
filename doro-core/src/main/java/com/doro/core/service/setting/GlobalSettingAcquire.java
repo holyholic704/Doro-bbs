@@ -4,8 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import com.doro.cache.utils.MultiCacheUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.exception.SystemException;
-import com.doro.orm.api.GlobalSettingService;
-import com.doro.orm.bean.GlobalSettingBean;
+import com.doro.api.orm.GlobalSettingService;
+import com.doro.api.bean.GlobalSettingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

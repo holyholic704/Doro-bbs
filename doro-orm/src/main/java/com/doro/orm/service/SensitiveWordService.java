@@ -1,7 +1,7 @@
 package com.doro.orm.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.doro.orm.bean.SensitiveWordBean;
+import com.doro.api.bean.SensitiveWordBean;
 import com.doro.orm.mapper.SensitiveWordMapper;
 import org.springframework.stereotype.Service;
 
