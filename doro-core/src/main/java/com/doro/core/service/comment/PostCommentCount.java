@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
  * @author jiage
  */
 @Service(CacheKey.POST_COMMENTS_PREFIX)
-public class PostCommentsCount extends BaseCountService {
+public class PostCommentCount extends BaseCountService {
 
     private final PostService postService;
 
     @Autowired
-    public PostCommentsCount(PostService postService) {
+    public PostCommentCount(PostService postService) {
         this.postService = postService;
     }
 

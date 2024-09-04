@@ -54,12 +54,10 @@ public class UpdateCommentsProducer implements Runner {
         if (delayTime > 0) {
             msg.setDelayTimeSec(delayTime);
         }
-        SendResult sendResult;
         try {
-            sendResult = producer.send(msg);
+            SendResult sendResult = producer.send(msg);
         } catch (MQClientException | RemotingException | MQBrokerException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(sendResult);
     }
 }

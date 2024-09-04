@@ -100,12 +100,10 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         return UpdateCount.ERROR_NO_DATA;
     }
 
-    private void correctCount(long id, long count) {
+    @Override
+    public void correctCount(long id) {
         String cacheKey = cachePrefix + id;
-        RedisUtil.initBatch(cacheKey)
-                .mapReadAll()
-                .mapPut(UpdateCount.LAST_UPDATE_KEY, count)
-                .mapPut(UpdateCount.COUNT_KEY, count)
-                .expire(CommonConst.COMMON_CACHE_DURATION);
+        RedisUtil.delete(cacheKey);
+        updateAndSendMessage(id, 0);
     }
 }

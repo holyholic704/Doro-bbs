@@ -1,6 +1,7 @@
 package com.doro.orm.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.api.model.request.RequestPost;
 import com.doro.api.orm.PostService;
@@ -48,4 +49,11 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
         return postBean != null ? postBean.getComments() : null;
     }
 
+    @Override
+    public boolean updateComments(long id, long oldComments, long newComments) {
+        return this.update(new LambdaUpdateWrapper<PostBean>()
+                .set(PostBean::getComments, newComments)
+                .eq(PostBean::getId, id)
+                .eq(PostBean::getComments, oldComments));
+    }
 }
