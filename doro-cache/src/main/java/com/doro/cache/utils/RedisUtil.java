@@ -27,6 +27,10 @@ public class RedisUtil {
         return redissonClient.getBucket(name).isExists();
     }
 
+    public static boolean delete(String name) {
+        return redissonClient.getBucket(name).delete();
+    }
+
     public static <T> RBucket<T> createBucket(String name) {
         return redissonClient.getBucket(name);
     }
@@ -45,12 +49,13 @@ public class RedisUtil {
     }
 
     public static <K, V> RMapCache<K, V> createMapCache(String name) {
-        return redissonClient.getMapCache(name);
+        return redissonClient.getMapCache(name, StringCodec.INSTANCE);
     }
 
     public static <T> RScoredSortedSet<T> createSortedset(String name) {
         return redissonClient.getScoredSortedSet(name);
     }
+
     public static RKeys getKeys() {
         return redissonClient.getKeys();
     }
@@ -120,7 +125,17 @@ public class RedisUtil {
             return this;
         }
 
-        public <K, V> RedisBatch putIfAbsent(K k, V v) {
+        public <K, V> RedisBatch mapReplaceCas(K k, V expect, V newValue) {
+            batch.getMap(name, StringCodec.INSTANCE).replaceAsync(k, expect, newValue);
+            return this;
+        }
+
+        public <K> RedisBatch mapAddAndGet(K k, Number delta) {
+            batch.getMap(name, StringCodec.INSTANCE).addAndGetAsync(k, delta);
+            return this;
+        }
+
+        public <K, V> RedisBatch mapPutIfAbsent(K k, V v) {
             batch.getMap(name, StringCodec.INSTANCE).putIfAbsentAsync(k, v);
             return this;
         }

@@ -1,10 +1,12 @@
 package com.doro.core.service.comment;
 
-import com.doro.cache.utils.RedisUtil;
-import com.doro.common.constant.CacheKey;
-import com.doro.common.constant.CommentConst;
+import com.doro.api.dto.CountSnapshot;
 import com.doro.api.orm.CommentService;
 import com.doro.api.orm.PostService;
+import com.doro.cache.utils.RedisUtil;
+import com.doro.common.constant.CacheKey;
+import com.doro.common.constant.CommonConst;
+import com.doro.common.enumeration.UpdateCount;
 import org.redisson.api.RMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,28 +23,26 @@ public class CommentCountService {
 
     private final CommentService commentService;
     private final PostService postService;
-    private final MergeUpdate mergeUpdate;
 
     @Autowired
-    public CommentCountService(CommentService commentService, PostService postService, MergeUpdate mergeUpdate) {
+    public CommentCountService(CommentService commentService, PostService postService) {
         this.commentService = commentService;
         this.postService = postService;
-        this.mergeUpdate = mergeUpdate;
     }
 
-    public long updateComments(String cachePrefix, Long id) {
-        return updateComments(cachePrefix, id, 1);
+    public void updateComments(String cachePrefix, Long id) {
+        updateComments(cachePrefix, id, 1);
     }
 
-    public long decrComments(String cachePrefix, Long id) {
-        return updateComments(cachePrefix, id, -1);
+    public void decrComments(String cachePrefix, Long id) {
+        updateComments(cachePrefix, id, -1);
     }
 
-    public long updateComments(String cachePrefix, Long id, int add) {
+    private CountSnapshot updateComments(String cachePrefix, Long id, int add) {
         String cacheKey = cachePrefix + id;
 
         List<?> responses = RedisUtil.initBatch(cacheKey)
-                .expire(CommentConst.COMMENTS_CACHE)
+                .expire(CommonConst.COMMON_CACHE_DURATION)
                 .isExists()
                 .execute();
 
@@ -58,26 +58,38 @@ public class CommentCountService {
 
             boolean isSuccess = initCache(cacheKey, comments, comments + add);
             if (isSuccess) {
-                return comments + add;
+                return new CountSnapshot(CacheKey.POST_COMMENTS_PREFIX,
+                        id,
+                        comments,
+                        comments + add);
             }
         }
-        RMap<String, Integer> rMap = RedisUtil.createMap(cacheKey);
-        return rMap.addAndGet(CommentConst.COMMENTS_COUNTS, add).longValue();
+
+        responses = RedisUtil.initBatch(cacheKey)
+                .mapGet(UpdateCount.LAST_UPDATE_KEY)
+                .mapAddAndGet(UpdateCount.COUNT_KEY, add)
+                .execute();
+        long last = Long.parseLong(String.valueOf(responses.get(0)));
+        long count = Long.parseLong(String.valueOf(responses.get(1)));
+        return new CountSnapshot(CacheKey.POST_COMMENTS_PREFIX,
+                id,
+                last,
+                count);
     }
 
     public long getCommentCount(Long id) {
         String cacheKey = CacheKey.POST_COMMENTS_PREFIX + id;
 
         List<?> result = RedisUtil.initBatch(cacheKey)
-                .expire(CommentConst.COMMENTS_CACHE)
+                .expire(CommonConst.COMMON_CACHE_DURATION)
                 .isExists()
                 .execute();
 
         boolean isExist = (Boolean) result.get(1);
 
         if (isExist) {
-            RMap<String, Integer> rMap = RedisUtil.createMap(cacheKey);
-            return rMap.get(CommentConst.COMMENTS_COUNTS);
+            RMap<String, String> rMap = RedisUtil.createMap(cacheKey);
+            return Long.parseLong(rMap.get(UpdateCount.COUNT_KEY));
         } else {
             // 不需要判断是否为 0，可能该帖子就是没有评论
             long comments = postService.getPostComments(id);
@@ -88,23 +100,23 @@ public class CommentCountService {
 
     private boolean initCache(String cacheKey, long last, long count) {
         List<?> result = RedisUtil.initBatch(cacheKey)
-                .putIfAbsent(CommentConst.COMMENTS_LAST_UPDATE, last)
-                .putIfAbsent(CommentConst.COMMENTS_COUNTS, count)
-                .expire(CommentConst.COMMENTS_CACHE)
+                .mapPutIfAbsent(UpdateCount.LAST_UPDATE_KEY, last)
+                .mapPutIfAbsent(UpdateCount.COUNT_KEY, count)
+                .expire(CommonConst.COMMON_CACHE_DURATION)
                 .execute();
         return result.get(0) == null;
     }
 
-    protected long getPostCommentsFromCache(Long id) {
-        return getCommentsFromCache(CacheKey.POST_COMMENTS_PREFIX + id);
-    }
-
-    protected long getSubCommentsFromCache(Long id) {
-        return getCommentsFromCache(CacheKey.COMMENT_COMMENTS_PREFIX + id);
-    }
-
-    private long getCommentsFromCache(String cacheKey) {
-        RMap<String, Long> rMap = RedisUtil.createMap(cacheKey);
-        return rMap.get(CommentConst.COMMENTS_COUNTS);
-    }
+//    protected long getPostCommentsFromCache(Long id) {
+//        return getCommentsFromCache(CacheKey.POST_COMMENTS_PREFIX + id);
+//    }
+//
+//    protected long getSubCommentsFromCache(Long id) {
+//        return getCommentsFromCache(CacheKey.COMMENT_COMMENTS_PREFIX + id);
+//    }
+//
+//    private long getCommentsFromCache(String cacheKey) {
+//        RMap<String, Long> rMap = RedisUtil.createMap(cacheKey);
+//        return rMap.get(CommentConst.COMMENTS_COUNTS);
+//    }
 }

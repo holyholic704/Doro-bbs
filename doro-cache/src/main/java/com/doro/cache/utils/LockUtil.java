@@ -272,7 +272,9 @@ public class LockUtil {
 
         @Override
         public void unlock() {
-            this.rLock.unlock();
+            if (isHeldByCurrentThread()) {
+                this.rLock.unlock();
+            }
         }
 
         @Override
@@ -308,6 +310,11 @@ public class LockUtil {
         @Override
         public long remainTimeToLive() {
             return this.rLock.remainTimeToLive();
+        }
+
+        @Override
+        public void close() throws Exception {
+            this.unlock();
         }
     }
 }

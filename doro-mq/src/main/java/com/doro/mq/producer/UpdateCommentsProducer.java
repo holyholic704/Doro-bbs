@@ -1,7 +1,8 @@
 package com.doro.mq.producer;
 
 import com.doro.api.common.Runner;
-import com.doro.common.constant.TopicConst;
+import com.doro.common.enumeration.TopicEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
 import org.apache.rocketmq.client.exception.MQBrokerException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
  * @author jiage
  */
 @Component
+@Slf4j
 public class UpdateCommentsProducer implements Runner {
 
     @Value("${rocketmq.name-server}")
@@ -37,18 +39,14 @@ public class UpdateCommentsProducer implements Runner {
     public void run() throws MQClientException {
         producer.setProducerGroup(producerGroup);
         producer.setNamesrvAddr(nameServer);
-//        producer.start();
-        System.out.println("启动");
+        producer.start();
+        log.info("生产者启动");
     }
 
-    public void send(String message) {
-        send(message, 0);
-    }
-
-    public void send(String message, long delayTime) {
-        Message msg = new Message(TopicConst.UPDATE_COMMENTS, message.getBytes());
+    public void send(byte[] message, long delayTime) {
+        Message msg = new Message(TopicEnum.UPDATE_COUNT.getTopic(), message);
         if (delayTime > 0) {
-            msg.setDelayTimeMs(delayTime * 1000);
+            msg.setDelayTimeSec(delayTime);
         }
         SendResult sendResult;
         try {

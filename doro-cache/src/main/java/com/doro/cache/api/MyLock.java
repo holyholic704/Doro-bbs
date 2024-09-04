@@ -6,7 +6,7 @@ package com.doro.cache.api;
  *
  * @author jiage
  */
-public interface MyLock {
+public interface MyLock extends AutoCloseable {
 
     /**
      * 释放锁

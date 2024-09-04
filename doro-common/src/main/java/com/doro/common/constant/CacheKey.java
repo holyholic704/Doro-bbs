@@ -29,5 +29,7 @@ public class CacheKey {
 
     public static final String COMMENT_MIN_ID_PREFIX = "COMMENT_MIN_ID:";
 
+    public static final String COUNT_STILL_NOT_CONSUMED = "COUNT_STILL_NOT_CONSUMED";
+
 
 }

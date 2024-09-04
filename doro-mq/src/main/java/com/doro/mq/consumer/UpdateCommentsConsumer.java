@@ -1,14 +1,16 @@
 package com.doro.mq.consumer;
 
-import com.doro.cache.utils.RedisUtil;
 import com.doro.api.common.Runner;
-import com.doro.common.constant.TopicConst;
+import com.doro.api.mq.UpdateCountMqService;
+import com.doro.cache.utils.RedisUtil;
+import com.doro.common.enumeration.TopicEnum;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.common.message.MessageExt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -27,13 +29,16 @@ public class UpdateCommentsConsumer implements Runner {
     @Value("${rocketmq.secret-key}")
     private String secretKey;
 
+    @Autowired
+    private UpdateCountMqService updateCountMqService;
+
     private final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(new AclClientRPCHook(new SessionCredentials(accessKey, secretKey)));
 
     @Override
     public void run() throws Exception {
         consumer.setNamesrvAddr(nameServer);
-        consumer.setConsumerGroup(TopicConst.UPDATE_COMMENTS_GROUP);
-        consumer.subscribe(TopicConst.UPDATE_COMMENTS, "*");
+        consumer.setConsumerGroup(TopicEnum.UPDATE_COUNT.getConsumerGroup());
+        consumer.subscribe(TopicEnum.UPDATE_COUNT.getTopic(), "*");
         consumer.registerMessageListener((MessageListenerConcurrently) (msg, context) -> {
             try {
                 for (MessageExt messageExt : msg) {
