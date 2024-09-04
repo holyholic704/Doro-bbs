@@ -14,6 +14,8 @@ import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * @author jiage
  */
@@ -27,10 +29,10 @@ public class UpdateCommentsProducer implements Runner {
     @Value("${rocketmq.producer.group}")
     private String producerGroup;
 
-    @Value("${rocketmq.access-key}")
+    @Value("${rocketmq.producer.access-key}")
     private String accessKey;
 
-    @Value("${rocketmq.secret-key}")
+    @Value("${rocketmq.producer.secret-key}")
     private String secretKey;
 
     private final DefaultMQProducer producer = new DefaultMQProducer(new AclClientRPCHook(new SessionCredentials(accessKey, secretKey)));
@@ -41,6 +43,10 @@ public class UpdateCommentsProducer implements Runner {
         producer.setNamesrvAddr(nameServer);
         producer.start();
         log.info("生产者启动");
+    }
+
+    public void send(String message, long delayTime) {
+        send(message.getBytes(StandardCharsets.UTF_8), delayTime);
     }
 
     public void send(byte[] message, long delayTime) {

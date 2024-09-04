@@ -28,5 +28,5 @@ public interface PostService {
 
     Long getPostViews(Long postId);
 
-    long getPostComments(Long postId);
+    Long getPostComments(Long postId);
 }

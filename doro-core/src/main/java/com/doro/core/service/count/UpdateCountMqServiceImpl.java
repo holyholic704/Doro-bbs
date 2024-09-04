@@ -10,7 +10,7 @@ import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommonConst;
 import com.doro.common.constant.Separator;
-import com.doro.common.enumeration.UpdateCount;
+import com.doro.common.constant.UpdateCount;
 import org.redisson.api.RMap;
 import org.redisson.api.RSet;
 import org.springframework.beans.factory.annotation.Autowired;

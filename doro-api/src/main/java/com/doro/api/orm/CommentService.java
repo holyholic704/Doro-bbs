@@ -23,7 +23,7 @@ public interface CommentService {
 
     List<CommentBean> pageUseMinId(long postId, long minId, int current, int size);
 
-    long getComments(Long id);
+    Long getComments(Long id);
 
     boolean updateComments(long id, long oldComments, long newComments);
 

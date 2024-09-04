@@ -1,7 +1,6 @@
 package com.doro.mq.consumer;
 
 import com.doro.api.common.Runner;
-import com.doro.api.mq.UpdateCountMqService;
 import com.doro.cache.utils.RedisUtil;
 import com.doro.common.enumeration.TopicEnum;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
@@ -10,7 +9,6 @@ import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.common.message.MessageExt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,14 +21,11 @@ public class UpdateCommentsConsumer implements Runner {
     @Value("${rocketmq.name-server}")
     private String nameServer;
 
-    @Value("${rocketmq.access-key}")
+    @Value("${rocketmq.consumer.access-key}")
     private String accessKey;
 
-    @Value("${rocketmq.secret-key}")
+    @Value("${rocketmq.consumer.secret-key}")
     private String secretKey;
-
-    @Autowired
-    private UpdateCountMqService updateCountMqService;
 
     private final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(new AclClientRPCHook(new SessionCredentials(accessKey, secretKey)));
 
@@ -56,6 +51,6 @@ public class UpdateCommentsConsumer implements Runner {
             // 默认消费成功
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         });
-//        consumer.start();
+        consumer.start();
     }
 }

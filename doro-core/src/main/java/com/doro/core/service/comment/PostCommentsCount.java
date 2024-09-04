@@ -1,7 +1,8 @@
-package com.doro.core.service.count;
+package com.doro.core.service.comment;
 
 import com.doro.api.orm.PostService;
 import com.doro.common.constant.CacheKey;
+import com.doro.core.service.count.BaseCountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class PostCommentsCount extends BaseCountService {
     }
 
     @Override
-    protected long getCountFromDatabase(long id) {
+    protected Long getFromDatabaseNullable(long id) {
         return postService.getPostComments(id);
     }
 }

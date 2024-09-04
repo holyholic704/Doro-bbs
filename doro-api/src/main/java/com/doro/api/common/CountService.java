@@ -7,11 +7,11 @@ public interface CountService {
 
     long getCount(Long id);
 
-    Long getCountFromCache(Long id);
+    long getCountFromCache(Long id);
 
-    void incrCount(Long id, int add);
+    long getCountFromDatabase(long id);
 
-    void decrCount(Long id, int add);
+    void incrCount(Long id);
 
-    boolean delCache(Long id);
+    void decrCount(Long id);
 }

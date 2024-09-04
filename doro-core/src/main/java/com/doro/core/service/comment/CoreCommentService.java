@@ -3,6 +3,11 @@ package com.doro.core.service.comment;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
+import com.doro.api.model.request.RequestComment;
+import com.doro.api.orm.CommentService;
+import com.doro.api.orm.PostService;
+import com.doro.api.orm.SubCommentService;
+import com.doro.bean.CommentBean;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
@@ -10,14 +15,11 @@ import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommentConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.model.Page;
+import com.doro.core.service.count.BaseCountService;
 import com.doro.core.utils.UserUtil;
-import com.doro.api.orm.CommentService;
-import com.doro.api.orm.PostService;
-import com.doro.api.orm.SubCommentService;
-import com.doro.bean.CommentBean;
-import com.doro.api.model.request.RequestComment;
 import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -37,15 +39,22 @@ import java.util.stream.Collectors;
 @Service
 public class CoreCommentService {
 
-    private final CommentCountService commentCountService;
+    private final BaseCountService postCommentCount;
+    private final BaseCountService commentSubCount;
     private final SubCommentService subCommentService;
     private final ThreadPoolTaskExecutor coreTask;
     private final CommentService commentService;
     private final PostService postService;
 
     @Autowired
-    public CoreCommentService(CommentCountService commentCountService, SubCommentService subCommentService, ThreadPoolTaskExecutor coreTask, CommentService commentService, PostService postService) {
-        this.commentCountService = commentCountService;
+    public CoreCommentService(@Qualifier(CacheKey.POST_COMMENTS_PREFIX) BaseCountService postCommentCount,
+                              @Qualifier(CacheKey.COMMENT_COMMENTS_PREFIX) BaseCountService commentSubCount,
+                              SubCommentService subCommentService,
+                              ThreadPoolTaskExecutor coreTask,
+                              CommentService commentService,
+                              PostService postService) {
+        this.postCommentCount = postCommentCount;
+        this.commentSubCount = commentSubCount;
         this.subCommentService = subCommentService;
         this.coreTask = coreTask;
         this.commentService = commentService;
@@ -80,9 +89,9 @@ public class CoreCommentService {
         }
 
         if (commentService.saveComment(commentBean)) {
-            commentCountService.updateComments(CacheKey.POST_COMMENTS_PREFIX, requestComment.getPostId());
+            postCommentCount.incrCount(requestComment.getPostId());
             if (requestComment.getParentId() != null) {
-                commentCountService.updateComments(CacheKey.COMMENT_COMMENTS_PREFIX, commentBean.getId());
+                commentSubCount.incrCount(commentBean.getId());
             }
             return true;
         }
@@ -138,7 +147,7 @@ public class CoreCommentService {
         if (page == null) {
             page = requestComment.asPage();
             page.setRecords(commentService.page(requestComment));
-            page.setTotal(commentCountService.getCommentCount(requestComment.getPostId()));
+            page.setTotal(postCommentCount.getCount(requestComment.getPostId()));
             setSubCommentList(page.getRecords());
         }
         return page;
@@ -187,7 +196,7 @@ public class CoreCommentService {
                     setSubCommentList(records);
 
                     Page<CommentBean> page = requestComment.asPage();
-                    page.setTotal(commentCountService.getCommentCount(postId));
+                    page.setTotal(commentSubCount.getCount(postId));
                     page.setRecords(records);
                     return page;
                 }

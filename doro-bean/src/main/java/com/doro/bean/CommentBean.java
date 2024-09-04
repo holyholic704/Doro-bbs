@@ -56,7 +56,7 @@ public class CommentBean extends BaseBean {
      * 子评论数
      * 是否应该将该字段放在这里，而不是单独创建一个表
      */
-    private Integer comments;
+    private Long comments;
 
     /**
      * 子评论列表

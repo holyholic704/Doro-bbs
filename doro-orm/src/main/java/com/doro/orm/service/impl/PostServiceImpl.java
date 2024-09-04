@@ -2,11 +2,11 @@ package com.doro.orm.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.doro.api.model.request.RequestPost;
 import com.doro.api.orm.PostService;
 import com.doro.bean.PostBean;
 import com.doro.common.model.Page;
 import com.doro.orm.mapper.PostMapper;
-import com.doro.api.model.request.RequestPost;
 import org.springframework.stereotype.Service;
 
 /**
@@ -41,11 +41,11 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
     }
 
     @Override
-    public long getPostComments(Long postId) {
+    public Long getPostComments(Long postId) {
         PostBean postBean = this.getOne(new LambdaQueryWrapper<PostBean>()
                 .select(PostBean::getComments)
                 .eq(PostBean::getId, postId));
-        return postBean != null ? postBean.getComments() : 0;
+        return postBean != null ? postBean.getComments() : null;
     }
 
 }

@@ -3,10 +3,10 @@ package com.doro.orm.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.doro.api.model.request.RequestComment;
 import com.doro.api.orm.CommentService;
 import com.doro.bean.CommentBean;
 import com.doro.orm.mapper.CommentMapper;
-import com.doro.api.model.request.RequestComment;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,10 +56,10 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
     }
 
     @Override
-    public long getComments(Long id) {
+    public Long getComments(Long id) {
         CommentBean commentBean = this.getOne(new LambdaQueryWrapper<CommentBean>()
                 .select(CommentBean::getComments)
                 .eq(CommentBean::getId, id));
-        return commentBean != null ? commentBean.getComments() : 0;
+        return commentBean != null ? commentBean.getComments() : null;
     }
 }
