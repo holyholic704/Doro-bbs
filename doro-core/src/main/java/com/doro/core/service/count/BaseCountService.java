@@ -39,13 +39,13 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
     }
 
     @Override
-    public long getCount(Long id) {
+    public long getCount(long id) {
         long result;
         return (result = getCountFromCache(id)) != UpdateCount.ERROR_NO_DATA ? result : initCache(id, 0);
     }
 
     @Override
-    public long getCountFromCache(Long id) {
+    public long getCountFromCache(long id) {
         String cacheKey = cachePrefix + id;
 
         List<?> result = RedisUtil.initBatch(cacheKey)
@@ -60,16 +60,16 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
     }
 
     @Override
-    public void incrCount(Long id) {
+    public void incrCount(long id) {
         updateAndSendMessage(id, 1);
     }
 
     @Override
-    public void decrCount(Long id) {
+    public void decrCount(long id) {
         updateAndSendMessage(id, -1);
     }
 
-    private void updateAndSendMessage(Long id, int add) {
+    private void updateAndSendMessage(long id, int add) {
         initCache(id, add);
         // 减少针对同一 key 的重复消息，添加失败表示消息还未被消费
         String cacheKey = cachePrefix + id;
@@ -78,7 +78,7 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         }
     }
 
-    private long initCache(Long id, long add) {
+    private long initCache(long id, long add) {
         String cacheKey = cachePrefix + id;
         try (MyLock lock = LockUtil.lock(LockKey.INIT_COUNT_CACHE_PREFIX + id, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {
             RMap<String, String> rMap = RedisUtil.createMap(cacheKey);
@@ -98,5 +98,14 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
             e.printStackTrace();
         }
         return UpdateCount.ERROR_NO_DATA;
+    }
+
+    private void correctCount(long id, long count) {
+        String cacheKey = cachePrefix + id;
+        RedisUtil.initBatch(cacheKey)
+                .mapReadAll()
+                .mapPut(UpdateCount.LAST_UPDATE_KEY, count)
+                .mapPut(UpdateCount.COUNT_KEY, count)
+                .expire(CommonConst.COMMON_CACHE_DURATION);
     }
 }

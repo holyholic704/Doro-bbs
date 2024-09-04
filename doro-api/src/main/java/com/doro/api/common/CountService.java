@@ -5,13 +5,13 @@ package com.doro.api.common;
  */
 public interface CountService {
 
-    long getCount(Long id);
+    long getCount(long id);
 
-    long getCountFromCache(Long id);
+    long getCountFromCache(long id);
 
     long getCountFromDatabase(long id);
 
-    void incrCount(Long id);
+    void incrCount(long id);
 
-    void decrCount(Long id);
+    void decrCount(long id);
 }

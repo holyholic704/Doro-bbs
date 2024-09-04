@@ -125,6 +125,11 @@ public class RedisUtil {
             return this;
         }
 
+        public <K> RedisBatch mapReadAll() {
+            batch.getMap(name, StringCodec.INSTANCE).readAllMapAsync();
+            return this;
+        }
+
         public <K, V> RedisBatch mapReplaceCas(K k, V expect, V newValue) {
             batch.getMap(name, StringCodec.INSTANCE).replaceAsync(k, expect, newValue);
             return this;
