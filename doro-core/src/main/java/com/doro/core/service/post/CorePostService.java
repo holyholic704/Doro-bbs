@@ -1,27 +1,32 @@
 package com.doro.core.service.post;
 
 import cn.hutool.core.util.StrUtil;
+import com.doro.api.model.request.RequestPost;
+import com.doro.api.orm.PostService;
+import com.doro.bean.PostBean;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
+import com.doro.common.constant.CommonConst;
 import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.model.Page;
-import com.doro.core.service.comment.CoreCommentService;
 import com.doro.core.service.CoreUserLikeService;
+import com.doro.core.service.comment.CoreCommentService;
+import com.doro.core.service.count.BaseCountService;
 import com.doro.core.utils.UserUtil;
-import com.doro.api.orm.PostService;
-import com.doro.bean.PostBean;
-import com.doro.api.model.request.RequestPost;
 import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * 帖子服务
@@ -35,13 +40,15 @@ public class CorePostService {
     private final CoreCommentService coreCommentService;
     private final ThreadPoolTaskExecutor coreTask;
     private final PostService postService;
+    private final BaseCountService postViewsCount;
 
     @Autowired
-    public CorePostService(CoreUserLikeService coreUserLikeService, CoreCommentService coreCommentService, ThreadPoolTaskExecutor coreTask, PostService postService) {
+    public CorePostService(CoreUserLikeService coreUserLikeService, CoreCommentService coreCommentService, ThreadPoolTaskExecutor coreTask, PostService postService, @Qualifier(CacheKey.POST_VIEWS_PREFIX) BaseCountService postViewsCount) {
         this.coreUserLikeService = coreUserLikeService;
         this.coreCommentService = coreCommentService;
         this.coreTask = coreTask;
         this.postService = postService;
+        this.postViewsCount = postViewsCount;
     }
 
     public boolean save(RequestPost requestPost) {
@@ -70,39 +77,34 @@ public class CorePostService {
      */
     public PostBean getById(Long postId) {
         String cacheKey = CacheKey.POST_PREFIX + postId;
-        String cacheViewsKey = CacheKey.POST_VIEWS_PREFIX + postId;
 
-        // 尝试从缓存中获取帖子和浏览量
-        List<?> postAndViewsCache = getPostAndViewsCache(cacheKey, cacheViewsKey);
-
-        // 获取帖子的缓存
-        PostBean post = (PostBean) postAndViewsCache.get(0);
-
+        RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
+        PostBean post = bucket.getAndExpire(CommonConst.COMMON_CACHE_DURATION);
+        Future<Long> viewsFuture = coreTask.submit(() -> postViewsCount.getCountFromCache(postId));
         if (post == null) {
             // 互斥锁
-            String lockKey = LockKey.INIT_POST_CACHE_PREFIX + postId;
-            MyLock lock = LockUtil.lock(lockKey, 10);
-
-            RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
+            MyLock lock = LockUtil.lock(LockKey.INIT_POST_CACHE_PREFIX + postId, CommonConst.COMMON_LOCK_LEASE_SECONDS);
             // 二次检查
             if (!bucket.isExists()) {
                 post = postService.getPostById(postId);
                 if (post != null) {
-                    bucket.setIfAbsent(post, PostConst.CACHE_DURATION);
+                    bucket.set(post, CommonConst.COMMON_CACHE_DURATION);
                 }
             }
             LockUtil.unlock(lock);
-        }
-
-        if (post != null) {
-            // 获取浏览量的缓存
-            Long views = (Long) postAndViewsCache.get(2);
-            if (views != null && views > 0) {
-                post.setViews(views);
-            }
             return post;
         }
-        return null;
+
+        try {
+            Long views = viewsFuture.get();
+            if (views != null) {
+                post.setViews(views);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+        postViewsCount.incrCount(post.getId());
+        return post;
     }
 
     /**
@@ -120,6 +122,7 @@ public class CorePostService {
         rBatch.getAtomicLong(cacheViewsKey).expireIfSetAsync(PostConst.CACHE_VIEWS_DURATION);
         // 获取浏览量
         rBatch.getAtomicLong(cacheViewsKey).getAsync();
+        RedisUtil.initBatch(cacheKey);
         return rBatch.execute().getResponses();
     }
 

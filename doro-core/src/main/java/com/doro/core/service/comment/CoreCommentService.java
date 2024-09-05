@@ -44,20 +44,22 @@ public class CoreCommentService {
     private final BaseCountService postCommentCount;
     private final BaseCountService commentSubCount;
     private final SubCommentService subCommentService;
-    private final ThreadPoolTaskExecutor coreTask;
+    private final ThreadPoolTaskExecutor coreIoTask;
     private final CommentService commentService;
+    private final CommentBatchInsert commentBatchInsert;
 
     @Autowired
     public CoreCommentService(@Qualifier(CacheKey.POST_COMMENTS_PREFIX) BaseCountService postCommentCount,
                               @Qualifier(CacheKey.COMMENT_COMMENTS_PREFIX) BaseCountService commentSubCount,
                               SubCommentService subCommentService,
-                              ThreadPoolTaskExecutor coreTask,
-                              CommentService commentService) {
+                              ThreadPoolTaskExecutor coreIoTask,
+                              CommentService commentService, CommentBatchInsert commentBatchInsert) {
         this.postCommentCount = postCommentCount;
         this.commentSubCount = commentSubCount;
         this.subCommentService = subCommentService;
-        this.coreTask = coreTask;
+        this.coreIoTask = coreIoTask;
         this.commentService = commentService;
+        this.commentBatchInsert = commentBatchInsert;
     }
 
     /**
@@ -85,8 +87,8 @@ public class CoreCommentService {
                     .setRepliedUserId(requestComment.getRepliedUserId())
                     .setContent(requestComment.getContent());
             if (subCommentService.saveSubComment(subCommentBean)) {
-                coreTask.submit(() -> postCommentCount.incrCount(requestComment.getPostId()));
-                coreTask.submit(() -> commentSubCount.incrCount(subCommentBean.getParentId()));
+                postCommentCount.incrCount(requestComment.getPostId());
+                commentSubCount.incrCount(subCommentBean.getParentId());
                 return true;
             }
         } else {
@@ -95,7 +97,7 @@ public class CoreCommentService {
                     .setPostId(requestComment.getPostId())
                     .setContent(requestComment.getContent());
             if (commentService.saveComment(commentBean)) {
-                coreTask.submit(() -> postCommentCount.incrCount(requestComment.getPostId()));
+                postCommentCount.incrCount(requestComment.getPostId());
                 return true;
             }
         }
@@ -145,8 +147,8 @@ public class CoreCommentService {
         Page<CommentBean> page = pageUseMinId(requestComment);
         if (page == null) {
             page = requestComment.asPage();
-            Future<List<CommentBean>> records = coreTask.submit(() -> commentService.page(requestComment));
-            Future<Long> count = coreTask.submit(() -> postCommentCount.getCount(requestComment.getPostId()));
+            Future<List<CommentBean>> records = coreIoTask.submit(() -> commentService.page(requestComment));
+            Future<Long> count = coreIoTask.submit(() -> postCommentCount.getCount(requestComment.getPostId()));
             try {
                 page.setRecords(records.get());
                 page.setTotal(count.get());
@@ -207,7 +209,7 @@ public class CoreCommentService {
                 }
             }
             // 异步添加缓存
-            coreTask.execute(() -> initIdsCache(requestComment.getPostId(), cacheSize));
+            coreIoTask.execute(() -> initIdsCache(requestComment.getPostId(), cacheSize));
         }
 
         return null;

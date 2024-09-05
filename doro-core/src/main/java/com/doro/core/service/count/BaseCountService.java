@@ -12,6 +12,7 @@ import com.doro.mq.producer.UpdateCommentsProducer;
 import org.redisson.api.RMap;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,8 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
 
     @Autowired
     private UpdateCommentsProducer producer;
+    @Autowired
+    private ThreadPoolTaskExecutor coreIoTask;
 
     @Override
     public void setBeanName(String s) {
@@ -54,19 +57,24 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
 
     @Override
     public void incrCount(long id) {
-        updateAndSendMessage(id, 1);
+        updateCount(id, 1);
     }
 
     @Override
     public void decrCount(long id) {
-        updateAndSendMessage(id, -1);
+        updateCount(id, -1);
     }
 
-    private void updateAndSendMessage(long id, int add) {
+    @Override
+    public void updateCount(long id, long add) {
+        coreIoTask.execute(() -> updateAndSendMessage(id, add));
+    }
+
+    private void updateAndSendMessage(long id, long add) {
         initCache(id, add);
         // 减少针对同一 key 的重复消息，添加失败表示消息还未被消费
         String cacheKey = cachePrefix + id;
-        if (RedisUtil.createSet(CacheKey.COUNT_STILL_NOT_CONSUMED).add(cacheKey)) {
+        if (RedisUtil.createBucket(CacheKey.COUNT_STILL_NOT_CONSUMED_PREFIX + cacheKey).setIfAbsent(0, CommonConst.COMMON_CACHE_DURATION)) {
             producer.send(cacheKey, 5);
         }
     }
@@ -95,6 +103,6 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
     public void correctCount(long id) {
         String cacheKey = cachePrefix + id;
         RedisUtil.delete(cacheKey);
-        updateAndSendMessage(id, 0);
+        updateCount(id, 0);
     }
 }

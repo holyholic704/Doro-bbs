@@ -1,4 +1,4 @@
-package com.doro.core.service.comment;
+package com.doro.core.service.count;
 
 import com.doro.api.orm.PostService;
 import com.doro.common.constant.CacheKey;
@@ -9,18 +9,18 @@ import org.springframework.stereotype.Service;
 /**
  * @author jiage
  */
-@Service(CacheKey.POST_COMMENTS_PREFIX)
-public class PostCommentCount extends BaseCountService {
+@Service(CacheKey.POST_VIEWS_PREFIX)
+public class PostViewCount extends BaseCountService {
 
     private final PostService postService;
 
     @Autowired
-    public PostCommentCount(PostService postService) {
+    public PostViewCount(PostService postService) {
         this.postService = postService;
     }
 
     @Override
     public Long getCountFromDatabase(long id) {
-        return postService.getPostComments(id);
+        return postService.getPostViews(id);
     }
 }

@@ -14,7 +14,6 @@ import com.doro.common.constant.Separator;
 import com.doro.common.constant.UpdateCount;
 import com.doro.core.config.ThreadPoolConfig;
 import org.redisson.api.RMap;
-import org.redisson.api.RSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.annotation.Async;
@@ -32,8 +31,6 @@ public class UpdateCountMqServiceImpl implements UpdateCountMqService {
     private final CommentService commentService;
     private final PostService postService;
 
-    private final RSet<String> COUNT_STILL_NOT_CONSUMED = RedisUtil.createSet(CacheKey.COUNT_STILL_NOT_CONSUMED);
-
     @Autowired
     public UpdateCountMqServiceImpl(CommentService commentService, PostService postService) {
         this.commentService = commentService;
@@ -44,7 +41,7 @@ public class UpdateCountMqServiceImpl implements UpdateCountMqService {
     @Override
     public void updateCount(String cacheKey) {
         try (MyLock lock = LockUtil.lock(cacheKey, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {
-            COUNT_STILL_NOT_CONSUMED.remove(cacheKey);
+            RedisUtil.createBucket(CacheKey.COUNT_STILL_NOT_CONSUMED_PREFIX + cacheKey).delete();
             RMap<String, String> rMap = RedisUtil.createMap(cacheKey);
             Map<String, String> allMap = rMap.readAllMap();
             if (MapUtil.isNotEmpty(allMap)) {
@@ -70,6 +67,8 @@ public class UpdateCountMqServiceImpl implements UpdateCountMqService {
                 return commentService.updateComments(id, last, count);
             case CacheKey.POST_COMMENTS_PREFIX:
                 return postService.updateComments(id, last, count);
+            case CacheKey.POST_VIEWS_PREFIX:
+                return postService.updateViews(id, last, count);
             default:
                 return false;
         }

@@ -1,8 +1,7 @@
-package com.doro.core.service.comment;
+package com.doro.core.service.count;
 
 import com.doro.api.orm.CommentService;
 import com.doro.common.constant.CacheKey;
-import com.doro.core.service.count.BaseCountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
