@@ -12,8 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
  *
  * @author jiage
  */
-@EnableDubbo
-@EnableDiscoveryClient
+//@EnableDubbo
+//@EnableDiscoveryClient
 @SpringBootApplication
 @MapperScan("com.doro.orm.mapper")
 @ComponentScan({"com.doro.*.*"})
