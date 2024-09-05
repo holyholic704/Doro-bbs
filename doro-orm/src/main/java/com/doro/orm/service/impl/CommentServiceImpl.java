@@ -62,4 +62,9 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
                 .eq(CommentBean::getId, id));
         return commentBean != null ? commentBean.getComments() : null;
     }
+
+    @Override
+    public boolean saveBatchComment(List<CommentBean> list) {
+        return this.saveBatch(list);
+    }
 }

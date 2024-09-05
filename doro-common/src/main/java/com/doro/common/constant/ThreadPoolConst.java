@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class ThreadPoolConst {
 
-    public static final int IO_BOUND_MAX_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 8;
+    public static final int IO_BOUND_MAX_POOL_SIZE = (int) (Runtime.getRuntime().availableProcessors() / (1 - 0.95));
 
     public static final int IO_BOUND_CORE_POOL_SIZE = IO_BOUND_MAX_POOL_SIZE / 2;
 

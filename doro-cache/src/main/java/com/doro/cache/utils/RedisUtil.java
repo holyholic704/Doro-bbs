@@ -125,7 +125,7 @@ public class RedisUtil {
             return this;
         }
 
-        public <K> RedisBatch mapReadAll() {
+        public RedisBatch mapReadAll() {
             batch.getMap(name, StringCodec.INSTANCE).readAllMapAsync();
             return this;
         }

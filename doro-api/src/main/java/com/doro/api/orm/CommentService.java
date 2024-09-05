@@ -29,4 +29,5 @@ public interface CommentService {
 
     boolean delById(Long id);
 
+    boolean saveBatchComment(List<CommentBean> list);
 }

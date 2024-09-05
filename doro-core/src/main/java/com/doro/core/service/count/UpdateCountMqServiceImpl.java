@@ -40,7 +40,7 @@ public class UpdateCountMqServiceImpl implements UpdateCountMqService {
         this.postService = postService;
     }
 
-    @Async(ThreadPoolConfig.CORE_TASK)
+    @Async(ThreadPoolConfig.CORE_IO_TASK)
     @Override
     public void updateCount(String cacheKey) {
         try (MyLock lock = LockUtil.lock(cacheKey, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {

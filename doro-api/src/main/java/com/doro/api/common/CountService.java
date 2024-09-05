@@ -15,5 +15,7 @@ public interface CountService {
 
     void decrCount(long id);
 
+    void updateCount(long id, long add);
+
     void correctCount(long id);
 }

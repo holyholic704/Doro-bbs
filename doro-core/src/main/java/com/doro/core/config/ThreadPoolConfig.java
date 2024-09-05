@@ -14,15 +14,15 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 public class ThreadPoolConfig {
 
-    public static final String CORE_TASK = "coreTask";
+    public static final String CORE_IO_TASK = "coreIoTask";
 
-    @Bean(name = CORE_TASK)
-    public ThreadPoolTaskExecutor coreTask() {
+    @Bean(name = CORE_IO_TASK)
+    public ThreadPoolTaskExecutor coreIoTask() {
         return create(ThreadPoolConst.IO_BOUND_CORE_POOL_SIZE,
                 ThreadPoolConst.IO_BOUND_MAX_POOL_SIZE,
                 ThreadPoolConst.KEEP_ALIVE_SECONDS,
                 ThreadPoolConst.IO_BOUND_QUEUE_CAPACITY,
-                CORE_TASK);
+                CORE_IO_TASK);
     }
 
     private ThreadPoolTaskExecutor create(int corePoolSize,

@@ -34,14 +34,6 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
     }
 
     @Override
-    public Long getPostViews(Long postId) {
-        PostBean postBean = this.getOne(new LambdaQueryWrapper<PostBean>()
-                .select(PostBean::getViews)
-                .eq(PostBean::getId, postId));
-        return postBean != null ? postBean.getViews() : null;
-    }
-
-    @Override
     public Long getPostComments(Long postId) {
         PostBean postBean = this.getOne(new LambdaQueryWrapper<PostBean>()
                 .select(PostBean::getComments)
@@ -50,10 +42,26 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
     }
 
     @Override
+    public Long getPostViews(Long postId) {
+        PostBean postBean = this.getOne(new LambdaQueryWrapper<PostBean>()
+                .select(PostBean::getViews)
+                .eq(PostBean::getId, postId));
+        return postBean != null ? postBean.getViews() : null;
+    }
+
+    @Override
     public boolean updateComments(long id, long oldComments, long newComments) {
         return this.update(new LambdaUpdateWrapper<PostBean>()
                 .set(PostBean::getComments, newComments)
                 .eq(PostBean::getId, id)
                 .eq(PostBean::getComments, oldComments));
+    }
+
+    @Override
+    public boolean updateViews(long id, long oldViews, long newViews) {
+        return this.update(new LambdaUpdateWrapper<PostBean>()
+                .set(PostBean::getViews, newViews)
+                .eq(PostBean::getId, id)
+                .eq(PostBean::getViews, oldViews));
     }
 }

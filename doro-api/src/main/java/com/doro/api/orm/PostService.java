@@ -31,4 +31,6 @@ public interface PostService {
     Long getPostComments(Long postId);
 
     boolean updateComments(long id, long oldComments, long newComments);
+
+    boolean updateViews(long id, long oldViews, long newViews);
 }
