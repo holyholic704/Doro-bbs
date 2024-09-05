@@ -8,6 +8,7 @@ import com.doro.api.orm.CommentService;
 import com.doro.api.orm.PostService;
 import com.doro.api.orm.SubCommentService;
 import com.doro.bean.CommentBean;
+import com.doro.bean.SubCommentBean;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
@@ -24,8 +25,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -76,33 +80,33 @@ public class CoreCommentService {
     public boolean save(RequestComment requestComment) {
 //        valid(requestComment);
         Long userId = UserUtil.getUserId();
-        CommentBean commentBean = new CommentBean()
-                .setUserId(userId)
-                .setPostId(requestComment.getPostId())
-                .setContent(requestComment.getContent());
 
         // 不为空为子评论
         if (requestComment.getParentId() != null) {
-            commentBean.setParentId(requestComment.getParentId())
+            SubCommentBean subCommentBean = new SubCommentBean()
+                    .setUserId(userId)
+                    .setParentId(requestComment.getParentId())
                     .setRepliedId(requestComment.getRepliedId())
-                    .setRepliedUserId(requestComment.getRepliedUserId());
-        }
-
-        if (commentService.saveComment(commentBean)) {
-            postCommentCount.incrCount(requestComment.getPostId());
-            if (requestComment.getParentId() != null) {
-                commentSubCount.incrCount(commentBean.getId());
+                    .setRepliedUserId(requestComment.getRepliedUserId())
+                    .setContent(requestComment.getContent());
+            if (subCommentService.saveSubComment(subCommentBean)) {
+                coreTask.submit(() -> postCommentCount.incrCount(requestComment.getPostId()));
+                coreTask.submit(() -> commentSubCount.incrCount(subCommentBean.getParentId()));
+                return true;
             }
-            return true;
+        } else {
+            CommentBean commentBean = new CommentBean()
+                    .setUserId(userId)
+                    .setPostId(requestComment.getPostId())
+                    .setContent(requestComment.getContent());
+            if (commentService.saveComment(commentBean)) {
+                coreTask.submit(() -> postCommentCount.incrCount(requestComment.getPostId()));
+                return true;
+            }
         }
 
         return false;
     }
-
-//    public boolean deleteById(Long id) {
-//        commentService.delById();
-//        subCommentService.delById();
-//    }
 
     /**
      * 根据评论获取子评论列表
@@ -113,11 +117,11 @@ public class CoreCommentService {
         if (CollUtil.isNotEmpty(commentList)) {
             Map<Long, CommentBean> idMap = commentList.stream().filter(v -> v.getComments() > 0).collect(Collectors.toMap(CommentBean::getId, Function.identity()));
             if (MapUtil.isNotEmpty(idMap)) {
-                // 只查出前面几个评论，
-                List<CommentBean> subCommentList = subCommentService.getByParentIds(idMap.keySet(), CommentConst.NORMAL_SUB_COMMENT_COUNT);
-                for (CommentBean subComment : subCommentList) {
+                // 只查出前面几个评论
+                List<SubCommentBean> subCommentList = subCommentService.getByParentIds(idMap.keySet(), CommentConst.NORMAL_SUB_COMMENT_COUNT);
+                for (SubCommentBean subComment : subCommentList) {
                     CommentBean commentBean = idMap.get(subComment.getParentId());
-                    List<CommentBean> subList = commentBean.getSubList();
+                    List<SubCommentBean> subList = commentBean.getSubList();
                     if (subList == null) {
                         commentBean.setSubList(subList = new ArrayList<>());
                     }
@@ -146,8 +150,14 @@ public class CoreCommentService {
         Page<CommentBean> page = pageUseMinId(requestComment);
         if (page == null) {
             page = requestComment.asPage();
-            page.setRecords(commentService.page(requestComment));
-            page.setTotal(postCommentCount.getCount(requestComment.getPostId()));
+            Future<List<CommentBean>> records = coreTask.submit(() -> commentService.page(requestComment));
+            Future<Long> count = coreTask.submit(() -> postCommentCount.getCount(requestComment.getPostId()));
+            try {
+                page.setRecords(records.get());
+                page.setTotal(count.get());
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
             setSubCommentList(page.getRecords());
         }
         return page;
@@ -196,7 +206,7 @@ public class CoreCommentService {
                     setSubCommentList(records);
 
                     Page<CommentBean> page = requestComment.asPage();
-                    page.setTotal(commentSubCount.getCount(postId));
+                    page.setTotal(postCommentCount.getCount(postId));
                     page.setRecords(records);
                     return page;
                 }
