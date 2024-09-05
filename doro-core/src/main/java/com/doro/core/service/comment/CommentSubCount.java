@@ -20,7 +20,7 @@ public class CommentSubCount extends BaseCountService {
     }
 
     @Override
-    protected Long getFromDatabaseNullable(long id) {
+    public Long getCountFromDatabase(long id) {
         return commentService.getComments(id);
     }
 }

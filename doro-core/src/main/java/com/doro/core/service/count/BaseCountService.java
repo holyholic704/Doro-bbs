@@ -14,6 +14,7 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author jiage
@@ -30,22 +31,14 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         this.cachePrefix = s;
     }
 
-    abstract protected Long getFromDatabaseNullable(long id);
-
     @Override
-    public long getCountFromDatabase(long id) {
-        Long count = getFromDatabaseNullable(id);
-        return count != null ? count : UpdateCount.ERROR_NO_DATA;
+    public Long getCount(long id) {
+        Long result;
+        return (result = getCountFromCache(id)) != null ? result : initCache(id, 0);
     }
 
     @Override
-    public long getCount(long id) {
-        long result;
-        return (result = getCountFromCache(id)) != UpdateCount.ERROR_NO_DATA ? result : initCache(id, 0);
-    }
-
-    @Override
-    public long getCountFromCache(long id) {
+    public Long getCountFromCache(long id) {
         String cacheKey = cachePrefix + id;
 
         List<?> result = RedisUtil.initBatch(cacheKey)
@@ -56,7 +49,7 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         if (result.get(1) != null) {
             return Long.parseLong(String.valueOf(result.get(1)));
         }
-        return UpdateCount.ERROR_NO_DATA;
+        return null;
     }
 
     @Override
@@ -74,30 +67,28 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         // 减少针对同一 key 的重复消息，添加失败表示消息还未被消费
         String cacheKey = cachePrefix + id;
         if (RedisUtil.createSet(CacheKey.COUNT_STILL_NOT_CONSUMED).add(cacheKey)) {
-            producer.send(cacheKey, CommonConst.COMMON_CACHE_DURATION.getSeconds() / 2);
+            producer.send(cacheKey, 5);
         }
     }
 
-    private long initCache(long id, long add) {
+    private Long initCache(long id, long add) {
         String cacheKey = cachePrefix + id;
         try (MyLock lock = LockUtil.lock(LockKey.INIT_COUNT_CACHE_PREFIX + id, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {
-            RMap<String, String> rMap = RedisUtil.createMap(cacheKey);
+            RMap<String, Long> rMap = RedisUtil.createMap(cacheKey);
             if (rMap.isExists()) {
-                return Long.parseLong(rMap.addAndGet(cacheKey, add));
+                return rMap.addAndGet(UpdateCount.COUNT_KEY, add);
             }
-            long last = getCountFromDatabase(id);
-            if (last != UpdateCount.ERROR_NO_DATA) {
-                RedisUtil.initBatch(cacheKey)
-                        .mapPut(UpdateCount.LAST_UPDATE_KEY, last)
-                        .mapPut(UpdateCount.COUNT_KEY, last + add)
-                        .expire(CommonConst.COMMON_CACHE_DURATION)
-                        .execute();
-                return last + add;
-            }
+            long last = Optional.ofNullable(getCountFromDatabase(id)).orElse(0L);
+            RedisUtil.initBatch(cacheKey)
+                    .mapPut(UpdateCount.LAST_UPDATE_KEY, last)
+                    .mapPut(UpdateCount.COUNT_KEY, last + add)
+                    .expire(CommonConst.COMMON_CACHE_DURATION)
+                    .execute();
+            return last + add;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
-        return UpdateCount.ERROR_NO_DATA;
     }
 
     @Override

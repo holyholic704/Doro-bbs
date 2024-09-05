@@ -38,21 +38,6 @@ public class CommentBean extends BaseBean {
     private String content;
 
     /**
-     * 父评论
-     */
-    private Long parentId;
-
-    /**
-     * 被回复的评论
-     */
-    private Long repliedId;
-
-    /**
-     * 被回复人
-     */
-    private Long repliedUserId;
-
-    /**
      * 子评论数
      * 是否应该将该字段放在这里，而不是单独创建一个表
      */
@@ -62,5 +47,5 @@ public class CommentBean extends BaseBean {
      * 子评论列表
      */
     @TableField(exist = false)
-    private List<CommentBean> subList;
+    private List<SubCommentBean> subList;
 }

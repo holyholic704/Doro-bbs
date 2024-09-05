@@ -24,12 +24,6 @@ public class UpdateCommentsConsumer implements Runner {
     @Value("${rocketmq.name-server}")
     private String nameServer;
 
-    @Value("${rocketmq.consumer.access-key}")
-    private String accessKey;
-
-    @Value("${rocketmq.consumer.secret-key}")
-    private String secretKey;
-
     private final UpdateCountMqService updateCountMqService;
 
     @Autowired
@@ -37,7 +31,7 @@ public class UpdateCommentsConsumer implements Runner {
         this.updateCountMqService = updateCountMqService;
     }
 
-    private final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(new AclClientRPCHook(new SessionCredentials(accessKey, secretKey)));
+    private final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer();
 
     @Override
     public void run() throws Exception {
@@ -53,5 +47,6 @@ public class UpdateCommentsConsumer implements Runner {
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         });
         consumer.start();
+        log.info("消费者启动");
     }
 }

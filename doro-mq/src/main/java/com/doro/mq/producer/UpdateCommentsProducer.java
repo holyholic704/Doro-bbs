@@ -29,13 +29,7 @@ public class UpdateCommentsProducer implements Runner {
     @Value("${rocketmq.producer.group}")
     private String producerGroup;
 
-    @Value("${rocketmq.producer.access-key}")
-    private String accessKey;
-
-    @Value("${rocketmq.producer.secret-key}")
-    private String secretKey;
-
-    private final DefaultMQProducer producer = new DefaultMQProducer(new AclClientRPCHook(new SessionCredentials(accessKey, secretKey)));
+    private final DefaultMQProducer producer = new DefaultMQProducer();
 
     @Override
     public void run() throws MQClientException {

@@ -1,6 +1,7 @@
 package com.doro.core.service.count;
 
 
+import cn.hutool.core.map.MapUtil;
 import com.doro.api.mq.UpdateCountMqService;
 import com.doro.api.orm.CommentService;
 import com.doro.api.orm.PostService;
@@ -46,31 +47,31 @@ public class UpdateCountMqServiceImpl implements UpdateCountMqService {
             COUNT_STILL_NOT_CONSUMED.remove(cacheKey);
             RMap<String, String> rMap = RedisUtil.createMap(cacheKey);
             Map<String, String> allMap = rMap.readAllMap();
-            if (allMap != null) {
-                update(cacheKey, allMap);
+            if (MapUtil.isNotEmpty(allMap)) {
+                long last = Long.parseLong(allMap.get(UpdateCount.LAST_UPDATE_KEY));
+                long count = Long.parseLong(allMap.get(UpdateCount.COUNT_KEY));
+                if (count > last) {
+                    int splitIndex = cacheKey.lastIndexOf(Separator.COLON);
+                    String prefix = cacheKey.substring(0, splitIndex + 1);
+                    long id = Long.parseLong(cacheKey.substring(splitIndex + 1));
+                    if (doUpdate(prefix, id, last, count)) {
+                        RedisUtil.createMap(cacheKey).putIfExists(UpdateCount.LAST_UPDATE_KEY, count);
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void update(String cacheKey, Map<String, String> allMap) {
-        long last = Long.parseLong(allMap.get(UpdateCount.LAST_UPDATE_KEY));
-        long count = Long.parseLong(allMap.get(UpdateCount.COUNT_KEY));
-        if (count > last) {
-            int splitIndex = cacheKey.lastIndexOf(Separator.COLON);
-            String prefix = cacheKey.substring(0, splitIndex + 1);
-            long id = Long.parseLong(cacheKey.substring(splitIndex + 1));
-            switch (prefix) {
-                case CacheKey.COMMENT_COMMENTS_PREFIX:
-                    commentService.updateComments(id, last, count);
-                    break;
-                case CacheKey.POST_COMMENTS_PREFIX:
-                    postService.updateComments(id, last, count);
-                    break;
-                default:
-                    break;
-            }
+    private boolean doUpdate(String prefix, long id, long last, long count) {
+        switch (prefix) {
+            case CacheKey.COMMENT_COMMENTS_PREFIX:
+                return commentService.updateComments(id, last, count);
+            case CacheKey.POST_COMMENTS_PREFIX:
+                return postService.updateComments(id, last, count);
+            default:
+                return false;
         }
     }
 }
