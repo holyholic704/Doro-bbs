@@ -1,7 +1,7 @@
 package com.doro.api.orm;
 
-import com.doro.bean.CommentBean;
 import com.doro.api.model.request.RequestComment;
+import com.doro.bean.CommentBean;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public interface CommentService {
 
     List<CommentBean> page(RequestComment requestComment);
 
-    List<Long> everyFewId(Long postId,int idGap);
+    List<Long> everyFewId(Long postId, int idGap);
 
     List<CommentBean> pageUseMinId(long postId, long minId, int current, int size);
 

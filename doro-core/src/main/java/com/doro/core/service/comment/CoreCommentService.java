@@ -5,7 +5,6 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.doro.api.model.request.RequestComment;
 import com.doro.api.orm.CommentService;
-import com.doro.api.orm.PostService;
 import com.doro.api.orm.SubCommentService;
 import com.doro.bean.CommentBean;
 import com.doro.bean.SubCommentBean;
@@ -25,7 +24,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -48,21 +46,18 @@ public class CoreCommentService {
     private final SubCommentService subCommentService;
     private final ThreadPoolTaskExecutor coreTask;
     private final CommentService commentService;
-    private final PostService postService;
 
     @Autowired
     public CoreCommentService(@Qualifier(CacheKey.POST_COMMENTS_PREFIX) BaseCountService postCommentCount,
                               @Qualifier(CacheKey.COMMENT_COMMENTS_PREFIX) BaseCountService commentSubCount,
                               SubCommentService subCommentService,
                               ThreadPoolTaskExecutor coreTask,
-                              CommentService commentService,
-                              PostService postService) {
+                              CommentService commentService) {
         this.postCommentCount = postCommentCount;
         this.commentSubCount = commentSubCount;
         this.subCommentService = subCommentService;
         this.coreTask = coreTask;
         this.commentService = commentService;
-        this.postService = postService;
     }
 
     /**
