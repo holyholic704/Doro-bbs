@@ -4,6 +4,8 @@ import com.doro.bean.PostBean;
 import com.doro.api.model.request.RequestPost;
 import com.doro.common.model.Page;
 
+import java.util.List;
+
 /**
  * 帖子
  *
@@ -21,10 +23,12 @@ public interface PostService {
      */
     boolean savePost(PostBean postBean);
 
+    boolean updatePost(PostBean postBean);
+
     /**
      * 分页查询
      */
-    Page<PostBean> page(RequestPost requestPost);
+    List<PostBean> page(RequestPost requestPost);
 
     Long getPostViews(Long postId);
 

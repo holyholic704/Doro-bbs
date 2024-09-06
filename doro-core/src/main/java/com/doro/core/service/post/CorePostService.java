@@ -10,8 +10,6 @@ import com.doro.common.constant.CommonConst;
 import com.doro.common.constant.PostConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.model.Page;
-import com.doro.core.service.CoreUserLikeService;
-import com.doro.core.service.comment.CoreCommentService;
 import com.doro.core.service.count.BaseCountService;
 import com.doro.core.utils.UserUtil;
 import org.redisson.api.RBucket;
@@ -32,17 +30,13 @@ import java.util.concurrent.Future;
 @Service
 public class CorePostService {
 
-    private final CoreUserLikeService coreUserLikeService;
-    private final CoreCommentService coreCommentService;
-    private final ThreadPoolTaskExecutor coreTask;
+    private final ThreadPoolTaskExecutor coreIoTask;
     private final PostService postService;
     private final BaseCountService postViewsCount;
 
     @Autowired
-    public CorePostService(CoreUserLikeService coreUserLikeService, CoreCommentService coreCommentService, ThreadPoolTaskExecutor coreTask, PostService postService, @Qualifier(CacheKey.POST_VIEWS_PREFIX) BaseCountService postViewsCount) {
-        this.coreUserLikeService = coreUserLikeService;
-        this.coreCommentService = coreCommentService;
-        this.coreTask = coreTask;
+    public CorePostService(ThreadPoolTaskExecutor coreIoTask, PostService postService, @Qualifier(CacheKey.POST_VIEWS_PREFIX) BaseCountService postViewsCount) {
+        this.coreIoTask = coreIoTask;
         this.postService = postService;
         this.postViewsCount = postViewsCount;
     }
@@ -61,10 +55,18 @@ public class CorePostService {
                 .setActivated(false);
         // TODO 发帖权限，等级
         // TODO 是否需要审核，审核规则？不审核、手动审核、敏感词过滤，谁来审核，版主？管理员？坛主？
-        // TODO 字数限制
-        // TODO 添加缓存，字数限制
         // TODO 防灌水
+        // TODO 写入优化
         return postService.savePost(postBean);
+    }
+
+    public boolean update(RequestPost requestPost) {
+        valid(requestPost);
+        PostBean postBean = new PostBean()
+                .setTitle(requestPost.getTitle())
+                .setContent(requestPost.getContent())
+                .setActivated(false);
+        return postService.updatePost(postBean);
     }
 
     /**
@@ -75,7 +77,7 @@ public class CorePostService {
      */
     public PostBean getById(final Long postId) {
         // 异步获取帖子的访问量
-        Future<Long> viewsFuture = coreTask.submit(() -> postViewsCount.getCountFromCache(postId));
+        Future<Long> viewsFuture = coreIoTask.submit(() -> postViewsCount.getCountFromCache(postId));
 
         // 先尝试从缓存中获取
         String cacheKey = CacheKey.POST_PREFIX + postId;
@@ -112,7 +114,10 @@ public class CorePostService {
     }
 
     public Page<PostBean> page(RequestPost requestPost) {
-        return postService.page(requestPost);
+        Page<PostBean> page = requestPost.asPage();
+        page.setRecords(postService.page(requestPost));
+        page.setTotal(999);
+        return page;
     }
 
     private void valid(RequestPost requestPost) {

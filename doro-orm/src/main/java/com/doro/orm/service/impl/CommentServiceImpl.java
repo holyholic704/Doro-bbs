@@ -29,7 +29,7 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
         int current = requestComment.getCurrent();
         int size = requestComment.getSize();
         int from = (current == 0 ? current : current - 1) * size;
-        return this.getBaseMapper().page(requestComment.getPostId(), from, size);
+        return this.getBaseMapper().page(requestComment, from, size);
     }
 
     @Override

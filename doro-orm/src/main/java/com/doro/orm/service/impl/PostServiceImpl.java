@@ -10,6 +10,8 @@ import com.doro.common.model.Page;
 import com.doro.orm.mapper.PostMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 帖子
  *
@@ -29,8 +31,19 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
     }
 
     @Override
-    public Page<PostBean> page(RequestPost requestPost) {
-        return null;
+    public boolean updatePost(PostBean postBean) {
+        return this.update(new LambdaUpdateWrapper<PostBean>()
+                .eq(PostBean::getId, postBean.getId())
+                .set(postBean.getContent() != null, PostBean::getContent, postBean.getContent())
+                .set(postBean.getTitle() != null, PostBean::getTitle, postBean.getTitle()));
+    }
+
+    @Override
+    public List<PostBean> page(RequestPost requestPost) {
+        int current = requestPost.getCurrent();
+        int size = requestPost.getSize();
+        int from = (current == 0 ? current : current - 1) * size;
+        return this.getBaseMapper().page(requestPost, from, size);
     }
 
     @Override
