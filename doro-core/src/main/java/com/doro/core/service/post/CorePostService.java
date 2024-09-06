@@ -4,12 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import com.doro.api.model.request.RequestPost;
 import com.doro.api.orm.PostService;
 import com.doro.bean.PostBean;
-import com.doro.cache.api.MyLock;
-import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommonConst;
-import com.doro.common.constant.LockKey;
 import com.doro.common.constant.PostConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.model.Page;
@@ -17,14 +14,13 @@ import com.doro.core.service.CoreUserLikeService;
 import com.doro.core.service.comment.CoreCommentService;
 import com.doro.core.service.count.BaseCountService;
 import com.doro.core.utils.UserUtil;
-import org.redisson.api.RBatch;
 import org.redisson.api.RBucket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -55,10 +51,12 @@ public class CorePostService {
         valid(requestPost);
         // 可以认为一定能获取到用户 ID
         Long authorId = UserUtil.getUserId();
+        String authorName = UserUtil.getUsername();
         PostBean postBean = new PostBean()
                 .setTitle(requestPost.getTitle())
                 .setContent(requestPost.getContent())
                 .setAuthorId(authorId)
+                .setAuthorName(authorName)
                 .setSectionId(requestPost.getSectionId())
                 .setActivated(false);
         // TODO 发帖权限，等级
@@ -70,60 +68,47 @@ public class CorePostService {
     }
 
     /**
-     * TODO 与浏览量增加区分开来，进入帖子页面后五秒调用增加浏览量方法
+     * 获取帖子详情
      *
-     * @param postId
+     * @param postId 帖子 id
      * @return
      */
-    public PostBean getById(Long postId) {
-        String cacheKey = CacheKey.POST_PREFIX + postId;
-
-        RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
-        PostBean post = bucket.getAndExpire(CommonConst.COMMON_CACHE_DURATION);
+    public PostBean getById(final Long postId) {
+        // 一步获取帖子的访问量
         Future<Long> viewsFuture = coreTask.submit(() -> postViewsCount.getCountFromCache(postId));
+
+        // 先尝试从缓存中获取
+        String cacheKey = CacheKey.POST_PREFIX + postId;
+        RBucket<PostBean> bucket = RedisUtil.createBucket(cacheKey);
+        Duration cacheDuration = CommonConst.COMMON_CACHE_DURATION;
+        PostBean post = bucket.getAndExpire(cacheDuration);
+
         if (post == null) {
-            // 互斥锁
-            MyLock lock = LockUtil.lock(LockKey.INIT_POST_CACHE_PREFIX + postId, CommonConst.COMMON_LOCK_LEASE_SECONDS);
-            // 二次检查
-            if (!bucket.isExists()) {
-                post = postService.getPostById(postId);
-                if (post != null) {
-                    bucket.set(post, CommonConst.COMMON_CACHE_DURATION);
+            // 对于一致性要求不高的数据，使用本地锁，虽然不同机器仍会多次执行，但可减少使用分布式锁的网络开销
+            synchronized (cacheKey.intern()) {
+                post = bucket.getAndExpire(cacheDuration);
+                if (post == null) {
+                    post = postService.getPostById(postId);
+                    // 暂时不做缓存的大小限制，Redis 字符串的缓存在 3kb/千字，做好保存时的长度限制即可
+                    if (post != null) {
+                        bucket.set(post, cacheDuration);
+                    }
                 }
             }
-            LockUtil.unlock(lock);
-            return post;
         }
 
-        try {
-            Long views = viewsFuture.get();
-            if (views != null) {
-                post.setViews(views);
+        if (post != null) {
+            try {
+                Long views = viewsFuture.get();
+                if (views != null) {
+                    post.setViews(views);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
             }
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
         }
-        postViewsCount.incrCount(post.getId());
-        return post;
-    }
 
-    /**
-     * 获取缓存中的帖子和浏览量
-     *
-     * @param cacheKey      帖子缓存 key
-     * @param cacheViewsKey 浏览量缓存 key
-     * @return 缓存
-     */
-    private List<?> getPostAndViewsCache(String cacheKey, String cacheViewsKey) {
-        RBatch rBatch = RedisUtil.createBatch();
-        // 获取帖子缓存
-        rBatch.getBucket(cacheKey).getAndExpireAsync(PostConst.CACHE_DURATION);
-        // 为浏览量缓存延长超时时间
-        rBatch.getAtomicLong(cacheViewsKey).expireIfSetAsync(PostConst.CACHE_VIEWS_DURATION);
-        // 获取浏览量
-        rBatch.getAtomicLong(cacheViewsKey).getAsync();
-        RedisUtil.initBatch(cacheKey);
-        return rBatch.execute().getResponses();
+        return post;
     }
 
     public Page<PostBean> page(RequestPost requestPost) {
