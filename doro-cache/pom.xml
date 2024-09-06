@@ -20,6 +20,18 @@
             <artifactId>redisson-spring-data-27</artifactId>
             <version>${redisson.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.alicp.jetcache</groupId>
+            <artifactId>jetcache-starter-redisson</artifactId>
+            <version>2.7.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.esotericsoftware.kryo</groupId>
+            <artifactId>kryo5</artifactId>
+            <version>5.5.0</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -74,7 +74,7 @@ public class CorePostService {
      * @return
      */
     public PostBean getById(final Long postId) {
-        // 一步获取帖子的访问量
+        // 异步获取帖子的访问量
         Future<Long> viewsFuture = coreTask.submit(() -> postViewsCount.getCountFromCache(postId));
 
         // 先尝试从缓存中获取
