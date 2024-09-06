@@ -11,6 +11,8 @@ public interface SectionService {
 
     boolean saveSection(SectionBean sectionBean);
 
+    boolean delSection(Long id);
+
     boolean hasName(String name);
 
     boolean hasSection(Long id);

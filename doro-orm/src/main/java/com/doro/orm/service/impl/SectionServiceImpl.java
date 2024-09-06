@@ -21,6 +21,11 @@ class SectionServiceImpl extends ServiceImpl<SectionMapper, SectionBean> impleme
     }
 
     @Override
+    public boolean delSection(Long id) {
+        return this.removeById(id);
+    }
+
+    @Override
     public boolean hasName(String name) {
         return this.count(new LambdaQueryWrapper<SectionBean>()
                 .eq(SectionBean::getName, name)) > 0;

@@ -15,7 +15,7 @@ public class PostConst {
 
     public static final int MIN_CONTENT_LENGTH = 10;
 
-    public static final int MAX_CONTENT_LENGTH = 2000;
+    public static final int MAX_CONTENT_LENGTH = 5000;
 
     public static final Duration CACHE_DURATION = Duration.ofMinutes(5);
 

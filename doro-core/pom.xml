@@ -75,11 +75,11 @@
         </dependency>
 
         <!-- 连接池，hikari 足够好，但监控不太完善 -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.2.21</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba</groupId>-->
+<!--            <artifactId>druid-spring-boot-starter</artifactId>-->
+<!--            <version>1.2.21</version>-->
+<!--        </dependency>-->
 
         <!-- Nacos 注册中心 -->
         <dependency>
