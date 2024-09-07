@@ -23,4 +23,9 @@ public class PostCommentCount extends BaseCountService {
     public Long getCountFromDatabase(long id) {
         return postService.getPostComments(id);
     }
+
+    @Override
+    protected boolean updateDatabaseCount(long id, long expect, long newValue) {
+        return postService.updateComments(id, expect, newValue);
+    }
 }

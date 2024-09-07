@@ -22,4 +22,9 @@ public class CommentSubCount extends BaseCountService {
     public Long getCountFromDatabase(long id) {
         return commentService.getComments(id);
     }
+
+    @Override
+    protected boolean updateDatabaseCount(long id, long expect, long newValue) {
+        return commentService.updateComments(id, expect, newValue);
+    }
 }

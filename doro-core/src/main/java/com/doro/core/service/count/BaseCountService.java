@@ -99,10 +99,15 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         }
     }
 
+    protected abstract boolean updateDatabaseCount(long id, long expect, long newValue);
+
     @Override
-    public void correctCount(long id) {
-        String cacheKey = cachePrefix + id;
-        RedisUtil.delete(cacheKey);
-        updateCount(id, 0);
+    public void saveCount(long id, long expect, long newValue) {
+        if (updateDatabaseCount(id, expect, newValue)) {
+            String cacheKey = cachePrefix + id;
+            RedisUtil.createMap(cacheKey).putIfExists(UpdateCount.LAST_UPDATE_KEY, newValue);
+            RedisUtil.delete(cacheKey);
+            initCache(id, 0);
+        }
     }
 }
