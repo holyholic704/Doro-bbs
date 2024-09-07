@@ -1,21 +1,18 @@
 package com.doro.core.service.count;
 
 import com.doro.api.common.CountService;
+import com.doro.api.mq.UpdateCountMqService;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommonConst;
 import com.doro.common.constant.LockKey;
-import com.doro.mq.producer.UpdateCommentsProducer;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 计数
@@ -25,16 +22,9 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseCountService implements CountService, BeanNameAware {
 
     @Autowired
-    private UpdateCommentsProducer producer;
+    private UpdateCountMqService updateCountMqService;
     @Autowired
     private ThreadPoolTaskExecutor coreIoTask;
-
-    /**
-     * 用于过滤并发时重复的请求
-     */
-    private final Cache<String, Long> INIT_CACHE = Caffeine.newBuilder()
-            .expireAfterWrite(CommonConst.COMMON_LOCK_LEASE_SECONDS / 2, TimeUnit.SECONDS)
-            .build();
 
     /**
      * 缓存 key 前缀，并以此区分不同的实现
@@ -106,7 +96,7 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
             // 减少针对同一 key 的重复消息，添加失败表示消息还未被消费
             String cacheKey = getCacheKey(id);
             if (RedisUtil.createBucket(CacheKey.COUNT_STILL_NOT_CONSUMED_PREFIX + cacheKey).setIfAbsent(0, CommonConst.COMMON_CACHE_DURATION)) {
-                producer.send(cachePrefix, id, count, CommonConst.COMMON_CACHE_DURATION.getSeconds() / 2);
+                updateCountMqService.send(cachePrefix, id, count, CommonConst.COMMON_CACHE_DURATION.getSeconds() / 2);
             }
         });
     }

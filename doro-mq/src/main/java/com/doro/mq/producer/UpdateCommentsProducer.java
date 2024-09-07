@@ -2,8 +2,9 @@ package com.doro.mq.producer;
 
 import cn.hutool.json.JSONUtil;
 import com.doro.api.common.Runner;
-import com.doro.mq.dto.CountMqModel;
+import com.doro.api.mq.UpdateCountMqService;
 import com.doro.common.enumeration.TopicEnum;
+import com.doro.mq.dto.CountMqModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
@@ -21,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Component
 @Slf4j
-public class UpdateCommentsProducer implements Runner {
+public class UpdateCommentsProducer implements Runner, UpdateCountMqService {
 
     @Value("${rocketmq.name-server}")
     private String nameServer;
@@ -39,6 +40,7 @@ public class UpdateCommentsProducer implements Runner {
         log.info("生产者启动");
     }
 
+    @Override
     public void send(String cachePrefix, long id, Long count, long delayTime) {
         String message = JSONUtil.toJsonStr(new CountMqModel(cachePrefix, id, count));
         Message msg = new Message(TopicEnum.UPDATE_COUNT.getTopic(), message.getBytes(StandardCharsets.UTF_8));

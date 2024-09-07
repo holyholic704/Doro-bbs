@@ -26,7 +26,7 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class UpdateCommentsConsumer implements Runner {
+public class UpdateCountConsumer implements Runner {
 
     @Value("${rocketmq.name-server}")
     private String nameServer;
@@ -34,7 +34,7 @@ public class UpdateCommentsConsumer implements Runner {
     private final Map<String, CountService> countServiceMap;
 
     @Autowired
-    public UpdateCommentsConsumer(Map<String, CountService> countServiceMap) {
+    public UpdateCountConsumer(Map<String, CountService> countServiceMap) {
         this.countServiceMap = countServiceMap;
     }
 
