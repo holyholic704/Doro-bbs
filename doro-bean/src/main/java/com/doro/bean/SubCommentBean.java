@@ -30,6 +30,11 @@ public class SubCommentBean extends BaseBean {
     private String content;
 
     /**
+     * 帖子
+     */
+    private Long postId;
+
+    /**
      * 父评论
      */
     private Long parentId;

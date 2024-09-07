@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.doro.api.model.request.RequestPost;
 import com.doro.api.orm.PostService;
 import com.doro.bean.PostBean;
-import com.doro.common.model.Page;
 import com.doro.orm.mapper.PostMapper;
 import org.springframework.stereotype.Service;
 
@@ -63,18 +62,15 @@ class PostServiceImpl extends ServiceImpl<PostMapper, PostBean> implements PostS
     }
 
     @Override
-    public boolean updateComments(long id, long oldComments, long newComments) {
-        return this.update(new LambdaUpdateWrapper<PostBean>()
-                .set(PostBean::getComments, newComments)
-                .eq(PostBean::getId, id)
-                .eq(PostBean::getComments, oldComments));
+    public boolean updateComments(long id) {
+        return this.getBaseMapper().updateComments(id);
     }
 
     @Override
-    public boolean updateViews(long id, long oldViews, long newViews) {
+    public boolean updateViews(long id, long views) {
         return this.update(new LambdaUpdateWrapper<PostBean>()
-                .set(PostBean::getViews, newViews)
+                .set(PostBean::getViews, views)
                 .eq(PostBean::getId, id)
-                .eq(PostBean::getViews, oldViews));
+                .lt(PostBean::getViews, views));
     }
 }

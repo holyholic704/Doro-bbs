@@ -25,7 +25,7 @@ public interface CommentService {
 
     Long getComments(Long id);
 
-    boolean updateComments(long id, long oldComments, long newComments);
+    boolean updateComments(long id);
 
     boolean delById(Long id);
 

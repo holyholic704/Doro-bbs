@@ -17,5 +17,5 @@ public interface CountService {
 
     void updateCount(long id, long add);
 
-    void saveCount(long id, long expect, long newValue);
+    boolean correctCount(long id, Long count);
 }

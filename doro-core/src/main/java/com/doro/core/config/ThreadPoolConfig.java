@@ -31,8 +31,8 @@ public class ThreadPoolConfig {
                                           int queueCapacity,
                                           String threadNamePrefix) {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(corePoolSize);
-        executor.setMaxPoolSize(maxPoolSize);
+        executor.setCorePoolSize(500);
+        executor.setMaxPoolSize(1000);
         executor.setKeepAliveSeconds(keepAliveSeconds);
         executor.setQueueCapacity(queueCapacity);
         executor.setRejectedExecutionHandler(ThreadPoolConst.REJECTED_EXECUTION_HANDLER);

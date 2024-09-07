@@ -24,7 +24,7 @@ public class CommentSubCount extends BaseCountService {
     }
 
     @Override
-    protected boolean updateDatabaseCount(long id, long expect, long newValue) {
-        return commentService.updateComments(id, expect, newValue);
+    protected void updateDatabaseCount(long id, Long count) {
+        commentService.updateComments(id);
     }
 }

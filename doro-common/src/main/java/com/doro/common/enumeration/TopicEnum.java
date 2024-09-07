@@ -12,6 +12,7 @@ import lombok.Getter;
 public enum TopicEnum {
 
     UPDATE_COUNT("UPDATE_COUNT", "UPDATE_COUNT_GROUP"),
+    BATCH_SAVE("BATCH_SAVE", "BATCH_SAVE_GROUP"),
     ;
 
     private final String topic;

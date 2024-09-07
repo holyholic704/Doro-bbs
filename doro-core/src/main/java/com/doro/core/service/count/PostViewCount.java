@@ -24,7 +24,9 @@ public class PostViewCount extends BaseCountService {
     }
 
     @Override
-    protected boolean updateDatabaseCount(long id, long expect, long newValue) {
-        return postService.updateViews(id, expect, newValue);
+    protected void updateDatabaseCount(long id, Long count) {
+        if (count != null) {
+            postService.updateViews(id, count);
+        }
     }
 }

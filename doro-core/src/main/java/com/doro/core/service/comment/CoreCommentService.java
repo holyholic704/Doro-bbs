@@ -82,6 +82,7 @@ public class CoreCommentService {
         if (requestComment.getParentId() != null) {
             SubCommentBean subCommentBean = new SubCommentBean()
                     .setUserId(userId)
+                    .setPostId(requestComment.getPostId())
                     .setParentId(requestComment.getParentId())
                     .setRepliedId(requestComment.getRepliedId())
                     .setRepliedUserId(requestComment.getRepliedUserId())
@@ -96,10 +97,11 @@ public class CoreCommentService {
                     .setUserId(userId)
                     .setPostId(requestComment.getPostId())
                     .setContent(requestComment.getContent());
-            if (commentService.saveComment(commentBean)) {
-                postCommentCount.incrCount(requestComment.getPostId());
-                return true;
-            }
+//            if (commentService.saveComment(commentBean)) {
+//                postCommentCount.incrCount(requestComment.getPostId());
+//                return true;
+//            }
+            return commentBatchInsert.addTask(commentBean);
         }
 
         return false;

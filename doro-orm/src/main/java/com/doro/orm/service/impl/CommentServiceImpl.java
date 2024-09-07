@@ -33,11 +33,8 @@ class CommentServiceImpl extends ServiceImpl<CommentMapper, CommentBean> impleme
     }
 
     @Override
-    public boolean updateComments(long id, long oldComments, long newComments) {
-        return this.update(new LambdaUpdateWrapper<CommentBean>()
-                .set(CommentBean::getComments, newComments)
-                .eq(CommentBean::getId, id)
-                .eq(CommentBean::getComments, oldComments));
+    public boolean updateComments(long id) {
+        return this.getBaseMapper().updateComments(id);
     }
 
     @Override

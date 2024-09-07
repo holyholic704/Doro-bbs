@@ -110,6 +110,11 @@ public class RedisUtil {
             return this;
         }
 
+        public RedisBatch atomicLongGet() {
+            batch.getAtomicLong(name).getAsync();
+            return this;
+        }
+
         public <K, V> RedisBatch mapPut(K k, V v) {
             batch.getMap(name, StringCodec.INSTANCE).putAsync(k, v);
             return this;

@@ -1,14 +1,13 @@
 package com.doro.mq.producer;
 
-import cn.hutool.json.JSONUtil;
 import com.doro.api.common.Runner;
-import com.doro.mq.dto.CountMqModel;
 import com.doro.common.enumeration.TopicEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.exception.MQBrokerException;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.client.producer.SendResult;
+import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Component
 @Slf4j
-public class UpdateCommentsProducer implements Runner {
+public class CommentSaveProducer implements Runner {
 
     @Value("${rocketmq.name-server}")
     private String nameServer;
@@ -36,19 +35,26 @@ public class UpdateCommentsProducer implements Runner {
         producer.setProducerGroup(producerGroup);
         producer.setNamesrvAddr(nameServer);
         producer.start();
-        log.info("生产者启动");
+        log.info("save生产者启动");
     }
 
-    public void send(String cachePrefix, long id, Long count, long delayTime) {
-        String message = JSONUtil.toJsonStr(new CountMqModel(cachePrefix, id, count));
-        Message msg = new Message(TopicEnum.UPDATE_COUNT.getTopic(), message.getBytes(StandardCharsets.UTF_8));
+    public boolean send(String message, long delayTime) {
+        return send(message.getBytes(StandardCharsets.UTF_8), delayTime);
+    }
+
+    public boolean send(byte[] message, long delayTime) {
+        Message msg = new Message(TopicEnum.BATCH_SAVE.getTopic(), message);
         if (delayTime > 0) {
             msg.setDelayTimeSec(delayTime);
         }
+
+        SendResult sendResult;
+
         try {
-            SendResult sendResult = producer.send(msg);
+            sendResult = producer.send(msg);
         } catch (MQClientException | RemotingException | MQBrokerException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+        return sendResult != null && SendStatus.SEND_OK.equals(sendResult.getSendStatus());
     }
 }
