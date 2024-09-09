@@ -95,8 +95,8 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
             Long count = initCache(id, add);
             // 减少针对同一 key 的重复消息，添加失败表示消息还未被消费
             String cacheKey = getCacheKey(id);
-            if (RedisUtil.createBucket(CacheKey.COUNT_STILL_NOT_CONSUMED_PREFIX + cacheKey).setIfAbsent(0, CommonConst.COMMON_CACHE_DURATION)) {
-                updateCountMqService.send(cachePrefix, id, count, CommonConst.COMMON_CACHE_DURATION.getSeconds() / 2);
+            if (RedisUtil.createBucket(CacheKey.COUNT_STILL_NOT_CONSUMED_PREFIX + cacheKey).setIfAbsent(0, CommonConst.COMMON_HALF_CACHE_DURATION)) {
+                updateCountMqService.send(cachePrefix, id, count, 5);
             }
         });
     }

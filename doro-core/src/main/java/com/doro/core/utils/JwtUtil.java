@@ -1,7 +1,7 @@
 package com.doro.core.utils;
 
 import cn.hutool.core.date.DateUtil;
-import com.doro.cache.utils.RemoteCacheUtil;
+import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LoginConst;
 import com.doro.core.service.setting.G_Setting;
@@ -63,7 +63,7 @@ public class JwtUtil {
     public static String generateAndCache(String username, Long userId) {
         String token = generate(username, userId);
         int jwtExpiration = GlobalSettingAcquire.get(G_Setting.JWT_EXPIRATION);
-        RemoteCacheUtil.put(CacheKey.JWT_PREFIX + username, token, Duration.ofSeconds(jwtExpiration));
+        RedisUtil.createBucket(CacheKey.JWT_PREFIX + username).set(token, Duration.ofSeconds(jwtExpiration));
         return token;
     }
 

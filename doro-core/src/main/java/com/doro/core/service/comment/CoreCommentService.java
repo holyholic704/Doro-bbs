@@ -13,6 +13,7 @@ import com.doro.cache.utils.LockUtil;
 import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.CommentConst;
+import com.doro.common.constant.CommonConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.model.Page;
 import com.doro.core.service.count.BaseCountService;
@@ -188,7 +189,7 @@ public class CoreCommentService {
             String cacheKey = CacheKey.COMMENT_MIN_ID_PREFIX + postId;
 
             List<?> list = RedisUtil.initBatch(cacheKey)
-                    .expire(CommentConst.MIN_ID_CACHE_DURATION)
+                    .expire(CommonConst.COMMON_CACHE_DURATION)
                     .listSize()
                     .listGet(index)
                     .execute();
@@ -236,7 +237,7 @@ public class CoreCommentService {
             RedisUtil.initBatch(cacheKey)
                     .delete()
                     .listAddAll(ids)
-                    .expire(CommentConst.MIN_ID_CACHE_DURATION)
+                    .expire(CommonConst.COMMON_CACHE_DURATION)
                     .execute();
         }
         LockUtil.unlock(lock);

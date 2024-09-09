@@ -1,18 +1,17 @@
 package com.doro.core.filter;
 
 import cn.hutool.core.util.StrUtil;
-import com.doro.cache.utils.RemoteCacheUtil;
+import com.doro.cache.utils.RedisUtil;
 import com.doro.common.constant.CacheKey;
 import com.doro.common.constant.LoginConst;
 import com.doro.common.constant.SecurityConst;
 import com.doro.core.service.login.provider.MyAuthenticationToken;
 import com.doro.core.service.setting.G_Setting;
 import com.doro.core.service.setting.GlobalSettingAcquire;
-import com.doro.core.utils.IpUtil;
 import com.doro.core.utils.JwtUtil;
-import com.doro.core.utils.UserUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RBucket;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -51,7 +50,8 @@ public class RequestFilter extends OncePerRequestFilter {
 
             Claims claims = JwtUtil.getPayload(token);
             String username = JwtUtil.getUsername(claims);
-            String storeToken = RemoteCacheUtil.get(CacheKey.JWT_PREFIX + username);
+            RBucket<String> bucket = RedisUtil.createBucket(CacheKey.JWT_PREFIX + username);
+            String storeToken = bucket.get();
 
             // 传入的 Token 是否与系统存储的相同，是否
             if (token.equals(storeToken) && !JwtUtil.isExpired(token)) {

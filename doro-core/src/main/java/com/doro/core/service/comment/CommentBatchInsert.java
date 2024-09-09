@@ -73,12 +73,11 @@ public class CommentBatchInsert {
 
         if (currentList.size() > 0) {
             log.info("长度" + currentList.size());
-            doUpdate(currentList);
-//            if (doUpdate(currentList)) {
-//                postCommentCount.updateCount(currentList.get(0).getPostId(), currentList.size());
-//            } else {
-//                // TODO MQ 消息
-//            }
+            if (doUpdate(currentList)) {
+                postCommentCount.updateCount(currentList.get(0).getPostId(), currentList.size());
+            } else {
+                // TODO MQ 消息
+            }
         }
     }
 
