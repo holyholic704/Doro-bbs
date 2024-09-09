@@ -37,7 +37,7 @@ public abstract class BaseProducer implements Producer {
         producer.setProducerGroup(producerGroup);
         producer.setNamesrvAddr(nameServer);
         producer.start();
-        log.info(this.topicEnum + "：启动");
+        log.info(this.topicEnum + "：生产者启动");
     }
 
     @Override

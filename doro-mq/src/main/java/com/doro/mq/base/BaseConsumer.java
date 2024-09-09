@@ -34,6 +34,6 @@ public abstract class BaseConsumer implements Consumer {
         consumer.subscribe(topicEnum.getTopic(), "*");
         consumer.registerMessageListener(registerListener());
         consumer.start();
-        log.info(this.topicEnum + "：启动");
+        log.info(this.topicEnum + "：消费者启动");
     }
 }
