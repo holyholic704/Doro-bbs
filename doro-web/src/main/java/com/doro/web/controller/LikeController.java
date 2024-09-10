@@ -1,9 +1,9 @@
 package com.doro.web.controller;
 
+import com.doro.api.model.request.RequestUserLike;
 import com.doro.common.enumeration.MessageEnum;
 import com.doro.common.response.ResponseResult;
-import com.doro.core.service.CoreUserLikeService;
-import com.doro.api.model.request.RequestUserLike;
+import com.doro.core.service.like.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,23 +11,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 用户的赞与踩管理
+ * 赞与踩
  *
  * @author jiage
  */
 @RestController
 @RequestMapping("like")
-public class UserPostLikeController {
+public class LikeController {
 
-    private final CoreUserLikeService userPostLikeService;
+    private final LikeService likeService;
 
     @Autowired
-    public UserPostLikeController(CoreUserLikeService userPostLikeService) {
-        this.userPostLikeService = userPostLikeService;
+    public LikeController(LikeService likeService) {
+        this.likeService = likeService;
     }
 
     @PostMapping("like")
     public ResponseResult<?> like(@RequestBody RequestUserLike requestUserLike) {
-        return userPostLikeService.like(requestUserLike) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
+        return likeService.like(requestUserLike) ? ResponseResult.success(MessageEnum.SAVE_SUCCESS) : ResponseResult.error(MessageEnum.SAVE_ERROR);
     }
 }

@@ -1,11 +1,10 @@
 package com.doro.core.service.comment;
 
-import cn.hutool.json.JSONUtil;
 import com.doro.api.orm.CommentService;
 import com.doro.bean.CommentBean;
 import com.doro.common.constant.CacheKey;
 import com.doro.core.service.count.BaseCountService;
-import com.doro.mq.producer.CommentSaveProducer;
+import com.doro.mq.producer.BatchSaveProducer;
 import com.github.yitter.idgen.YitIdHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,13 @@ public class CommentBatchInsert {
 
     private final CommentService commentService;
     private final BaseCountService postCommentCount;
-    private final CommentSaveProducer commentSaveProducer;
+    private final BatchSaveProducer batchSaveProducer;
 
     @Autowired
-    public CommentBatchInsert(CommentService commentService, @Qualifier(CacheKey.POST_COMMENTS_PREFIX) BaseCountService postCommentCount, CommentSaveProducer commentSaveProducer) {
+    public CommentBatchInsert(CommentService commentService, @Qualifier(CacheKey.POST_COMMENTS_PREFIX) BaseCountService postCommentCount, BatchSaveProducer batchSaveProducer) {
         this.commentService = commentService;
         this.postCommentCount = postCommentCount;
-        this.commentSaveProducer = commentSaveProducer;
+        this.batchSaveProducer = batchSaveProducer;
         test();
     }
 
@@ -41,7 +40,7 @@ public class CommentBatchInsert {
         bean.setId(YitIdHelper.nextId());
 
         boolean addSuccess = queue.offer(bean);
-        boolean sendSuccess = commentSaveProducer.send(JSONUtil.toJsonStr(bean), 10);
+        boolean sendSuccess = batchSaveProducer.send(bean, 10);
 
         if (queue.size() > 256) {
             log.info("执行一次");

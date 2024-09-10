@@ -13,6 +13,7 @@ public enum TopicEnum {
 
     UPDATE_COUNT("UPDATE_COUNT", "UPDATE_COUNT_GROUP"),
     BATCH_SAVE("BATCH_SAVE", "BATCH_SAVE_GROUP"),
+    LIKE_SAVE("LIKE_SAVE", "LIKE_SAVE_GROUP"),
     ;
 
     private final String topic;

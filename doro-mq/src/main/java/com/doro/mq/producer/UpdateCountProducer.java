@@ -1,6 +1,5 @@
 package com.doro.mq.producer;
 
-import cn.hutool.json.JSONUtil;
 import com.doro.api.mq.UpdateCountMqService;
 import com.doro.common.enumeration.TopicEnum;
 import com.doro.mq.base.BaseProducer;
@@ -15,12 +14,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UpdateCountProducer extends BaseProducer implements UpdateCountMqService {
 
-    public UpdateCountProducer() {
-        super(TopicEnum.UPDATE_COUNT);
+    @Override
+    protected TopicEnum getTopicEnum() {
+        return TopicEnum.UPDATE_COUNT;
     }
 
     @Override
     public void send(String cachePrefix, long id, Long count, long delayTime) {
-        send(JSONUtil.toJsonStr(new CountMqModel(cachePrefix, id, count)), delayTime);
+        send(new CountMqModel(cachePrefix, id, count), delayTime);
     }
 }

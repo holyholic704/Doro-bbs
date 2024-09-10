@@ -18,11 +18,8 @@ public abstract class BaseConsumer implements Consumer {
     private String nameServer;
 
     private DefaultMQPushConsumer consumer;
-    private final TopicEnum topicEnum;
 
-    protected BaseConsumer(TopicEnum topicEnum) {
-        this.topicEnum = topicEnum;
-    }
+    protected abstract TopicEnum getTopicEnum();
 
     protected abstract MessageListenerConcurrently registerListener();
 
@@ -30,10 +27,11 @@ public abstract class BaseConsumer implements Consumer {
     public void start() throws MQClientException {
         consumer = new DefaultMQPushConsumer();
         consumer.setNamesrvAddr(nameServer);
+        TopicEnum topicEnum = getTopicEnum();
         consumer.setConsumerGroup(topicEnum.getConsumerGroup());
         consumer.subscribe(topicEnum.getTopic(), "*");
         consumer.registerMessageListener(registerListener());
         consumer.start();
-        log.info(this.topicEnum + "：消费者启动");
+        log.info(topicEnum + "：消费者启动");
     }
 }

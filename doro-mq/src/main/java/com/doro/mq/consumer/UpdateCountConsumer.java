@@ -1,6 +1,6 @@
 package com.doro.mq.consumer;
 
-import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.doro.api.common.CountService;
 import com.doro.cache.api.MyLock;
 import com.doro.cache.utils.LockUtil;
@@ -17,6 +17,7 @@ import org.apache.rocketmq.common.message.MessageExt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 /**
@@ -30,25 +31,7 @@ public class UpdateCountConsumer extends BaseConsumer {
 
     @Autowired
     public UpdateCountConsumer(Map<String, CountService> countServiceMap) {
-        super(TopicEnum.UPDATE_COUNT);
         this.countServiceMap = countServiceMap;
-    }
-
-    @Override
-    protected MessageListenerConcurrently registerListener() {
-        return (msg, context) -> {
-            for (MessageExt messageExt : msg) {
-                try {
-                    CountMqModel countMqModel = ObjectUtil.deserialize(messageExt.getBody());
-                    doUpdate(countMqModel);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.info(e.getMessage());
-                }
-            }
-            // 默认消费成功
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-        };
     }
 
     private void doUpdate(CountMqModel countMqModel) {
@@ -69,5 +52,22 @@ public class UpdateCountConsumer extends BaseConsumer {
 
     private void delNotConsumedCache(String cacheKey) {
         RedisUtil.createBucket(CacheKey.COUNT_STILL_NOT_CONSUMED_PREFIX + cacheKey).delete();
+    }
+
+    @Override
+    protected TopicEnum getTopicEnum() {
+        return TopicEnum.UPDATE_COUNT;
+    }
+
+    @Override
+    protected MessageListenerConcurrently registerListener() {
+        return (msg, context) -> {
+            for (MessageExt messageExt : msg) {
+                CountMqModel countMqModel = JSONUtil.toBean(new String(messageExt.getBody(), StandardCharsets.UTF_8), CountMqModel.class);
+                doUpdate(countMqModel);
+            }
+            // 默认消费成功
+            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+        };
     }
 }

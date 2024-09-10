@@ -29,5 +29,7 @@ public class CacheKey {
 
     public static final String COUNT_STILL_NOT_CONSUMED_PREFIX = "NOT_CONSUMED:";
 
+    public static final String USER_LIKE_PREFIX = "USER_LIKE:";
+
 
 }

@@ -23,8 +23,12 @@ public class CommentSaveConsumer extends BaseConsumer {
 
     @Autowired
     public CommentSaveConsumer(CommentService commentService) {
-        super(TopicEnum.BATCH_SAVE);
         this.commentService = commentService;
+    }
+
+    @Override
+    protected TopicEnum getTopicEnum() {
+        return TopicEnum.BATCH_SAVE;
     }
 
     @Override

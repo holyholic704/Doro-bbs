@@ -2,15 +2,15 @@ package com.doro.mq.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.io.Serializable;
+import lombok.Setter;
 
 /**
  * @author jiage
  */
 @Getter
+@Setter
 @AllArgsConstructor
-public class CountMqModel implements Serializable {
+public class CountMqModel {
 
     private String cachePrefix;
 

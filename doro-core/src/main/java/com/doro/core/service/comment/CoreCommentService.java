@@ -17,6 +17,7 @@ import com.doro.common.constant.CommonConst;
 import com.doro.common.exception.ValidException;
 import com.doro.common.model.Page;
 import com.doro.core.service.count.BaseCountService;
+import com.doro.core.service.like.LikeService;
 import com.doro.core.utils.UserUtil;
 import org.redisson.api.RList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,19 +49,21 @@ public class CoreCommentService {
     private final ThreadPoolTaskExecutor coreIoTask;
     private final CommentService commentService;
     private final CommentBatchInsert commentBatchInsert;
+    private final LikeService likeService;
 
     @Autowired
     public CoreCommentService(@Qualifier(CacheKey.POST_COMMENTS_PREFIX) BaseCountService postCommentCount,
                               @Qualifier(CacheKey.COMMENT_COMMENTS_PREFIX) BaseCountService commentSubCount,
                               SubCommentService subCommentService,
                               ThreadPoolTaskExecutor coreIoTask,
-                              CommentService commentService, CommentBatchInsert commentBatchInsert) {
+                              CommentService commentService, CommentBatchInsert commentBatchInsert, LikeService likeService) {
         this.postCommentCount = postCommentCount;
         this.commentSubCount = commentSubCount;
         this.subCommentService = subCommentService;
         this.coreIoTask = coreIoTask;
         this.commentService = commentService;
         this.commentBatchInsert = commentBatchInsert;
+        this.likeService = likeService;
     }
 
     /**
@@ -118,6 +121,7 @@ public class CoreCommentService {
             Map<Long, CommentBean> idMap = commentList.stream().filter(v -> v.getComments() > 0).collect(Collectors.toMap(CommentBean::getId, Function.identity()));
             if (MapUtil.isNotEmpty(idMap)) {
                 // 只查出前面几个评论
+                // TODO 只显示热评
                 List<SubCommentBean> subCommentList = subCommentService.getByParentIds(idMap.keySet(), CommentConst.NORMAL_SUB_COMMENT_COUNT);
                 for (SubCommentBean subComment : subCommentList) {
                     CommentBean commentBean = idMap.get(subComment.getParentId());
@@ -158,7 +162,23 @@ public class CoreCommentService {
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
-            setSubCommentList(page.getRecords());
+
+            List<CommentBean> commentList = page.getRecords();
+
+            if (CollUtil.isNotEmpty(commentList)) {
+                Long userId = UserUtil.getUserId();
+                Future<Map<Long, Boolean>> userCommentLikesFuture = null;
+
+                if (userId != null) {
+                    userCommentLikesFuture = coreIoTask.submit(() -> likeService.getUserCommentLikes(userId, commentList));
+                }
+
+                setSubCommentList(page.getRecords());
+
+                if (userCommentLikesFuture != null) {
+
+                }
+            }
         }
         return page;
     }

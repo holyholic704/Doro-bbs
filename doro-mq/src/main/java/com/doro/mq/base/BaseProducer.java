@@ -1,5 +1,6 @@
 package com.doro.mq.base;
 
+import cn.hutool.json.JSONUtil;
 import com.doro.api.mq.Producer;
 import com.doro.common.enumeration.TopicEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.remoting.exception.RemotingException;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author jiage
@@ -25,11 +28,8 @@ public abstract class BaseProducer implements Producer {
     private String producerGroup;
 
     private DefaultMQProducer producer;
-    private final TopicEnum topicEnum;
 
-    public BaseProducer(TopicEnum topicEnum) {
-        this.topicEnum = topicEnum;
-    }
+    protected abstract TopicEnum getTopicEnum();
 
     @Override
     public void start() throws MQClientException {
@@ -37,12 +37,12 @@ public abstract class BaseProducer implements Producer {
         producer.setProducerGroup(producerGroup);
         producer.setNamesrvAddr(nameServer);
         producer.start();
-        log.info(this.topicEnum + "：生产者启动");
+        log.info(getTopicEnum() + "：生产者启动");
     }
 
     @Override
-    public boolean send(byte[] message, long delayTime) {
-        Message msg = new Message(topicEnum.getTopic(), message);
+    public boolean send(Object message, long delayTime) {
+        Message msg = new Message(getTopicEnum().getTopic(), JSONUtil.toJsonStr(message).getBytes(StandardCharsets.UTF_8));
         if (delayTime > 0) {
             msg.setDelayTimeSec(delayTime);
         }

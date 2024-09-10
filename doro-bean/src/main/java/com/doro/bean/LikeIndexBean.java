@@ -8,7 +8,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * 用户的赞与踩
+ * 赞与踩的汇总
  *
  * @author jiage
  */
@@ -16,13 +16,8 @@ import lombok.experimental.Accessors;
 @Setter
 @ToString
 @Accessors(chain = true)
-@TableName("doro_bbs_user_like")
-public class UserLikeBean extends BaseBean {
-
-    /**
-     * 用户
-     */
-    private Long userId;
+@TableName("doro_bbs_like_index")
+public class LikeIndexBean extends BaseBean {
 
     /**
      * 点赞/踩对象类型
@@ -30,18 +25,17 @@ public class UserLikeBean extends BaseBean {
     private Short type;
 
     /**
-     * 点赞/踩对象
+     * 点赞/踩对象所属用户
      */
-    private Long objId;
+    private Long memberId;
 
     /**
-     * true：赞
-     * false：踩
+     * 赞的数量
      */
-    private Boolean positive;
+    private Long positiveNum;
 
-//    /**
-//     * 赞/踩对象的所属用户
-//     */
-//    private Long memberId;
+    /**
+     * 踩的数量
+     */
+    private Long negativeNum;
 }

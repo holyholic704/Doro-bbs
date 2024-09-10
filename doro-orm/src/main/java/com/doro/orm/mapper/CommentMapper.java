@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 评论
@@ -28,4 +29,26 @@ public interface CommentMapper extends BaseMapper<CommentBean> {
 
     @Select("SELECT id FROM ( SELECT ROW_NUMBER() over ( ORDER BY create_time ASC, id ASC ) rownum, id FROM doro_bbs_comment WHERE post_id = #{postId} AND del = 0 ) A WHERE rownum % #{idGap} = 1")
     List<Long> everyFewId(Long postId, int idGap);
+
+    @Select("SELECT Z.* FROM ( " +
+            "   SELECT " +
+            "       X.id, " +
+            "       X.user_id, " +
+            "       X.post_id, " +
+            "       X.content, " +
+            "       X.comments, " +
+            "       X.create_time, " +
+            "       Y.id SUB_ID, " +
+            "       Y.user_id SUB_USER_ID, " +
+            "       Y.content SUB_CONTENT, " +
+            "       Y.create_time SUB_TIME, " +
+            "       ROW_NUMBER() over ( PARTITION BY X.id ORDER BY Y.create_time ASC ) rownum " +
+            "   FROM ( " +
+            "       SELECT A.id, A.user_id, A.post_id, A.content, A.comments, A.create_time " +
+            "       FROM doro_bbs_comment A JOIN ( " +
+            "           SELECT id FROM doro_bbs_comment WHERE post_id = #{postId} AND del = 0 ORDER BY create_time ASC, id ASC LIMIT #{current}, #{size} " +
+            "       ) B ON A.id = B.id " +
+            "   ) X LEFT JOIN doro_bbs_sub_comment Y ON X.id = Y.parent_id AND X.comments > 0 AND Y.del = 0 " +
+            ") Z WHERE Z.rownum <= #{subCommentCount}")
+    List<Map<String, Object>> getAllComment(long postId, int current, int size, int subCommentCount);
 }

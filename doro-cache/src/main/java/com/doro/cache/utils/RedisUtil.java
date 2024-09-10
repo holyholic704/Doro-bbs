@@ -35,6 +35,10 @@ public class RedisUtil {
         return redissonClient.getBucket(name);
     }
 
+    public static RBuckets createBuckets() {
+        return redissonClient.getBuckets();
+    }
+
     public static RedisBatch initBatch(String name) {
         return new RedisBatch(name);
     }

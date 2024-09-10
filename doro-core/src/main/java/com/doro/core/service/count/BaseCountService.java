@@ -170,12 +170,7 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
      * @return 缓存是否存在
      */
     private boolean isExistsAndExpire(String cacheKey) {
-        // 不能用 get 方法判断是否存在缓存，计数可能存在为 0 的情况
-        List<?> result = RedisUtil.initBatch(cacheKey)
-                .isExists()
-                .expire(CommonConst.COMMON_CACHE_DURATION)
-                .execute();
-        return (Boolean) result.get(0);
+        return getAndExpire(cacheKey) != null;
     }
 
     /**
@@ -189,11 +184,15 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
         // 延长时间在前，避免出现获取成功后立即超时的情况，导致延长时间失败（key 不存在）
         List<?> result = RedisUtil.initBatch(cacheKey)
                 .expire(CommonConst.COMMON_CACHE_DURATION)
+                .isExists()
                 .atomicLongGet()
                 .execute();
 
-        if (result.get(1) != null) {
-            return Long.parseLong(String.valueOf(result.get(1)));
+        // 不能用 get 方法判断是否存在缓存，计数可能存在为 0 的情况
+        boolean isExists = (Boolean) result.get(1);
+
+        if (isExists) {
+            return (Long) result.get(2);
         }
         return null;
     }

@@ -9,8 +9,4 @@ import com.doro.bean.UserLikeBean;
  * @author jiage
  */
 public interface UserLikeMapper extends BaseMapper<UserLikeBean> {
-
-//    @MapKey("positive")
-//    @Select("SELECT positive, COUNT( 1 ) nums FROM doro_bbs_user_like WHERE post_id = #{postId} GROUP BY positive;")
-//    Map<Boolean, UserLikeBean> getPostLikes(Long postId);
 }
