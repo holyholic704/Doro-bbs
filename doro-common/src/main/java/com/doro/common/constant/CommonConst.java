@@ -13,4 +13,6 @@ public class CommonConst {
 
     public static final long COMMON_LOCK_LEASE_SECONDS = 8;
 
+    public static final long COMMON_DELAY_SECONDS = 5;
+
 }

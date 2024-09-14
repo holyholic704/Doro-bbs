@@ -123,12 +123,10 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
             return false;
         }
 
-        try (MyLock lock = LockUtil.lock(LockKey.INIT_COUNT_CACHE_PREFIX + id, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {
-            count = getCountFromDatabase(id);
-            setAndExpire(getCacheKey(id), count);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        MyLock lock = LockUtil.lock(LockKey.INIT_COUNT_CACHE_PREFIX + id, CommonConst.COMMON_LOCK_LEASE_SECONDS);
+        count = getCountFromDatabase(id);
+        setAndExpire(getCacheKey(id), count);
+        lock.unlock();
         return true;
     }
 
@@ -144,19 +142,16 @@ public abstract class BaseCountService implements CountService, BeanNameAware {
 
         if (!isExistsAndExpire(cacheKey)) {
             // 同时只有一个线程能初始化缓存
-            try (MyLock lock = LockUtil.lock(LockKey.INIT_COUNT_CACHE_PREFIX + id, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {
-                // 避免重复执行数据库的查询
-                if (!isExistsAndExpire(cacheKey)) {
-                    Long count = getCountFromDatabase(id);
-                    // 计数的增减都在数据成功写入数据库之后，所以数据基本上都是有的，
-                    if (count != null) {
-                        return setAndExpire(cacheKey, count + 1);
-                    }
+            MyLock lock = LockUtil.lock(LockKey.INIT_COUNT_CACHE_PREFIX + id, CommonConst.COMMON_LOCK_LEASE_SECONDS);
+            // 避免重复执行数据库的查询
+            if (!isExistsAndExpire(cacheKey)) {
+                Long count = getCountFromDatabase(id);
+                // 计数的增减都在数据成功写入数据库之后，所以数据基本上都是有的，
+                if (count != null) {
+                    return setAndExpire(cacheKey, count + 1);
                 }
-            } catch (Exception e) {
-                // 正常来说不会出现异常
-                e.printStackTrace();
             }
+            lock.unlock();
         }
 
         // 不用担心到这一步刚好缓存失效，之前的操作都有延长超时时间

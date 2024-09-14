@@ -38,16 +38,14 @@ public class UpdateCountConsumer extends BaseConsumer {
         String cachePrefix = countMqModel.getCachePrefix();
         long id = countMqModel.getId();
         String cacheKey = cachePrefix + id;
-        try (MyLock lock = LockUtil.lock(cacheKey, CommonConst.COMMON_LOCK_LEASE_SECONDS)) {
-            delNotConsumedCache(cacheKey);
-            CountService countService = countServiceMap.get(cachePrefix);
-            if (countService != null) {
-                countService.correctCount(id, countMqModel.getCount());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            delNotConsumedCache(cacheKey);
+        MyLock lock = LockUtil.lock(cacheKey, CommonConst.COMMON_LOCK_LEASE_SECONDS);
+        delNotConsumedCache(cacheKey);
+        CountService countService = countServiceMap.get(cachePrefix);
+        if (countService != null) {
+            countService.correctCount(id, countMqModel.getCount());
         }
+        delNotConsumedCache(cacheKey);
+        lock.unlock();
     }
 
     private void delNotConsumedCache(String cacheKey) {
